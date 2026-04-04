@@ -22,4 +22,4 @@ CMD set -a && [ -f .env ] && . ./.env || true; set +a && \
     python3 manage.py restore_db || true && \
     python3 manage.py migrate --noinput || true && \
     python3 manage.py create_superusers || true && \
-    uwsgi --http 0.0.0.0:8000 --master --wsgi southernpark.wsgi:application
+    gunicorn southernpark.wsgi:application --bind 0.0.0.0:8000 --workers 2 --timeout 120
