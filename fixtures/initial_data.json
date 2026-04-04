@@ -1,0 +1,464 @@
+[
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$600000$wKCGh1j3i5BSc6diqGv2Aa$QaxSp1BXoG/JnU1B2pqqitCO4i+YLyMD3XRZ7rW2i9s=",
+    "last_login": "2026-04-01T23:37:30.342Z",
+    "is_superuser": true,
+    "username": "admin",
+    "first_name": "",
+    "last_name": "",
+    "email": "admin@example.com",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2026-04-01T21:54:03.810Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$600000$SSZ8U48irK7c2X2BrIsXwl$9koHhFnZxbGCKoIU3zFlpY3UDHoQYGrOMAXvWwDtYKw=",
+    "last_login": null,
+    "is_superuser": true,
+    "username": "shwetanshu",
+    "first_name": "",
+    "last_name": "",
+    "email": "shwetanshu.c@gmail.com",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2026-04-04T04:53:48.848Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$600000$S3GV8Q5V4GV8Z8OpzCVC1Z$QmhjBIJRG45EpLy7No7PTAtgscuiK05dKVcBFa9po4Q=",
+    "last_login": null,
+    "is_superuser": true,
+    "username": "michael",
+    "first_name": "",
+    "last_name": "",
+    "email": "director@southernparkmusicschool.com",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2026-04-04T04:53:48.994Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$600000$JsIdtuK0cda6YEgwxyVuOj$/YLWk7h8lunYCnckI834YTUiAjgvcooP0JAwzzbj4BI=",
+    "last_login": null,
+    "is_superuser": true,
+    "username": "gay",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2026-04-04T04:53:49.138Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "sitecontent.sitesettings",
+  "pk": 1,
+  "fields": {
+    "alert_enabled": true,
+    "alert_message": "In the event of adverse weather, please contact your teacher individually to arrange a virtual lesson.",
+    "phone_display": "(704) 676-1002",
+    "phone_tel": "+17046761002",
+    "email": "info@southernparkmusicschool.com",
+    "address": "4805 Park Rd STE 230\nCharlotte, NC 28209",
+    "hours_weekday": "9AM–9PM",
+    "hours_saturday": "9AM–2PM",
+    "calendar_embed_url": ""
+  }
+},
+{
+  "model": "sitecontent.heroslide",
+  "pk": 1,
+  "fields": {
+    "image": "hero/carnegie.jpeg",
+    "image_url": "",
+    "alt": "Carnegie Hall performance",
+    "sort_order": 10,
+    "is_active": true
+  }
+},
+{
+  "model": "sitecontent.heroslide",
+  "pk": 2,
+  "fields": {
+    "image": "hero/gallery1.jpg",
+    "image_url": "",
+    "alt": "Student recital",
+    "sort_order": 20,
+    "is_active": true
+  }
+},
+{
+  "model": "sitecontent.heroslide",
+  "pk": 3,
+  "fields": {
+    "image": "hero/gallery2.jpg",
+    "image_url": "",
+    "alt": "Student recital",
+    "sort_order": 30,
+    "is_active": true
+  }
+},
+{
+  "model": "faculty.facultymember",
+  "pk": 1,
+  "fields": {
+    "name": "Dr. Michael Lehtinen",
+    "title": "School Director",
+    "instrument_tag": "piano",
+    "photo": "faculty/michael.jpg",
+    "bio": "DMA and MM from the Eastman School of Music; BMUs from Oberlin Conservatory. Director since 2006, teaching at Southern Park since 1995. His students participate in festivals and competitions throughout Charlotte and NC. He is also the Organist at St. Stephen United Methodist Church.",
+    "sort_order": 10,
+    "is_active": true
+  }
+},
+{
+  "model": "faculty.facultymember",
+  "pk": 2,
+  "fields": {
+    "name": "Dr. Amy Harris",
+    "title": "Instructor of Piano",
+    "instrument_tag": "piano",
+    "photo": "faculty/amy.jpeg",
+    "bio": "DMA from UNC Greensboro; MM and BMus from University of Georgia. Teaching private piano in Charlotte since 2005. Nationally Certified Teacher of Music, Registered Suzuki Piano Teacher, member of MTNA and the Charlotte Piano Teachers Forum.",
+    "sort_order": 20,
+    "is_active": true
+  }
+},
+{
+  "model": "faculty.facultymember",
+  "pk": 3,
+  "fields": {
+    "name": "Sharon Stricklin",
+    "title": "Instructor of Piano",
+    "instrument_tag": "piano",
+    "photo": "faculty/stricklin.jpeg",
+    "bio": "MM and BMus from Michigan State University. 40 years of piano teaching experience. Previously taught middle and high school choral music, AP Music Theory, and AP Music History. Former church music director and accompanist.",
+    "sort_order": 30,
+    "is_active": true
+  }
+},
+{
+  "model": "faculty.facultymember",
+  "pk": 4,
+  "fields": {
+    "name": "Dr. Gregory Thompson",
+    "title": "Instructor of Piano",
+    "instrument_tag": "piano",
+    "photo": "faculty/gregory.avif",
+    "bio": "DMA from University of South Carolina. Recitalist and collaborative pianist with performances in the U.S., Europe, and Asia. He enjoys sharing his love of the piano with students of all ages and abilities.",
+    "sort_order": 40,
+    "is_active": true
+  }
+},
+{
+  "model": "faculty.facultymember",
+  "pk": 5,
+  "fields": {
+    "name": "Janice Williams",
+    "title": "Instructor of Piano & Voice",
+    "instrument_tag": "piano voice",
+    "photo": "faculty/teacher1.jpeg",
+    "bio": "MM from St. Louis Conservatory of Music; BMus from Tulsa University. Over 20 years teaching experience. Performed with Opera Carolina for 12 years. Also sings regularly at Charlotte-area churches and performs with the \"In The Mood\" trio.",
+    "sort_order": 50,
+    "is_active": true
+  }
+},
+{
+  "model": "faculty.facultymember",
+  "pk": 6,
+  "fields": {
+    "name": "Marscia Martinez-Mendoza",
+    "title": "Instructor of Violin & Viola",
+    "instrument_tag": "violin viola",
+    "photo": "faculty/violin.png",
+    "bio": "Instructor of Violin & Viola at Southern Park Music School.",
+    "sort_order": 60,
+    "is_active": true
+  }
+},
+{
+  "model": "faculty.facultymember",
+  "pk": 7,
+  "fields": {
+    "name": "Alasondro Linney",
+    "title": "Instructor of Violin & Viola",
+    "instrument_tag": "violin viola",
+    "photo": "faculty/violin_uzNdSzC.png",
+    "bio": "BMus from NC School of the Arts. Teaches both traditional and Suzuki method. Has performed with the Charlotte Symphony and Alabama Symphony, and enjoys sharing that experience with his students.",
+    "sort_order": 70,
+    "is_active": true
+  }
+},
+{
+  "model": "faculty.facultymember",
+  "pk": 8,
+  "fields": {
+    "name": "Andrew Werner",
+    "title": "Instructor of Cello",
+    "instrument_tag": "cello",
+    "photo": "faculty/cello.png",
+    "bio": "Andrew has a BMus in Cello Performance from James Madison University.",
+    "sort_order": 80,
+    "is_active": true
+  }
+},
+{
+  "model": "faculty.facultymember",
+  "pk": 9,
+  "fields": {
+    "name": "Elaina Palada",
+    "title": "Instructor of Flute",
+    "instrument_tag": "flute",
+    "photo": "faculty/elaina.webp",
+    "bio": "MM from Northwestern University; BM from Syracuse University. Moved to Charlotte in 2022 to work for Flute World. Active performer and substitute flutist for multiple regional orchestras. Five+ years teaching flute to all ages.",
+    "sort_order": 90,
+    "is_active": true
+  }
+},
+{
+  "model": "faculty.facultymember",
+  "pk": 10,
+  "fields": {
+    "name": "Candace Schmitt",
+    "title": "Instructor of Oboe",
+    "instrument_tag": "oboe flute",
+    "photo": "faculty/flute.png",
+    "bio": "BA from UNC Charlotte; BM from Appalachian State University. Plays oboe, flute, and English horn. Adjunct Instructor at Gardner-Webb University. Performs with the Charlotte Civic Orchestra and Charlotte Flute Choir.",
+    "sort_order": 100,
+    "is_active": true
+  }
+},
+{
+  "model": "faculty.facultymember",
+  "pk": 11,
+  "fields": {
+    "name": "Mark Catoe",
+    "title": "Instructor of Saxophone & Clarinet",
+    "instrument_tag": "saxophone clarinet",
+    "photo": "faculty/saxophone.png",
+    "bio": "BMusEd from Winthrop University. Multi-instrumentalist with six+ years performing in the area, including two years on a cruise ship. Notable performances with the Charlotte Symphony, The Temptations, and The Four Tops. Also performs as a jazz pianist.",
+    "sort_order": 110,
+    "is_active": true
+  }
+},
+{
+  "model": "faculty.facultymember",
+  "pk": 12,
+  "fields": {
+    "name": "Dr. Gay Pappin",
+    "title": "Administrative Assistant",
+    "instrument_tag": "administrator",
+    "photo": "faculty/gay.jpeg",
+    "bio": "DMA and MM from Louisiana State University; BMusEd from Ouachita Baptist University. Has taught piano, organ, theory, and music appreciation at several universities. Church pianist and organist for most of her life. Loves working with Southern Park families.",
+    "sort_order": 200,
+    "is_active": true
+  }
+},
+{
+  "model": "gallery.galleryphoto",
+  "pk": 1,
+  "fields": {
+    "image": "gallery/gallery1.jpg",
+    "caption": "",
+    "sort_order": 10,
+    "is_active": true
+  }
+},
+{
+  "model": "gallery.galleryphoto",
+  "pk": 2,
+  "fields": {
+    "image": "gallery/gallery2.jpg",
+    "caption": "",
+    "sort_order": 20,
+    "is_active": true
+  }
+},
+{
+  "model": "gallery.galleryphoto",
+  "pk": 3,
+  "fields": {
+    "image": "gallery/gallery3.jpg",
+    "caption": "",
+    "sort_order": 30,
+    "is_active": true
+  }
+},
+{
+  "model": "gallery.galleryphoto",
+  "pk": 4,
+  "fields": {
+    "image": "gallery/gallery4.jpg",
+    "caption": "",
+    "sort_order": 40,
+    "is_active": true
+  }
+},
+{
+  "model": "gallery.galleryphoto",
+  "pk": 5,
+  "fields": {
+    "image": "gallery/gallery5.jpg",
+    "caption": "",
+    "sort_order": 50,
+    "is_active": true
+  }
+},
+{
+  "model": "gallery.galleryphoto",
+  "pk": 6,
+  "fields": {
+    "image": "gallery/gallery6.jpg",
+    "caption": "",
+    "sort_order": 60,
+    "is_active": true
+  }
+},
+{
+  "model": "gallery.galleryphoto",
+  "pk": 7,
+  "fields": {
+    "image": "gallery/gallery7.jpg",
+    "caption": "",
+    "sort_order": 70,
+    "is_active": true
+  }
+},
+{
+  "model": "gallery.galleryphoto",
+  "pk": 8,
+  "fields": {
+    "image": "gallery/gallery8.jpg",
+    "caption": "",
+    "sort_order": 80,
+    "is_active": true
+  }
+},
+{
+  "model": "policies.policysection",
+  "pk": 1,
+  "fields": {
+    "title": "Summer 2025 Term",
+    "body": "<p>Tuesday, June 3 – Sunday, August 17, 2025<br>Summer Term fees are based upon the number of lessons scheduled by mutual agreement of the teacher and student/parent. The Summer Term administrative fee is $26 with a sibling discount of $13.</p>",
+    "sort_order": 10,
+    "is_active": true
+  }
+},
+{
+  "model": "policies.policysection",
+  "pk": 2,
+  "fields": {
+    "title": "Fall 2025 Term",
+    "body": "<p>Monday, August 18, 2025 – January 11, 2026<br>18 30-minute lessons ($38/lesson): <strong>$722</strong><br>18 45-minute lessons ($57/lesson): <strong>$1,064</strong><br>18 60-minute lessons ($76/lesson): <strong>$1,406</strong><br><em>(includes a non-refundable $38 administrative fee)</em></p>",
+    "sort_order": 20,
+    "is_active": true
+  }
+},
+{
+  "model": "policies.policysection",
+  "pk": 3,
+  "fields": {
+    "title": "Fall & Spring Terms",
+    "body": "<p>Students take one lesson per week. During the fall and spring, Southern Park Music School operates on a <strong>term basis</strong>; however, if a student enters mid-term, the fee will be <strong>prorated</strong> to reflect the number of weeks remaining in the term. Invoices may be paid with cash or check. <strong>We do not accept credit cards.</strong><br><br><strong>Fees are due before the first lesson of the term.</strong> Any exceptions must be discussed with the Director. A $35 fee will be assessed for a returned check.</p>",
+    "sort_order": 30,
+    "is_active": true
+  }
+},
+{
+  "model": "policies.policysection",
+  "pk": 4,
+  "fields": {
+    "title": "Interview Lessons",
+    "body": "<p>Students may request a 30-minute interview lesson for a charge of $38. Payment is due at the time of the lesson by check or cash. <strong>We do not accept credit cards. An interview lesson may not be rescheduled or refunded.</strong></p>",
+    "sort_order": 40,
+    "is_active": true
+  }
+},
+{
+  "model": "policies.policysection",
+  "pk": 5,
+  "fields": {
+    "title": "Banked Time",
+    "body": "<p>Any extra time given by a teacher may be used for an absence.</p>",
+    "sort_order": 50,
+    "is_active": true
+  }
+},
+{
+  "model": "policies.policysection",
+  "pk": 6,
+  "fields": {
+    "title": "Instruction for All Ages",
+    "body": "<p>Southern Park Music School offers music instruction to students of <strong>all ages and abilities</strong>.</p>",
+    "sort_order": 60,
+    "is_active": true
+  }
+},
+{
+  "model": "policies.policysection",
+  "pk": 7,
+  "fields": {
+    "title": "Missed Lessons",
+    "body": "<p><strong>The teacher is under no obligation to make up lessons missed by the student.</strong> Lessons postponed by the teacher will be made up before the end of the term. If a teacher has scheduled a make-up lesson and the student is absent, the teacher is under no further obligation to reschedule.</p>",
+    "sort_order": 70,
+    "is_active": true
+  }
+},
+{
+  "model": "policies.policysection",
+  "pk": 8,
+  "fields": {
+    "title": "Bad Weather",
+    "body": "<p>Southern Park Music School <strong>will not cancel lessons due to dangerous weather</strong>. If a particular teacher must reschedule lessons due to severe weather, lessons will be made up according to the above guidelines. In the event of adverse weather, please contact your teacher individually to arrange a virtual lesson.</p>",
+    "sort_order": 80,
+    "is_active": true
+  }
+},
+{
+  "model": "policies.policysection",
+  "pk": 9,
+  "fields": {
+    "title": "Performances",
+    "body": "<p>Student performances play an important part in the development of a good musician. <strong>We encourage all students to participate in recitals, festivals, and contests.</strong> During the fall and spring terms, recitals are scheduled on certain Sundays at 2:30 p.m; mandatory dress rehearsals are Saturday at 2:30 p.m. Times may vary.</p>",
+    "sort_order": 90,
+    "is_active": true
+  }
+},
+{
+  "model": "policies.policysection",
+  "pk": 10,
+  "fields": {
+    "title": "Photography & Videography",
+    "body": "<p>Individuals may make audio/video recordings of their own relatives in recitals. Individuals may not make images of non-family members.</p>",
+    "sort_order": 100,
+    "is_active": true
+  }
+},
+{
+  "model": "policies.policysection",
+  "pk": 11,
+  "fields": {
+    "title": "Refund Policy",
+    "body": "<p><strong>No refunds will be made for early withdrawal.</strong></p>",
+    "sort_order": 110,
+    "is_active": true
+  }
+}
+]
