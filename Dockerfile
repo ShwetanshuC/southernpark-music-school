@@ -16,6 +16,7 @@ RUN pip install -r requirements.txt
 COPY . .
 # Run migrations then start server
 CMD python3 manage.py migrate --noinput && \
+    python3 manage.py create_superusers && \
     uwsgi --http 0.0.0.0:8000 \
           --protocol uwsgi \
           --wsgi southernpark.wsgi:application
