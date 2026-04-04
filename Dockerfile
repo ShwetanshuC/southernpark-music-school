@@ -18,8 +18,7 @@ RUN pip install -r requirements.txt
 COPY . .
 
 # Startup: load env, run DB setup, then serve
-CMD set -a && [ -f .env ] && . ./.env || true; set +a && \
-    python3 manage.py restore_db || true && \
-    python3 manage.py migrate --noinput || true && \
+CMD python3 manage.py restore_db || true && \
+    python3 manage.py migrate --noinput && \
     python3 manage.py create_superusers || true && \
     gunicorn southernpark.wsgi:application --bind 0.0.0.0:8000 --workers 2 --timeout 120
