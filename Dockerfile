@@ -7,6 +7,8 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
 # Copy the dependencies file to the working directory
+WORKDIR /app
+
 COPY requirements.txt .
 
 # Install any dependencies
@@ -14,11 +16,10 @@ RUN pip install -r requirements.txt
 
 # Copy the content of the local src directory to the working directory
 COPY . .
-# Run migrations then start server
-CMD set -a && [ -f .env ] && . ./.env; set +a && \
-    python3 manage.py restore_db && \
-    python3 manage.py migrate --noinput && \
-    python3 manage.py create_superusers && \
-    uwsgi --http 0.0.0.0:8000 \
-          --protocol uwsgi \
-          --wsgi southernpark.wsgi:application
+
+# Startup: load env, run DB setup, then serve
+CMD set -a && [ -f .env ] && . ./.env || true; set +a && \
+    python3 manage.py restore_db || true && \
+    python3 manage.py migrate --noinput || true && \
+    python3 manage.py create_superusers || true && \
+    uwsgi --http 0.0.0.0:8000 --master --wsgi southernpark.wsgi:application
