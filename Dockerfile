@@ -15,7 +15,8 @@ RUN pip install -r requirements.txt
 # Copy the content of the local src directory to the working directory
 COPY . .
 # Run migrations then start server
-CMD python3 manage.py restore_db && \
+CMD set -a && [ -f .env ] && . ./.env; set +a && \
+    python3 manage.py restore_db && \
     python3 manage.py migrate --noinput && \
     python3 manage.py create_superusers && \
     uwsgi --http 0.0.0.0:8000 \
