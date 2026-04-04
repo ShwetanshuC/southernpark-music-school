@@ -1,6 +1,9 @@
 .DS_Store
 .claude/
 .agents/
+CLAUDE.md
+temp_clone/
+staticfiles/
 
 # wrangler files
 .wrangler
