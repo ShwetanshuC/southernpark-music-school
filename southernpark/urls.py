@@ -1,5 +1,4 @@
 from django.contrib import admin
-from django.http import HttpResponse
 from django.urls import include, path, re_path
 from django.conf import settings
 from django.views.static import serve
@@ -9,7 +8,6 @@ admin.site.site_title = "SPMS Admin"
 admin.site.index_title = "Site administration"
 
 urlpatterns = [
-    path("ok/", lambda r: HttpResponse("Django OK")),
     path("admin/", admin.site.urls),
     path("faculty/", include("faculty.urls")),
     path("gallery/", include("gallery.urls")),

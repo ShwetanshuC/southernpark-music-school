@@ -67,21 +67,6 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       - name: 🐳 Build django image
         run: docker build -t django:latest .
-      - name: 🔍 Test container startup
-        run: |
-          docker run -d --name spms-test \
-            -e DJANGO_SECRET_KEY=test-key \
-            -e S3_ACCESS_KEY=x \
-            -e S3_SECRET_KEY=x \
-            -e S3_AWS_STORAGE_BUCKET_NAME=x \
-            -p 8001:8000 \
-            django:latest
-          sleep 15
-          echo "=== /ok/ response ==="
-          curl -s http://localhost:8001/ok/ || true
-          echo "=== container logs ==="
-          docker logs spms-test
-          docker stop spms-test || true
       - name: 📬 Push django to Lightsail
         run: |
           aws lightsail push-container-image \
@@ -102,7 +87,7 @@ jobs:
                   \"S3_ACCESS_KEY\": \"${{ secrets.S3_ACCESS_KEY }}\",
                   \"S3_SECRET_KEY\": \"${{ secrets.S3_SECRET_KEY }}\",
                   \"S3_AWS_STORAGE_BUCKET_NAME\": \"${{ secrets.S3_AWS_STORAGE_BUCKET_NAME }}\",
-                  \"DEBUG\": \"True\"
+                  \"DEBUG\": \"False\"
                 }
               },
               \"nginx\": {

@@ -23,5 +23,6 @@ RUN DJANGO_SECRET_KEY=build-placeholder python3 manage.py collectstatic --noinpu
 # Startup: load env, run DB setup, then serve
 CMD python3 manage.py restore_db || true && \
     python3 manage.py migrate --noinput && \
+    python3 manage.py load_initial_data || true && \
     python3 manage.py create_superusers || true && \
     gunicorn southernpark.wsgi:application --bind 0.0.0.0:8000 --workers 2 --timeout 120
