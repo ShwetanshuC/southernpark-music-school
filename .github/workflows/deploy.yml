@@ -75,24 +75,35 @@ jobs:
             --label django \
             --image django:latest
       - name: 🚀 Deploy containers with secrets injected
+        env:
+          DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
+          S3_ACCESS_KEY: ${{ secrets.S3_ACCESS_KEY }}
+          S3_SECRET_KEY: ${{ secrets.S3_SECRET_KEY }}
+          S3_AWS_STORAGE_BUCKET_NAME: ${{ secrets.S3_AWS_STORAGE_BUCKET_NAME }}
         run: |
+          python3 - <<'EOF'
+          import json, os, subprocess
+          containers = {
+            "django": {
+              "image": ":djangoapp.django.latest",
+              "ports": {"8000": "HTTP"},
+              "environment": {
+                "DJANGO_SECRET_KEY": os.environ["DJANGO_SECRET_KEY"],
+                "S3_ACCESS_KEY": os.environ["S3_ACCESS_KEY"],
+                "S3_SECRET_KEY": os.environ["S3_SECRET_KEY"],
+                "S3_AWS_STORAGE_BUCKET_NAME": os.environ["S3_AWS_STORAGE_BUCKET_NAME"],
+                "DEBUG": "False",
+              }
+            },
+            "nginx": {
+              "image": ":djangoapp.nginx.latest",
+              "ports": {"80": "HTTP"}
+            }
+          }
+          with open("/tmp/containers.json", "w") as f:
+              json.dump(containers, f)
+          EOF
           aws lightsail create-container-service-deployment \
             --service-name ${{ env.AWS_LIGHTSAIL_SERVICE_NAME }} \
-            --containers "{
-              \"django\": {
-                \"image\": \":${{ env.AWS_LIGHTSAIL_SERVICE_NAME }}.django.latest\",
-                \"ports\": {\"8000\": \"HTTP\"},
-                \"environment\": {
-                  \"DJANGO_SECRET_KEY\": \"${{ secrets.DJANGO_SECRET_KEY }}\",
-                  \"S3_ACCESS_KEY\": \"${{ secrets.S3_ACCESS_KEY }}\",
-                  \"S3_SECRET_KEY\": \"${{ secrets.S3_SECRET_KEY }}\",
-                  \"S3_AWS_STORAGE_BUCKET_NAME\": \"${{ secrets.S3_AWS_STORAGE_BUCKET_NAME }}\",
-                  \"DEBUG\": \"False\"
-                }
-              },
-              \"nginx\": {
-                \"image\": \":${{ env.AWS_LIGHTSAIL_SERVICE_NAME }}.nginx.latest\",
-                \"ports\": {\"80\": \"HTTP\"}
-              }
-            }" \
+            --containers file:///tmp/containers.json \
             --public-endpoint file://AWS/publicendpoint.json
