@@ -74,6 +74,20 @@ jobs:
             --service-name ${{ env.AWS_LIGHTSAIL_SERVICE_NAME }} \
             --label django \
             --image django:latest
+      - name: ⏳ Wait for Lightsail service to be ready
+        run: |
+          echo "Waiting for any in-progress deployment to finish..."
+          for i in $(seq 1 30); do
+            STATE=$(aws lightsail get-container-services \
+              --service-name ${{ env.AWS_LIGHTSAIL_SERVICE_NAME }} \
+              --query 'containerServices[0].state' --output text)
+            echo "State: $STATE"
+            if [ "$STATE" = "RUNNING" ] || [ "$STATE" = "DISABLED" ]; then
+              echo "Service ready."
+              break
+            fi
+            sleep 30
+          done
       - name: 🚀 Deploy containers with secrets injected
         env:
           DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
