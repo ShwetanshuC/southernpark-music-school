@@ -108,7 +108,7 @@ jobs:
                 "S3_SECRET_KEY": os.environ["S3_SECRET_KEY"],
                 "S3_AWS_STORAGE_BUCKET_NAME": os.environ["S3_AWS_STORAGE_BUCKET_NAME"],
                 "AWS_REGION": os.environ.get("AWS_REGION_VAL", "us-east-1"),
-                "DEBUG": "False",
+                "DJANGO_DEBUG": "0",
               }
             },
             "nginx": {
