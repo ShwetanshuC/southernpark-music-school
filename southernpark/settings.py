@@ -121,6 +121,7 @@ if _s3_bucket:
     AWS_ACCESS_KEY_ID = os.environ.get("S3_ACCESS_KEY")
     AWS_SECRET_ACCESS_KEY = os.environ.get("S3_SECRET_KEY")
     AWS_STORAGE_BUCKET_NAME = _s3_bucket
+    AWS_S3_REGION_NAME = os.environ.get("AWS_REGION", "us-east-1")
     AWS_QUERYSTRING_AUTH = False
     AWS_S3_FILE_OVERWRITE = False
     STORAGES["default"] = {
