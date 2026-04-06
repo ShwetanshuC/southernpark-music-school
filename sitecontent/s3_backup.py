@@ -22,8 +22,9 @@ def _db_path():
     return str(settings.DATABASES["default"]["NAME"])
 
 
-def backup_db():
-    """Upload the local SQLite DB to S3. No-ops if S3 is not configured."""
+import threading
+
+def _run_backup():
     bucket = _bucket()
     if not bucket:
         return
@@ -31,6 +32,12 @@ def backup_db():
         _client().upload_file(_db_path(), bucket, S3_KEY)
     except Exception as e:
         print(f"[s3_backup] Upload failed: {e}")
+
+def backup_db():
+    """Upload the local SQLite DB to S3 asynchronously. No-ops if S3 is not configured."""
+    thread = threading.Thread(target=_run_backup)
+    thread.daemon = True
+    thread.start()
 
 
 def restore_db():

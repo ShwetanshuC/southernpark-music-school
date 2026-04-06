@@ -32,6 +32,8 @@ INSTALLED_APPS = [
     "faculty",
     "gallery",
     "policies",
+    "easy_thumbnails",
+    "image_cropping",
 ]
 
 MIDDLEWARE = [
@@ -131,6 +133,14 @@ if _s3_bucket:
     }
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = None
+
+from easy_thumbnails.conf import Settings as thumbnail_settings
+THUMBNAIL_PROCESSORS = (
+    'image_cropping.thumbnail_processors.crop_corners',
+) + thumbnail_settings.THUMBNAIL_PROCESSORS
+
+IMAGE_CROPPING_JQUERY_URL = None
+
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 LOGGING = {
