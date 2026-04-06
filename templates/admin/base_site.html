@@ -287,16 +287,50 @@
     .login #branding h1 {
         justify-content: center !important;
     }
-    
     .login #content {
         padding: 30px 40px !important;
     }
     
+    .login #header {
+        background: transparent !important;
+        border: none !important;
+        padding: 40px 0 20px !important;
+        text-align: center !important;
+    }
+    
+    .login #header a {
+        font-family: 'Playfair Display', Georgia, serif !important;
+        font-size: 24px !important;
+        color: #fff !important;
+        text-decoration: none !important;
+    }
+
     .login .form-row {
         background: transparent !important;
         border: none !important;
-        padding: 15px 0 !important;
+        padding: 10px 0 !important;
     }
+</style>
+
+<!-- JavaScript Centering Script -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    if (document.body.classList.contains('login')) {
+        var container = document.getElementById('container');
+        if (container) {
+            document.body.style.display = 'flex';
+            document.body.style.flexDirection = 'column';
+            document.body.style.alignItems = 'center';
+            document.body.style.justifyContent = 'center';
+            document.body.style.minHeight = '100dvh';
+            document.body.style.margin = '0';
+            document.body.style.padding = '0';
+            document.body.style.background = '#110f0e';
+            container.style.margin = '0';
+        }
+    }
+});
+</script>
     
     .login .submit-row {
         background: transparent !important;
