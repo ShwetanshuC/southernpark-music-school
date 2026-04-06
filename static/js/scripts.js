@@ -200,9 +200,21 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // ===== Stat counter =====
-  document.querySelectorAll('[data-count]').forEach(function (el) {
-    var target = parseInt(el.dataset.count, 10);
+  document.querySelectorAll('.stat-num').forEach(function (el) {
+    var raw = el.dataset.count || el.textContent.trim();
+    var target = parseInt(raw, 10);
     var suffix = el.dataset.suffix || '';
+    
+    // If no explicit suffix but string has one (e.g. "60+"), extract it
+    if (!suffix && /[^\d]/.test(raw)) {
+      suffix = raw.replace(/[\d]/g, '');
+    }
+
+    if (isNaN(target)) {
+      el.textContent = raw;
+      return;
+    }
+
     var duration = 1400;
     var started = false;
     var statObs = new IntersectionObserver(function (entries) {

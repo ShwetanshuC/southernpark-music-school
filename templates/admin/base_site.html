@@ -289,6 +289,7 @@
     }
     .login #content {
         padding: 30px 40px !important;
+        text-align: center !important;
     }
     
     .login #header {
@@ -309,16 +310,35 @@
         background: transparent !important;
         border: none !important;
         padding: 10px 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+    }
+
+    .login .form-row label {
+        display: block !important;
+        padding: 0 0 5px 0 !important;
+        text-align: center !important;
+        width: 100% !important;
+    }
+
+    .login .form-row input {
+        width: 100% !important;
+        max-width: 320px !important;
+        margin: 0 auto !important;
     }
 
     .login .submit-row {
         background: transparent !important;
         padding: 20px 0 0 0 !important;
         text-align: center !important;
+        display: flex !important;
+        justify-content: center !important;
     }
     
     .login .submit-row input {
         width: 100% !important;
+        max-width: 320px !important;
         padding: 14px !important;
         font-size: 1rem !important;
     }
