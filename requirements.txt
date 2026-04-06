@@ -6,9 +6,6 @@ dj-database-url>=2.1
 psycopg2-binary>=2.9
 boto3
 django-storages
-
-django-image-cropping
-easy-thumbnails
 django-image-cropping
 easy-thumbnails
 django-colorfield
