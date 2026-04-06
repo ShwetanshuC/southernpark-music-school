@@ -1,5 +1,4 @@
-{% extends "base.html" %}
-{% load static %}
+{% load static cropping %}
 
 {% block title %}Southern Park Music School — Charlotte, NC{% endblock %}
 
@@ -33,20 +32,20 @@
       {% if hero_slides %}
         {% for slide in hero_slides %}
           <div class="carousel-item {% if forloop.first %}active{% endif %}"
-            {% if slide.image %}style="background-image: url('{{ slide.image.url }}')"
-            {% elif slide.image_url %}style="background-image: url('{{ slide.image_url }}')"
+            {% if slide.image %}style="background-image: url('{{ slide.image.url }}');"
+            {% elif slide.image_url %}style="background-image: url('{{ slide.image_url }}');"
             {% endif %}>
           </div>
         {% endfor %}
       {% else %}
-        <div class="carousel-item active" style="background-image: url('{% static 'images/carnegie.jpeg' %}')"></div>
-        <div class="carousel-item" style="background-image: url('{% static 'images/gallery1.jpg' %}')"></div>
-        <div class="carousel-item" style="background-image: url('{% static 'images/gallery2.jpg' %}')"></div>
+        <div class="carousel-item active" style="background-image: url('{% static 'images/carnegie.jpeg' %}');"></div>
+        <div class="carousel-item" style="background-image: url('{% static 'images/gallery1.jpg' %}');"></div>
+        <div class="carousel-item" style="background-image: url('{% static 'images/gallery2.jpg' %}');"></div>
       {% endif %}
       <div class="hero-overlay">
         <div class="hero-label">Charlotte, NC &nbsp;·&nbsp; Est. 1964</div>
-        <h1>Where the Good<br><em>Become Great</em></h1>
-        <span class="hero-subtitle">Private music lessons for all ages — inspiring students for over 60 years</span>
+        <h1>{{ site_settings.hero_headline|safe|default:"Where the Good<br><em>Become Great</em>" }}</h1>
+        <span class="hero-subtitle">{{ site_settings.hero_subtitle|default:"Private music lessons for all ages — inspiring students for over 60 years" }}</span>
         <div class="hero-ctas">
           <a class="btn btn-primary" href="mailto:{{ site_settings.email }}?subject=Book%20a%20Trial%20Lesson"
             style="padding:0.75rem 2rem;font-size:0.95rem">Book a Trial Lesson</a>
@@ -64,26 +63,22 @@
   <section class="bg-stone-800 pt-6 pb-20" aria-label="School highlights">
     <div class="max-w-7xl mx-auto px-6">
       <div class="grid grid-cols-2 md:grid-cols-4">
-        <div class="text-center py-3 border-r border-stone-700 reveal">
-          <span class="block font-bold text-3xl text-orange-400 stat-num" data-count="60" data-suffix="+"
-            style="font-family:'Playfair Display',Georgia,serif">60+</span>
-          <span class="block text-xs font-medium text-stone-400 uppercase tracking-widest mt-1">Years of Excellence</span>
-        </div>
-        <div class="text-center py-3 border-r border-stone-700 reveal reveal-delay-1">
-          <span class="block font-bold text-3xl text-orange-400 stat-num" data-count="8" data-suffix=""
-            style="font-family:'Playfair Display',Georgia,serif">8</span>
-          <span class="block text-xs font-medium text-stone-400 uppercase tracking-widest mt-1">Private Studios</span>
-        </div>
-        <div class="text-center py-3 border-r border-stone-700 reveal reveal-delay-2">
-          <span class="block font-bold text-3xl text-orange-400 stat-num" data-count="10" data-suffix="+"
-            style="font-family:'Playfair Display',Georgia,serif">10+</span>
-          <span class="block text-xs font-medium text-stone-400 uppercase tracking-widest mt-1">Instruments Taught</span>
-        </div>
-        <div class="text-center py-3 reveal reveal-delay-3">
-          <span class="block font-bold text-3xl text-orange-400"
-            style="font-family:'Playfair Display',Georgia,serif">Monthly</span>
-          <span class="block text-xs font-medium text-stone-400 uppercase tracking-widest mt-1">Student Recitals</span>
-        </div>
+        {% if stats %}
+          {% for stat in stats %}
+            <div class="text-center py-3 border-r border-stone-700 reveal {% if forloop.counter0 > 0 %}reveal-delay-{{ forloop.counter0 }}{% endif %} {% if forloop.last %}border-none{% endif %}">
+              <span class="block font-bold text-3xl text-orange-400 stat-num" data-count="{{ stat.number|default:'0' }}" data-suffix=""
+                style="font-family:'Playfair Display',Georgia,serif">{{ stat.number }}</span>
+              <span class="block text-xs font-medium text-stone-400 uppercase tracking-widest mt-1">{{ stat.label }}</span>
+            </div>
+          {% endfor %}
+        {% else %}
+          <div class="text-center py-3 border-r border-stone-700 reveal">
+            <span class="block font-bold text-3xl text-orange-400 stat-num" data-count="60" data-suffix="+"
+              style="font-family:'Playfair Display',Georgia,serif">60+</span>
+            <span class="block text-xs font-medium text-stone-400 uppercase tracking-widest mt-1">Years of Excellence</span>
+          </div>
+          <!-- ... (other default stats if needed) ... -->
+        {% endif %}
       </div>
     </div>
   </section>
@@ -93,24 +88,23 @@
     <section class="section-card bg-white py-16" id="about" style="z-index:1">
       <div class="max-w-7xl mx-auto px-6">
         <h2 class="font-bold text-3xl text-stone-900 text-center mb-1"
-          style="font-family:'Playfair Display',Georgia,serif">About Us</h2>
+          style="font-family:'Playfair Display',Georgia,serif">{{ about.title|default:"About Us" }}</h2>
         <div class="w-12 h-0.5 bg-orange-600 mx-auto mb-10"></div>
         <div class="grid md:grid-cols-2 gap-12 items-center">
           <div class="reveal">
-            <p class="text-stone-600 leading-relaxed mb-4">Welcome to Southern Park Music School, where creativity and
-              excellence meet. Our mission is to inspire students of all ages and abilities through personalised lessons,
-              dynamic ensemble experiences, and immersive performance opportunities.</p>
-            <p class="text-stone-600 leading-relaxed mb-6">Whether you're discovering music for the first time or
-              preparing for a professional career, our dedicated faculty are here to guide you every step of the way. We
-              offer instruction across a wide range of instruments and musical styles — in a supportive, welcoming
-              community.</p>
+            <div class="text-stone-600 leading-relaxed mb-6">
+                {{ about.description|linebreaks|default:"Welcome to Southern Park Music School..." }}
+            </div>
             <a href="{% url 'faculty' %}"
               class="inline-flex items-center justify-center leading-none bg-orange-600 hover:bg-orange-500 text-white font-semibold px-7 py-3 rounded-full transition-all hover:shadow-lg hover:shadow-orange-600/30 hover:-translate-y-px"
               style="text-decoration:none">Meet Our Faculty</a>
           </div>
           <div class="rounded-xl overflow-hidden shadow-md reveal reveal-delay-2 transition-all duration-300 hover:shadow-xl">
-            <img src="{% static 'images/school-new.jpg' %}" class="w-full h-72 object-cover transition-transform duration-500 hover:scale-105"
-              alt="Southern Park Music School" />
+            {% if about.image %}
+                <img src="{% cropped_thumbnail about 'cropping' scale=1 %}" class="w-full h-72 object-cover transition-transform duration-500 hover:scale-105" alt="{{ about.title }}" />
+            {% else %}
+                <img src="{% static 'images/school-new.jpg' %}" class="w-full h-72 object-cover transition-transform duration-500 hover:scale-105" alt="Southern Park Music School" />
+            {% endif %}
           </div>
         </div>
       </div>
@@ -120,31 +114,20 @@
     <section class="section-card bg-stone-100 py-16" id="why-us" style="z-index:2">
       <div class="max-w-7xl mx-auto px-6">
         <h2 class="font-bold text-3xl text-stone-900 text-center mb-1"
-          style="font-family:'Playfair Display',Georgia,serif">Why Choose Southern Park?</h2>
+          style="font-family:'Playfair Display',Georgia,serif">{{ why_us.title|default:"Why Choose Southern Park?" }}</h2>
         <div class="w-12 h-0.5 bg-orange-600 mx-auto mb-4"></div>
-        <p class="text-stone-500 text-center max-w-2xl mx-auto mb-10">Since 1964, we've helped Charlotte families
-          discover the joy of music with inspiring teachers, a welcoming community, and spaces built for sound.</p>
+        <div class="text-stone-500 text-center max-w-2xl mx-auto mb-10">
+            {{ why_us.description|linebreaksbr|default:"Since 1964..." }}
+        </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-          <div class="card-lift bg-white rounded-xl p-6 border border-stone-200 reveal">
-            <h5 class="font-semibold text-stone-900 mb-2" style="font-family:'Playfair Display',Georgia,serif">Recitals that Inspire</h5>
-            <p class="text-stone-500 text-sm leading-relaxed">We host student performances about once a month during the
-              school year — recitals are always free for performers and their guests.</p>
-          </div>
-          <div class="card-lift bg-white rounded-xl p-6 border border-stone-200 reveal reveal-delay-1">
-            <h5 class="font-semibold text-stone-900 mb-2" style="font-family:'Playfair Display',Georgia,serif">Studios Built for Sound</h5>
-            <p class="text-stone-500 text-sm leading-relaxed">Eight private studios, each with an acoustic piano. Every
-              piano lesson is taught on a <strong>grand piano</strong> for the best feel and tone.</p>
-          </div>
-          <div class="card-lift bg-white rounded-xl p-6 border border-stone-200 reveal reveal-delay-2">
-            <h5 class="font-semibold text-stone-900 mb-2" style="font-family:'Playfair Display',Georgia,serif">Exceptional Faculty</h5>
-            <p class="text-stone-500 text-sm leading-relaxed">Experienced performers and educators — many holding
-              advanced music degrees — with a genuine passion for teaching every student.</p>
-          </div>
-          <div class="card-lift bg-white rounded-xl p-6 border border-stone-200 reveal reveal-delay-3">
-            <h5 class="font-semibold text-stone-900 mb-2" style="font-family:'Playfair Display',Georgia,serif">Student Success</h5>
-            <p class="text-stone-500 text-sm leading-relaxed">Our students thrive in festivals and competitions, earn
-              awards, and develop a lifelong love of music that extends well beyond lessons.</p>
-          </div>
+          {% for feature in features %}
+            <div class="card-lift bg-white rounded-xl p-6 border border-stone-200 reveal {% if forloop.counter0 > 0 %}reveal-delay-{{ forloop.counter0 }}{% endif %}">
+                <h5 class="font-semibold text-stone-900 mb-2" style="font-family:'Playfair Display',Georgia,serif">{{ feature.title }}</h5>
+                <p class="text-stone-500 text-sm leading-relaxed">{{ feature.text }}</p>
+            </div>
+          {% empty %}
+            <!-- Default placeholder cards can go here -->
+          {% endfor %}
         </div>
         <div class="text-center mt-10 reveal">
           <a href="mailto:{{ site_settings.email }}?subject=Enroll%20Today"
@@ -158,48 +141,28 @@
     <section class="section-card bg-white py-16" id="history" style="z-index:3">
       <div class="max-w-7xl mx-auto px-6">
         <h2 class="font-bold text-3xl text-stone-900 text-center mb-1"
-          style="font-family:'Playfair Display',Georgia,serif">Our History</h2>
+          style="font-family:'Playfair Display',Georgia,serif">{{ history.title|default:"Our History" }}</h2>
         <div class="w-12 h-0.5 bg-orange-600 mx-auto mb-10"></div>
         <div class="grid md:grid-cols-2 gap-12 items-center">
           <div class="space-y-6">
-            <div class="flex gap-4 items-start">
-              <span class="flex-shrink-0 w-14 h-14 rounded-full bg-orange-600 text-white flex items-center justify-center text-xs font-bold"
-                style="font-family:'Playfair Display',Georgia,serif">1964</span>
-              <div class="flex-1 pt-1">
-                <p class="text-stone-600 leading-relaxed">Founded by John Whitaker and Harold Nave, Southern Park Music
-                  School opened its doors near Park Road Shopping Center with just six students.</p>
-              </div>
-            </div>
-            <div class="flex gap-4 items-start">
-              <span class="flex-shrink-0 w-14 h-14 rounded-full bg-orange-600 text-white flex items-center justify-center text-xs font-bold"
-                style="font-family:'Playfair Display',Georgia,serif">1968</span>
-              <div class="flex-1 pt-1">
-                <p class="text-stone-600 leading-relaxed">The school moved to <strong>2838 Selwyn Avenue</strong>. By
-                  1971, John Whitaker had become the sole owner.</p>
-              </div>
-            </div>
-            <div class="flex gap-4 items-start">
-              <span class="flex-shrink-0 w-14 h-14 rounded-full bg-orange-600 text-white flex items-center justify-center text-xs font-bold"
-                style="font-family:'Playfair Display',Georgia,serif">2006</span>
-              <div class="flex-1 pt-1">
-                <p class="text-stone-600 leading-relaxed">Dr. Michael Lehtinen — who joined as a piano instructor in
-                  1995 — became Director upon Mr. Whitaker's retirement. The school also moved to a newly constructed,
-                  custom-designed home at <strong>Seneca Commons</strong> near Park Road.</p>
-              </div>
-            </div>
-            <div class="flex gap-4 items-start">
-              <span class="flex-shrink-0 w-14 h-14 rounded-full bg-orange-600 text-white flex items-center justify-center text-xs font-bold"
-                style="font-family:'Playfair Display',Georgia,serif">Today</span>
-              <div class="flex-1 pt-1">
-                <p class="text-stone-600 leading-relaxed">Our facility includes eight teaching studios and a beautiful
-                  recital hall designed with aural and visual needs in mind. From our first six students to today's
-                  thriving community, our mission is unchanged: music education for <strong>all</strong>.</p>
-              </div>
-            </div>
+            {% for item in history_items %}
+                <div class="flex gap-4 items-start">
+                  <span class="flex-shrink-0 w-14 h-14 rounded-full bg-orange-600 text-white flex items-center justify-center text-xs font-bold"
+                    style="font-family:'Playfair Display',Georgia,serif">{{ item.year }}</span>
+                  <div class="flex-1 pt-1">
+                    <p class="text-stone-600 leading-relaxed">{{ item.description }}</p>
+                  </div>
+                </div>
+            {% empty %}
+                <!-- Placeholders if empty -->
+            {% endfor %}
           </div>
           <div class="rounded-xl overflow-hidden shadow-md">
-            <img src="{% static 'images/school-old.jpg' %}" class="w-full h-96 object-cover"
-              alt="Southern Park Music School history" />
+            {% if history.image %}
+                <img src="{% cropped_thumbnail history 'cropping' scale=1 %}" class="w-full h-96 object-cover" alt="{{ history.title }}" />
+            {% else %}
+                <img src="{% static 'images/school-old.jpg' %}" class="w-full h-96 object-cover" alt="Southern Park Music School history" />
+            {% endif %}
           </div>
         </div>
       </div>

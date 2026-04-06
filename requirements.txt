@@ -11,3 +11,4 @@ django-image-cropping
 easy-thumbnails
 django-image-cropping
 easy-thumbnails
+django-colorfield

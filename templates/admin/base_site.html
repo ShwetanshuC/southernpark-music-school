@@ -9,131 +9,252 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
 <style>
-    /* Override Django Admin CSS Variables */
+    /* Premium Southern Park Dark Theme Overrides */
     :root {
-        --primary: #c2410c; /* spms-accent */
-        --secondary: #9a3412; /* spms-accent-h */
+        --primary: #c2410c; /* spms-accent orange */
+        --secondary: #9a3412; /* spms-accent-h deep orange */
         --accent: #ea580c;
         --primary-fg: #fff;
 
-        --body-fg: #1c1917; /* stone-900 */
-        --body-bg: #fafaf9; /* stone-50 */
-        --body-quiet-color: #57534e; /* stone-600 */
-        --body-loud-color: #000;
+        /* Body Background & Foreground */
+        --body-bg: #1c1917; /* stone-900 */
+        --body-fg: #e7e5e4; /* stone-200 */
+        --body-quiet-color: #a8a29e; /* stone-400 */
+        --body-loud-color: #fff;
 
+        /* Header (Top Nav) */
+        --header-bg: #110f0e; /* deeper black-stone */
         --header-color: #fff;
         --header-branding-color: #c2410c;
-        --header-bg: #292524; /* stone-800 */
-        --header-link-color: #fff;
+        --header-link-color: #d6d3d1;
 
-        --breadcrumbs-fg: #e7e5e4; /* stone-200 */
+        /* Breadcrumbs Bar */
+        --breadcrumbs-bg: #292524; /* stone-800 */
+        --breadcrumbs-fg: #d6d3d1;
         --breadcrumbs-link-fg: #fff;
-        --breadcrumbs-bg: #c2410c; /* accent bar */
 
-        --link-fg: #c2410c;
-        --link-hover-color: #ea580c;
+        /* Links */
+        --link-fg: #f97316; /* orange-500 */
+        --link-hover-color: #fb923c;
         --link-selected-fg: #fff;
 
-        --hairline-color: #e7e5e4; /* stone-200 */
-        --border-color: #d6d3d1; /* stone-300 */
+        /* Borders / Hairlines */
+        --hairline-color: #44403c; /* stone-700 */
+        --border-color: #57534e; /* stone-600 */
 
-        --error-fg: #dc2626;
+        /* Logic Flags */
+        --error-fg: #ef4444;
+        --message-success-bg: #15803d;
+        --message-warning-bg: #ca8a04;
+        --message-error-bg: #b91c1c;
 
-        --message-success-bg: #16a34a;
-        --message-warning-bg: #eab308;
-        --message-error-bg: #dc2626;
+        /* Modules & Cards */
+        --darkened-bg: #292524; /* stone-800 for module titles */
+        --selected-bg: #292524;
+        --selected-row: #44403c; /* stone-700 for hover row */
 
-        --darkened-bg: #f5f5f4; /* stone-100 */
-        --selected-bg: #fcd34d;
-        --selected-row: #ffedd5; /* orange-50 */
-
+        /* Buttons */
         --button-fg: #fff;
         --button-bg: #c2410c;
         --button-hover-bg: #9a3412;
-        --default-button-bg: #1c1917;
-        --default-button-hover-bg: #292524;
+        --default-button-bg: #44403c;
+        --default-button-hover-bg: #57534e;
 
         font-family: 'Poppins', sans-serif !important;
     }
 
-    /* Additional Overrides */
+    /* Core Layout Dark Mode Tweaks */
     body {
+        background-color: var(--body-bg);
+        color: var(--body-fg);
         font-family: 'Poppins', sans-serif;
     }
+    
     #header {
+        background: var(--header-bg);
+        color: var(--header-color);
+        padding: 10px 40px;
         border-bottom: 2px solid var(--primary);
-    }
-    #branding h1 {
-        font-family: 'Playfair Display', Georgia, serif;
-        font-size: 1.8rem;
-        font-weight: 700;
-        color: #fff;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-    .module h2, .module caption, .inline-group h2 {
-        background: var(--darkened-bg);
-        color: var(--body-fg);
-        border-bottom: 2px solid var(--primary);
-        font-family: 'Playfair Display', Georgia, serif;
-        font-weight: 600;
-        font-size: 1.25rem;
-    }
-    a.section:link, a.section:visited {
-        color: var(--body-fg);
-    }
-    .button, input[type=submit], input[type=button], .submit-row input, a.button {
-        border-radius: 9999px; /* full rounded like book trial button */
-        padding: 0.6rem 1.25rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        font-size: 0.85rem;
-        letter-spacing: 0.05em;
-        transition: all 0.2s ease;
-    }
-    .submit-row input.default {
-        background-color: var(--primary);
-    }
-    .submit-row input.default:hover {
-        background-color: var(--secondary);
-    }
-    #branding img.logo {
-        height: 40px;
-        width: auto;
-    }
-    .help, p.help {
-        font-size: 0.85rem;
-        color: var(--body-quiet-color);
-    }
-    /* Enlarge the inputs slightly for older users */
-    input[type=text], input[type=password], input[type=email], input[type=url], input[type=number], select, textarea {
-        padding: 0.5rem 0.75rem;
-        font-size: 1.05rem;
-        border-radius: 0.375rem;
-        border: 1px solid var(--border-color);
-        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    }
-    /* Larger checkboxes for accessibility */
-    input[type=checkbox] {
-        width: 1.5rem;
-        height: 1.5rem;
     }
     
-    /* Bigger text in list view */
-    td, th {
-        font-size: 0.95rem;
+    #branding h1 {
+        font-family: 'Playfair Display', Georgia, serif;
+        font-weight: 700;
+        font-size: 1.5rem;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    #branding h1 a {
+        color: #fff;
+    }
+    
+    #branding img.logo {
+        height: 32px;
+        width: auto;
+    }
+
+    /* Fix the "White on White" Contrast Issues */
+    /* Header labels in the main admin dashboard */
+    .module h2, .module caption, .inline-group h2 {
+        background: #292524 !important; /* stone-800 */
+        color: #fff !important; /* Forces white on dark high contrast */
+        border-bottom: 2px solid var(--primary);
+        font-family: 'Playfair Display', Georgia, serif;
+        font-size: 1.2rem;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        padding: 12px 15px;
+    }
+    
+    div.breadcrumbs {
+        padding: 12px 40px;
+        background: var(--breadcrumbs-bg);
+        color: var(--breadcrumbs-fg);
+        border-bottom: 1px solid var(--hairline-color);
+    }
+    
+    div.breadcrumbs a {
+        color: var(--breadcrumbs-link-fg);
+        font-weight: 500;
     }
     
     #content h1 {
         font-family: 'Playfair Display', Georgia, serif;
+        color: #fff;
+        font-weight: 700;
+        margin-bottom: 24px;
+        font-size: 2rem;
+    }
+
+    /* Tables */
+    table th, table td {
+        background: transparent !important;
+        color: var(--body-fg);
+        border-bottom: 1px solid var(--hairline-color);
+    }
+    
+    table thead th {
+        background: #292524 !important;
+        color: #fff;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 0.05em;
+    }
+    
+    tr.row1, tr.row2 {
+        background: #1c1917 !important;
+    }
+    
+    tr:hover td, tr:hover th {
+        background: #44403c !important; /* stone-700 row hover */
+    }
+
+    /* Forms */
+    .module {
+        background: #292524;
+        border: 1px solid var(--hairline-color);
+        border-radius: 12px;
+        overflow: hidden;
+        margin-bottom: 30px;
+    }
+    
+    fieldset.module {
+        padding: 0;
+    }
+    
+    .form-row {
+        padding: 15px 20px;
+        border-bottom: 1px solid var(--hairline-color);
+    }
+    
+    input[type=text], input[type=password], input[type=email], input[type=url], input[type=number], select, textarea {
+        background-color: #110f0e !important;
+        color: #fff !important;
+        border: 1px solid var(--border-color) !important;
+        padding: 10px 14px !important;
+        border-radius: 8px !important;
+        font-size: 1rem !important;
+    }
+    
+    input[type=text]:focus, select:focus, textarea:focus {
+        border-color: var(--primary) !important;
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(194, 65, 12, 0.2);
+    }
+
+    /* Buttons */
+    .button, input[type=submit], input[type=button], .submit-row input, a.button {
+        border-radius: 9999px; 
+        padding: 10px 24px;
+        font-weight: 600;
+        background: var(--button-bg);
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.05em;
+    }
+    
+    .submit-row {
+        background: #110f0e;
+        border: none;
+        border-radius: 0 0 12px 12px;
+        padding: 20px;
+    }
+    
+    .submit-row input.default {
+        background: var(--primary);
+    }
+    
+    .submit-row input.default:hover {
+        background: var(--secondary);
+    }
+    
+    .submit-row a.deletelink {
+        border-radius: 9999px;
+        padding: 10px 24px;
+        background: transparent;
+        color: var(--error-fg);
+        border: 1px solid var(--error-fg);
+    }
+    
+    .submit-row a.deletelink:hover {
+        background: var(--error-fg);
+        color: #fff;
+    }
+
+    /* Help text */
+    .help, p.help {
+        color: var(--body-quiet-color);
+        font-style: italic;
+    }
+
+    /* Hide the default Django color inputs if they look ugly */
+    input[type=color] {
+        width: 60px;
+        height: 60px;
+        border-radius: 12px;
+        border: 2px solid var(--border-color);
+        padding: 0;
+        cursor: pointer;
+    }
+
+    /* Sidebar / Navigation */
+    #content-main {
+        padding: 40px;
     }
 </style>
 {% endblock %}
 
 {% block branding %}
 <h1 id="site-name">
-    <a href="{% url 'admin:index' %}" style="display: flex; align-items: center; gap: 10px;">
+    <a href="{% url 'admin:index' %}">
         <img src="{% static 'images/SPMS_542_icon.gif' %}" alt="SPMS logo" class="logo" />
         Southern Park Admin
     </a>

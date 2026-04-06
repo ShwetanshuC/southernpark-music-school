@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     "policies",
     "easy_thumbnails",
     "image_cropping",
+    "colorfield",
 ]
 
 MIDDLEWARE = [
@@ -105,7 +106,7 @@ MEDIA_ROOT = BASE_DIR / "media"
 
 STORAGES = {
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
     "default": {
         "BACKEND": "django.core.files.storage.FileSystemStorage",
@@ -139,7 +140,8 @@ THUMBNAIL_PROCESSORS = (
     'image_cropping.thumbnail_processors.crop_corners',
 ) + thumbnail_settings.THUMBNAIL_PROCESSORS
 
-IMAGE_CROPPING_JQUERY_URL = None
+IMAGE_CROPPING_JQUERY_URL = 'https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js'
+IMAGE_CROPPING_THUMB_SIZE = (300, 300)
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 

@@ -1,36 +1,46 @@
 from django.contrib import admin
-from django.forms.widgets import TextInput
-from .models import SiteSettings, HeroSlide
-
-class ColorPickerWidget(TextInput):
-    input_type = "color"
+from django.contrib.auth.models import User, Group
+from django.contrib.auth.admin import UserAdmin
+from .models import SiteSettings, HeroSlide, HomeSection, HomeStat, HomeFeature, HomeHistoryItem
+from image_cropping import ImageCroppingMixin
 
 @admin.register(SiteSettings)
 class SiteSettingsAdmin(admin.ModelAdmin):
-    def formfield_for_dbfield(self, db_field, **kwargs):
-        if db_field.name == "alert_color":
-            kwargs["widget"] = ColorPickerWidget()
-        return super().formfield_for_dbfield(db_field, **kwargs)
-
     def has_add_permission(self, request):
         return not SiteSettings.objects.exists()
-
-
-from image_cropping import ImageCroppingMixin
 
 @admin.register(HeroSlide)
 class HeroSlideAdmin(ImageCroppingMixin, admin.ModelAdmin):
     list_display = ["__str__", "sort_order", "is_active"]
     list_editable = ["sort_order", "is_active"]
 
-from django.contrib.auth.models import User, Group
-from django.contrib.auth.admin import UserAdmin
+@admin.register(HomeSection)
+class HomeSectionAdmin(ImageCroppingMixin, admin.ModelAdmin):
+    list_display = ["get_section_type_display", "title"]
+    readonly_fields = ["section_type"]
 
-# Remove Group from admin entirely
-admin.site.unregister(Group)
+@admin.register(HomeStat)
+class HomeStatAdmin(admin.ModelAdmin):
+    list_display = ["number", "label", "sort_order"]
+    list_editable = ["sort_order"]
+
+@admin.register(HomeFeature)
+class HomeFeatureAdmin(admin.ModelAdmin):
+    list_display = ["title", "sort_order"]
+    list_editable = ["sort_order"]
+
+@admin.register(HomeHistoryItem)
+class HomeHistoryItemAdmin(admin.ModelAdmin):
+    list_display = ["year", "sort_order"]
+    list_editable = ["sort_order"]
+
+# Simplified User Management
+try:
+    admin.site.unregister(Group)
+except admin.sites.NotRegistered:
+    pass
 
 class SimplifiedUserAdmin(UserAdmin):
-    # Only show these fields
     fieldsets = (
         (None, {"fields": ("username", "password")}),
         ("Personal info", {"fields": ("first_name", "last_name", "email")}),
@@ -40,11 +50,12 @@ class SimplifiedUserAdmin(UserAdmin):
     filter_horizontal = ()
 
     def save_model(self, request, obj, form, change):
-        # Auto-grant staff status so they can log into this admin panel
         if not obj.is_staff:
             obj.is_staff = True
         super().save_model(request, obj, form, change)
 
-admin.site.unregister(User)
+try:
+    admin.site.unregister(User)
+except admin.sites.NotRegistered:
+    pass
 admin.site.register(User, SimplifiedUserAdmin)
-
