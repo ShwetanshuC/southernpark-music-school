@@ -75,6 +75,7 @@ EXPOSE 80
 ```nginx
 proxy_cache_path /tmp/nginx keys_zone=mycache:1m;
 server {
+    client_max_body_size 0;
     location / {
         proxy_pass http://localhost:8000;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
