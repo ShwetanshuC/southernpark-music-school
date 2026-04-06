@@ -1,21 +1,31 @@
 import os
 import boto3
-from botocore.exceptions import ClientError
+import logging
+from botocore.exceptions import ClientError, NoCredentialsError
 from django.conf import settings
 
-S3_KEY = "backups/db.sqlite3"
+logger = logging.getLogger(__name__)
 
+S3_KEY = "backups/db.sqlite3"
 
 _S3_CLIENT = None
 
 def _client():
     global _S3_CLIENT
     if _S3_CLIENT is None:
-        _S3_CLIENT = boto3.client(
-            "s3",
-            aws_access_key_id=os.environ.get("S3_ACCESS_KEY"),
-            aws_secret_access_key=os.environ.get("S3_SECRET_KEY"),
-        )
+        access_key = os.environ.get("S3_ACCESS_KEY")
+        secret_key = os.environ.get("S3_SECRET_KEY")
+        if not access_key or not secret_key:
+            return None
+        try:
+            _S3_CLIENT = boto3.client(
+                "s3",
+                aws_access_key_id=access_key,
+                aws_secret_access_key=secret_key,
+            )
+        except Exception as e:
+            logger.error(f"[s3_backup] Failed to initialize S3 client: {e}")
+            return None
     return _S3_CLIENT
 
 
@@ -28,26 +38,25 @@ def _db_path():
 
 
 import threading
-
 import time
+import shutil
 
 def _run_backup():
     # Small debounce to avoid overlapping uploads during rapid or bulk edits
     time.sleep(5)
     
     bucket = _bucket()
-    if not bucket:
+    client = _client()
+    if not bucket or not client:
         return
     try:
-        _client().upload_file(_db_path(), bucket, S3_KEY)
-        print(f"[s3_backup] Database backed up to S3 successfully.")
+        client.upload_file(_db_path(), bucket, S3_KEY)
+        logger.info(f"[s3_backup] Database backed up to S3 successfully.")
     except Exception as e:
-        print(f"[s3_backup] Upload failed: {e}")
+        logger.error(f"[s3_backup] Upload failed: {e}")
 
 def backup_db():
     """Upload the local SQLite DB to S3 asynchronously with a debounce delay."""
-    # We use a simple daemon thread. For serious debouncing, a singleton worker thread would be better,
-    # but this prevents blocking the Django request/response cycle.
     thread = threading.Thread(target=_run_backup)
     thread.daemon = True
     thread.start()
@@ -56,13 +65,37 @@ def backup_db():
 def restore_db():
     """Download the SQLite DB from S3. Returns True if restored, False otherwise."""
     bucket = _bucket()
-    if not bucket:
+    client = _client()
+    if not bucket or not client:
         return False
+        
+    db_path = _db_path()
+    temp_path = db_path + ".tmp"
+    
     try:
-        _client().download_file(bucket, S3_KEY, _db_path())
-        return True
+        # Atomic restore: download to temp file first
+        client.download_file(bucket, S3_KEY, temp_path)
+        
+        # Verify file size (ensure it's not empty)
+        if os.path.exists(temp_path) and os.path.getsize(temp_path) > 0:
+            shutil.move(temp_path, db_path)
+            logger.info(f"[s3_backup] Database restored from S3 successfully.")
+            return True
+        else:
+            if os.path.exists(temp_path):
+                os.remove(temp_path)
+            return False
+            
     except ClientError as e:
         if e.response["Error"]["Code"] == "404":
-            return False
-        print(f"[s3_backup] Download failed: {e}")
+            logger.warning(f"[s3_backup] No backup found in S3 bucket.")
+        else:
+            logger.error(f"[s3_backup] Download failed: {e}")
+        if os.path.exists(temp_path):
+            os.remove(temp_path)
+        return False
+    except Exception as e:
+        logger.error(f"[s3_backup] Unexpected error during restore: {e}")
+        if os.path.exists(temp_path):
+            os.remove(temp_path)
         return False
