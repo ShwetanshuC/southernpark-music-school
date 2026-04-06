@@ -251,27 +251,29 @@
         padding: 40px;
     }
 
-    /* Login Centering Fix */
+    /* Force Perfect Login Centering */
     body.login {
+        position: fixed !important;
+        inset: 0 !important;
         display: flex !important;
-        flex-direction: column !important;
         align-items: center !important;
         justify-content: center !important;
-        min-height: 100dvh !important;
         background: #110f0e !important;
         margin: 0 !important;
-        padding: 0 !important;
+        padding: 16px !important;
+        z-index: 9999 !important;
     }
     
     .login #container {
+        position: relative !important;
         width: 100% !important;
-        max-width: 420px !important;
+        max-width: 400px !important;
         background: #1c1917 !important;
         border: 1px solid #44403c !important;
         border-radius: 16px !important;
         overflow: hidden !important;
-        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7) !important;
-        margin: auto !important; /* Perfect Center */
+        box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.9) !important;
+        margin: 0 !important;
     }
     
     .login #header {
