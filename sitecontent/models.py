@@ -35,7 +35,7 @@ from image_cropping import ImageRatioField
 
 class HeroSlide(models.Model):
     image = models.ImageField(upload_to="hero/", blank=True, null=True)
-    cropping = ImageRatioField("image", "0x0") # Free cropping
+    cropping = ImageRatioField("image", "1600x900")
     image_url = models.URLField(blank=True, default="", max_length=800)
     alt = models.CharField(max_length=160, blank=True)
     sort_order = models.PositiveIntegerField(default=0)
@@ -59,7 +59,7 @@ class HomeSection(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True)
     image = models.ImageField(upload_to="home/", blank=True, null=True)
-    cropping = ImageRatioField('image', '0x0') # Free cropping
+    cropping = ImageRatioField('image', "1200x800")
     
     class Meta:
         verbose_name = "Home Section"

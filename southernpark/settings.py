@@ -145,17 +145,19 @@ IMAGE_CROPPING_JQUERY_URL = 'https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/
 IMAGE_CROPPING_THUMB_SIZE = (300, 300)
 
 # CKEditor Configuration for non-technical users
+CKEDITOR_BASEPATH = "/static/ckeditor/ckeditor/"
+CKEDITOR_UPLOAD_PATH = "uploads/"
+CKEDITOR_IMAGE_BACKEND = "pillow"
+
 CKEDITOR_CONFIGS = {
     'default': {
         'toolbar': 'Custom',
         'toolbar_Custom': [
-            ['Format', 'Bold', 'Italic', 'Underline', 'Strike'],
+            ['Bold', 'Italic', 'Underline'],
             ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock'],
-            ['Link', 'Unlink', 'Anchor'],
+            ['Link', 'Unlink'],
             ['RemoveFormat', 'Source']
         ],
-        'height': '300px',
-        'width': '100%',
         'removePlugins': 'elementspath',
         'resize_enabled': False,
     }
