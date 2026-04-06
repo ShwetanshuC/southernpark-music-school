@@ -310,28 +310,7 @@
         border: none !important;
         padding: 10px 0 !important;
     }
-</style>
 
-<!-- JavaScript Centering Script -->
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-    if (document.body.classList.contains('login')) {
-        var container = document.getElementById('container');
-        if (container) {
-            document.body.style.display = 'flex';
-            document.body.style.flexDirection = 'column';
-            document.body.style.alignItems = 'center';
-            document.body.style.justifyContent = 'center';
-            document.body.style.minHeight = '100dvh';
-            document.body.style.margin = '0';
-            document.body.style.padding = '0';
-            document.body.style.background = '#110f0e';
-            container.style.margin = '0';
-        }
-    }
-});
-</script>
-    
     .login .submit-row {
         background: transparent !important;
         padding: 20px 0 0 0 !important;
@@ -360,6 +339,27 @@ document.addEventListener("DOMContentLoaded", function() {
         display: block;
     }
 </style>
+
+<!-- JavaScript Initializations -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // Admin Centering Fallback
+    if (document.body.classList.contains('login')) {
+        var container = document.getElementById('container');
+        if (container) {
+            document.body.style.display = 'flex';
+            document.body.style.flexDirection = 'column';
+            document.body.style.alignItems = 'center';
+            document.body.style.justifyContent = 'center';
+            document.body.style.minHeight = '100dvh';
+            document.body.style.margin = '0';
+            document.body.style.padding = '16px';
+            document.body.style.background = '#110f0e';
+            container.style.margin = '0';
+        }
+    }
+});
+</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {

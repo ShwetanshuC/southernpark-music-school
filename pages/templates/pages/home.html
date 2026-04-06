@@ -67,7 +67,9 @@
         {% if stats %}
           {% for stat in stats %}
             <div class="text-center py-3 border-r border-stone-700 reveal {% if forloop.counter0 > 0 %}reveal-delay-{{ forloop.counter0 }}{% endif %} {% if forloop.last %}border-none{% endif %}">
-              <span class="block font-bold text-3xl text-orange-400 stat-num" data-count="{{ stat.number|default:'0' }}" data-suffix=""
+              <span class="block font-bold text-3xl text-orange-400 stat-num" 
+                data-count="{{ stat.number|stringformat:'d'|default:stat.number }}" 
+                data-suffix="{% if '+' in stat.number %}+{% endif %}"
                 style="font-family:'Playfair Display',Georgia,serif">{{ stat.number }}</span>
               <span class="block text-xs font-medium text-stone-400 uppercase tracking-widest mt-1">{{ stat.label }}</span>
             </div>
