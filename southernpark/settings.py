@@ -27,14 +27,15 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "storages",
-    "sitecontent",
+    "sitecontent.apps.SitecontentConfig",
     "pages",
     "faculty",
     "gallery",
     "policies",
-    "easy_thumbnails",
     "image_cropping",
+    "easy_thumbnails",
     "colorfield",
+    "ckeditor", # Rich text editor for policies
 ]
 
 MIDDLEWARE = [
@@ -142,6 +143,26 @@ THUMBNAIL_PROCESSORS = (
 
 IMAGE_CROPPING_JQUERY_URL = 'https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js'
 IMAGE_CROPPING_THUMB_SIZE = (300, 300)
+
+# CKEditor Configuration for non-technical users
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'Custom',
+        'toolbar_Custom': [
+            ['Format', 'Bold', 'Italic', 'Underline', 'Strike'],
+            ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock'],
+            ['Link', 'Unlink', 'Anchor'],
+            ['RemoveFormat', 'Source']
+        ],
+        'height': '300px',
+        'width': '100%',
+        'removePlugins': 'elementspath',
+        'resize_enabled': False,
+    }
+}
+
+# Speed Optimization: Aggressive caching for Lightsail
+WHITENOISE_MAX_AGE = 31536000 # 1 year
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 

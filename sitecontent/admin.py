@@ -9,6 +9,15 @@ class SiteSettingsAdmin(admin.ModelAdmin):
     def has_add_permission(self, request):
         return not SiteSettings.objects.exists()
 
+    def changelist_view(self, request, extra_context=None):
+        """Redirect the changelist to the change view of the first instance."""
+        obj = SiteSettings.objects.first()
+        if obj:
+            from django.urls import reverse
+            from django.http import HttpResponseRedirect
+            return HttpResponseRedirect(reverse('admin:sitecontent_sitesettings_change', args=(obj.id,)))
+        return super().changelist_view(request, extra_context=extra_context)
+
 @admin.register(HeroSlide)
 class HeroSlideAdmin(ImageCroppingMixin, admin.ModelAdmin):
     list_display = ["__str__", "sort_order", "is_active"]

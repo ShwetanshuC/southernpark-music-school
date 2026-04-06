@@ -1,9 +1,9 @@
 from django.db import models
-
+from ckeditor.fields import RichTextField
 
 class PolicySection(models.Model):
     title = models.CharField(max_length=120)
-    body = models.TextField(help_text="Supports basic HTML")
+    body = RichTextField()
     sort_order = models.PositiveIntegerField(default=0)
     is_active = models.BooleanField(default=True)
 

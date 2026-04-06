@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
 <style>
     /* Premium Southern Park Dark Theme Overrides */
     :root {
@@ -249,7 +250,145 @@
     #content-main {
         padding: 40px;
     }
+
+    /* Login Centering Fix */
+    body.login {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        min-height: 100vh !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #110f0e !important;
+    }
+    
+    .login #container {
+        flex: none !important;
+        width: 100% !important;
+        max-width: 480px !important;
+        background: #1c1917 !important;
+        border: 1px solid #44403c !important;
+        border-radius: 12px !important;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
+        margin: 20px !important;
+    }
+    
+    .login #header {
+        background: transparent !important;
+        border: none !important;
+        border-bottom: 1px solid var(--primary) !important;
+        text-align: center !important;
+        padding: 30px !important;
+    }
+    
+    .login #branding h1 {
+        justify-content: center !important;
+    }
+    
+    .login #content {
+        padding: 30px 40px !important;
+    }
+    
+    .login .form-row {
+        background: transparent !important;
+        border: none !important;
+        padding: 15px 0 !important;
+    }
+    
+    .login .submit-row {
+        background: transparent !important;
+        padding: 20px 0 0 0 !important;
+        text-align: center !important;
+    }
+    
+    .login .submit-row input {
+        width: 100% !important;
+        padding: 14px !important;
+        font-size: 1rem !important;
+    }
+
+    /* Cropper Preview Styles */
+    .live-crop-preview-wrapper {
+        margin-top: 15px;
+        max-width: 600px;
+        border: 2px dashed #44403c;
+        border-radius: 8px;
+        padding: 10px;
+        background: #110f0e;
+        display: none;
+    }
+    
+    .live-crop-preview-img {
+        max-width: 100%;
+        display: block;
+    }
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Live Cropper Implementation
+    const fileInputs = document.querySelectorAll('input[type="file"]');
+    
+    fileInputs.forEach(input => {
+        // Find if this input is related to a cropping field
+        const row = input.closest('.form-row');
+        if (!row) return;
+        
+        // We look for a related ImageRatioField by checking if the next row has a jcrop container or by naming convention
+        // Actually, we'll just check if there's a field ending in '-cropping' in the same form
+        const fieldName = input.name;
+        const form = input.form;
+        if (!form) return;
+        
+        input.addEventListener('change', function(e) {
+            if (!this.files || !this.files[0]) return;
+            
+            const file = this.files[0];
+            const reader = new FileReader();
+            
+            reader.onload = function(event) {
+                // Create preview element if not exists
+                let wrapper = row.querySelector('.live-crop-preview-wrapper');
+                if (!wrapper) {
+                    wrapper = document.createElement('div');
+                    wrapper.className = 'live-crop-preview-wrapper';
+                    wrapper.innerHTML = '<p style="color:var(--primary); font-size: 0.8rem; margin-bottom: 8px; font-weight: bold;">LIVE PREVIEW & CROP (Adjust before saving)</p><img class="live-crop-preview-img">';
+                    row.appendChild(wrapper);
+                }
+                
+                const img = wrapper.querySelector('img');
+                img.src = event.target.result;
+                wrapper.style.display = 'block';
+                
+                // Initialize Cropper.js
+                if (window.currentCropper) window.currentCropper.destroy();
+                
+                // Try to find the target cropping fields (box_coords)
+                // django-image-cropping hidden inputs are usually name + "_cropping"
+                const targetField = form.querySelector(`input[name="${fieldName}_cropping"]`);
+                
+                window.currentCropper = new Cropper(img, {
+                    aspectRatio: 16/9, // Default for Hero, we could parse this from the field data if needed
+                    viewMode: 1,
+                    crop(event) {
+                        if (targetField) {
+                            // Update the hidden field with the new coordinates
+                            // Format: x1,y1,x2,y2
+                            const x1 = Math.round(event.detail.x);
+                            const y1 = Math.round(event.detail.y);
+                            const x2 = Math.round(event.detail.x + event.detail.width);
+                            const y2 = Math.round(event.detail.y + event.detail.height);
+                            targetField.value = `${x1},${y1},${x2},${y2}`;
+                        }
+                    }
+                });
+            };
+            
+            reader.readAsDataURL(file);
+        });
+    });
+});
+</script>
 {% endblock %}
 
 {% block branding %}

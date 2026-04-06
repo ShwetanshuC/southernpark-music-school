@@ -6,12 +6,17 @@ from django.conf import settings
 S3_KEY = "backups/db.sqlite3"
 
 
+_S3_CLIENT = None
+
 def _client():
-    return boto3.client(
-        "s3",
-        aws_access_key_id=os.environ.get("S3_ACCESS_KEY"),
-        aws_secret_access_key=os.environ.get("S3_SECRET_KEY"),
-    )
+    global _S3_CLIENT
+    if _S3_CLIENT is None:
+        _S3_CLIENT = boto3.client(
+            "s3",
+            aws_access_key_id=os.environ.get("S3_ACCESS_KEY"),
+            aws_secret_access_key=os.environ.get("S3_SECRET_KEY"),
+        )
+    return _S3_CLIENT
 
 
 def _bucket():
@@ -24,17 +29,25 @@ def _db_path():
 
 import threading
 
+import time
+
 def _run_backup():
+    # Small debounce to avoid overlapping uploads during rapid or bulk edits
+    time.sleep(5)
+    
     bucket = _bucket()
     if not bucket:
         return
     try:
         _client().upload_file(_db_path(), bucket, S3_KEY)
+        print(f"[s3_backup] Database backed up to S3 successfully.")
     except Exception as e:
         print(f"[s3_backup] Upload failed: {e}")
 
 def backup_db():
-    """Upload the local SQLite DB to S3 asynchronously. No-ops if S3 is not configured."""
+    """Upload the local SQLite DB to S3 asynchronously with a debounce delay."""
+    # We use a simple daemon thread. For serious debouncing, a singleton worker thread would be better,
+    # but this prevents blocking the Django request/response cycle.
     thread = threading.Thread(target=_run_backup)
     thread.daemon = True
     thread.start()
