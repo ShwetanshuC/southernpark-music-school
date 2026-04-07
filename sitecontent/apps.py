@@ -1,4 +1,5 @@
 from django.apps import AppConfig
+from django.conf import settings
 import logging
 
 logger = logging.getLogger(__name__)
@@ -18,6 +19,12 @@ class SitecontentConfig(AppConfig):
         # Restore DB on startup if on Lightsail/Production and not yet restored
         has_bucket = "S3_AWS_STORAGE_BUCKET_NAME" in os.environ
         has_not_restored = os.environ.get("DB_RESTORED") != "True"
+
+        if not has_bucket and not settings.DEBUG:
+            logger.warning(
+                "[sitecontent] No S3 bucket configured. Database and media will not persist across redeploys. "
+                "Set S3_AWS_STORAGE_BUCKET_NAME, S3_ACCESS_KEY, and S3_SECRET_KEY for persistence."
+            )
 
         if has_bucket and has_not_restored:
             try:

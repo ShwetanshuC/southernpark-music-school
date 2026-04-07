@@ -160,7 +160,12 @@ Go to **repo → Settings → Secrets and variables → Actions** and add:
 | `S3_SECRET_KEY` | From Lightsail storage bucket |
 | `S3_AWS_STORAGE_BUCKET_NAME` | Your bucket name |
 
-**No DB secrets needed** — project uses SQLite (data resets on each deploy; media files persist via S3).
+**Persistent storage note**
+- If you set `S3_AWS_STORAGE_BUCKET_NAME` along with `S3_ACCESS_KEY` and `S3_SECRET_KEY`, the app will:
+  - restore `db.sqlite3` from S3 on startup,
+  - backup DB changes to S3 after model saves/deletes,
+  - use S3 for uploaded media files in production.
+- If you do not set these S3 secrets in production, SQLite and local media will reset on each container redeploy.
 
 ---
 
