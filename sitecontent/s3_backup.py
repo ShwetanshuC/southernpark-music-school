@@ -8,27 +8,22 @@ from django.conf import settings
 logger = logging.getLogger(__name__)
 
 S3_KEY = "backups/db.sqlite3"
-_S3_CLIENT = None
-
-
 def _client():
-    global _S3_CLIENT
-    if _S3_CLIENT is None:
-        access_key = os.environ.get("S3_ACCESS_KEY")
-        secret_key = os.environ.get("S3_SECRET_KEY")
-        if not access_key or not secret_key:
-            print("[s3_backup] ERROR: S3_ACCESS_KEY or S3_SECRET_KEY not set — backup disabled.")
-            return None
-        try:
-            _S3_CLIENT = boto3.client(
-                "s3",
-                aws_access_key_id=access_key,
-                aws_secret_access_key=secret_key,
-            )
-        except Exception as e:
-            print(f"[s3_backup] ERROR: Failed to init S3 client: {e}")
-            return None
-    return _S3_CLIENT
+    """Always create a fresh client — no singleton caching that can get stuck None."""
+    access_key = os.environ.get("S3_ACCESS_KEY")
+    secret_key = os.environ.get("S3_SECRET_KEY")
+    if not access_key or not secret_key:
+        print("[s3_backup] ERROR: S3_ACCESS_KEY or S3_SECRET_KEY not set — backup disabled.")
+        return None
+    try:
+        return boto3.client(
+            "s3",
+            aws_access_key_id=access_key,
+            aws_secret_access_key=secret_key,
+        )
+    except Exception as e:
+        print(f"[s3_backup] ERROR: Failed to init S3 client: {e}")
+        return None
 
 
 def _bucket():

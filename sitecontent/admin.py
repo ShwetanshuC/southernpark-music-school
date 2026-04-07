@@ -1,8 +1,10 @@
 from django.contrib import admin
+from django.contrib import messages
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.admin import UserAdmin
+from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
-from django.urls import reverse
+from django.urls import reverse, path
 from .models import SiteSettings, HeroSlide, HomeSection, HomeStat, HomeFeature, HomeHistoryItem
 from image_cropping import ImageCroppingMixin
 
@@ -61,12 +63,31 @@ class SiteSettingsAdmin(admin.ModelAdmin):
         return not SiteSettings.objects.exists()
 
     def changelist_view(self, request, extra_context=None):
-        """Redirect the changelist to the change view of the first instance."""
         obj = SiteSettings.objects.first()
         if obj:
             return redirect(reverse('admin:sitecontent_sitesettings_change', args=(obj.id,)))
-        else:
-            return super().changelist_view(request, extra_context)
+        return super().changelist_view(request, extra_context)
+
+    def get_urls(self):
+        urls = super().get_urls()
+        custom = [
+            path('backup-now/', self.admin_site.admin_view(self.backup_now_view), name='sitecontent_backup_now'),
+        ]
+        return custom + urls
+
+    def backup_now_view(self, request):
+        from sitecontent.s3_backup import backup_db
+        try:
+            backup_db()
+            messages.success(request, "Database backed up to S3 successfully.")
+        except Exception as e:
+            messages.error(request, f"Backup failed: {e}")
+        return HttpResponseRedirect(reverse('admin:sitecontent_sitesettings_changelist'))
+
+    def change_view(self, request, object_id, form_url='', extra_context=None):
+        extra_context = extra_context or {}
+        extra_context['backup_url'] = reverse('admin:sitecontent_backup_now')
+        return super().change_view(request, object_id, form_url, extra_context)
 
 @admin.register(HeroSlide)
 class HeroSlideAdmin(CroppingAdminMediaMixin, ImageCroppingMixin, admin.ModelAdmin):
