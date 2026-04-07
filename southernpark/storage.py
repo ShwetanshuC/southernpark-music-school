@@ -1,47 +1,36 @@
 """
-Storage backends that resize images on upload.
+Storage backends for Southern Park.
 
-Max dimension: 1920px on longest side — sufficient for any display including Retina.
-Quality: 88 — visually lossless, roughly 60-80% smaller than a raw camera JPEG.
+Images are stored at original quality — CloudFront caches them at the edge
+so they load as fast as static files after the first request.
+The only transform applied is stripping EXIF rotation metadata and baking
+it into the pixel data so browsers show photos with correct orientation.
 """
 from __future__ import annotations
 from io import BytesIO
 from django.core.files.base import ContentFile
 from django.core.files.storage import FileSystemStorage
 
-MAX_DIM = 1920
-JPEG_QUALITY = 88
 
-
-def _resize(content, max_dim: int = MAX_DIM):
+def _fix_orientation(content):
     """
-    Return (new_content, needs_rename_to_jpg).
-    Returns the original unchanged if already small or not a raster image.
+    Bake EXIF rotation into pixels and return the file unchanged otherwise.
+    Preserves original format and uses quality='keep' for JPEG so no
+    recompression occurs. Returns (new_content, changed).
     """
     try:
-        from PIL import Image
+        from PIL import Image, ImageOps
         content.seek(0)
         img = Image.open(content)
+        original_format = img.format or "JPEG"
 
-        if max(img.size) <= max_dim:
-            content.seek(0)
-            return content, False
+        img = ImageOps.exif_transpose(img)
 
-        ratio = max_dim / max(img.size)
-        new_size = (int(img.width * ratio), int(img.height * ratio))
-
-        # Flatten alpha before saving as JPEG
-        if img.mode in ("RGBA", "P", "LA"):
-            bg = Image.new("RGB", img.size, (255, 255, 255))
-            mask = img.split()[-1] if img.mode in ("RGBA", "LA") else None
-            bg.paste(img, mask=mask)
-            img = bg
-        elif img.mode != "RGB":
-            img = img.convert("RGB")
-
-        img = img.resize(new_size, Image.LANCZOS)
         out = BytesIO()
-        img.save(out, format="JPEG", quality=JPEG_QUALITY, optimize=True)
+        if original_format == "JPEG":
+            img.save(out, format="JPEG", quality="keep", subsampling="keep")
+        else:
+            img.save(out, format=original_format)
         out.seek(0)
         return ContentFile(out.read()), True
     except Exception:
@@ -54,27 +43,21 @@ def _resize(content, max_dim: int = MAX_DIM):
 
 class ResizingFileSystemStorage(FileSystemStorage):
     def _save(self, name: str, content):
-        new_content, rename = _resize(content)
-        if rename and "." in name:
-            name = name.rsplit(".", 1)[0] + ".jpg"
+        new_content, _ = _fix_orientation(content)
         return super()._save(name, new_content)
 
 
-# S3 backend is imported lazily to avoid errors when storages isn't installed
 def _make_resizing_s3():
     from storages.backends.s3boto3 import S3Boto3Storage
 
     class ResizingS3Storage(S3Boto3Storage):
         def _save(self, name: str, content):
-            new_content, rename = _resize(content)
-            if rename and "." in name:
-                name = name.rsplit(".", 1)[0] + ".jpg"
+            new_content, _ = _fix_orientation(content)
             return super()._save(name, new_content)
 
     return ResizingS3Storage
 
 
-# Eagerly create for import convenience in settings.py
 try:
     ResizingS3Storage = _make_resizing_s3()
 except Exception:
