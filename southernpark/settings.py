@@ -18,9 +18,13 @@ ALLOWED_HOSTS = (
 )
 
 # Production security settings (only when DEBUG=False)
+# Note: AWS LightSail handles SSL/TLS termination at the load balancer
 if not DEBUG:
+    # Trust the X-Forwarded-Proto header from nginx/load balancer
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-    SECURE_SSL_REDIRECT = True
+    # Only redirect to HTTPS if we're NOT running behind a proxy
+    # (AWS LightSail already handles HTTPS, so we don't redirect here)
+    SECURE_SSL_REDIRECT = False
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     SECURE_HSTS_SECONDS = 31536000
