@@ -1,10 +1,10 @@
 # Set base image (host OS)
-FROM python:3.10-buster
+FROM python:3.10-slim-buster
 
 # By default, listen on port
 EXPOSE 8000/tcp
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 
 # Copy the dependencies file to the working directory
 WORKDIR /app
@@ -16,7 +16,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libffi-dev \
     libjpeg-dev \
     zlib1g-dev \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 COPY requirements.txt .
 
@@ -32,8 +32,4 @@ COPY . .
 RUN DJANGO_SECRET_KEY=build-placeholder python3 manage.py collectstatic --noinput
 
 # Startup: restore DB from S3, run migrations, seed data, then serve via Daphne (ASGI) with HTTP/2 support
-CMD python3 manage.py restore_db || true && \
-    python3 manage.py migrate --noinput && \
-    python3 manage.py load_initial_data || true && \
-    python3 manage.py create_superusers || true && \
-    daphne -b 0.0.0.0 -p 8000 -v 2 southernpark.asgi:application
+CMD ["sh", "-c", "python3 manage.py restore_db || true && python3 manage.py migrate --noinput && python3 manage.py load_initial_data || true && python3 manage.py create_superusers || true && daphne -b 0.0.0.0 -p 8000 -v 2 southernpark.asgi:application"]
