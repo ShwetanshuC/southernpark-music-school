@@ -160,6 +160,9 @@ if _s3_bucket:
     AWS_S3_REGION_NAME = os.environ.get("AWS_REGION", "us-east-1")
     AWS_QUERYSTRING_AUTH = False
     AWS_S3_FILE_OVERWRITE = False
+    _cf_domain = os.environ.get("CLOUDFRONT_DOMAIN")
+    if _cf_domain:
+        AWS_S3_CUSTOM_DOMAIN = _cf_domain
     AWS_S3_OBJECT_PARAMETERS = {
         "CacheControl": "max-age=31536000, public",
     }
