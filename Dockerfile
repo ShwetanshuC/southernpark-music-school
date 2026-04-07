@@ -1,5 +1,5 @@
-# Set base image (host OS)
-FROM python:3.10-slim-buster
+# Set base image (host OS) - using slim variant with current Debian for security
+FROM python:3.10-slim
 
 # By default, listen on port
 EXPOSE 8000/tcp
