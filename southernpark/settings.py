@@ -126,6 +126,8 @@ else:
         }
     }
 
+AUTHENTICATION_BACKENDS = ["southernpark.auth_backends.CaseInsensitiveModelBackend"]
+
 AUTH_PASSWORD_VALIDATORS: list[dict[str, str]] = []
 
 LANGUAGE_CODE = "en-us"

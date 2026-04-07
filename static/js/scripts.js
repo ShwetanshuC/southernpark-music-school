@@ -72,45 +72,20 @@ function closeModal() {
 }
 
 // Initialize custom hero carousel (simple slideshow)
-// Slides use data-bg to avoid gray fragments — image is preloaded before being set as background.
 function initHeroCarousel() {
   var hero = document.getElementById('heroCarousel');
   if (!hero) return;
-  var slides = Array.prototype.slice.call(hero.querySelectorAll('.carousel-item'));
-  if (!slides.length) return;
+  var slides = hero.querySelectorAll('.carousel-item');
+  if (!slides || slides.length === 0) return;
   var current = 0;
-
-  // Preload a slide's background and reveal it when ready
-  function loadSlide(slide, onReady) {
-    var url = slide.getAttribute('data-bg');
-    if (!url) { if (onReady) onReady(); return; }
-    if (slide.dataset.bgLoaded) { if (onReady) onReady(); return; }
-    var img = new Image();
-    img.onload = img.onerror = function () {
-      slide.style.backgroundImage = 'url("' + url + '")';
-      slide.dataset.bgLoaded = '1';
-      slide.classList.remove('slide-loading');
-      if (onReady) onReady();
-    };
-    img.src = url;
-  }
-
-  // Load first slide immediately; preload the rest in background
-  loadSlide(slides[0], function () {
-    slides[0].classList.add('active');
-    for (var i = 1; i < slides.length; i++) {
-      (function (s) { loadSlide(s); })(slides[i]);
-    }
+  slides.forEach(function (slide, index) {
+    if (index === 0) slide.classList.add('active');
+    else slide.classList.remove('active');
   });
-
   setInterval(function () {
-    var prev = current;
+    slides[current].classList.remove('active');
     current = (current + 1) % slides.length;
-    var next = slides[current];
-    loadSlide(next, function () {
-      slides[prev].classList.remove('active');
-      next.classList.add('active');
-    });
+    slides[current].classList.add('active');
   }, 5000);
 }
 

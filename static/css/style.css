@@ -28,6 +28,7 @@ header { position: relative; display: block; line-height: 0; font-size: 0; }
   height: 80vh;
   min-height: 520px;
   overflow: hidden;
+  background-color: #1a0f07;
 }
 
 #heroCarousel .carousel-item {
