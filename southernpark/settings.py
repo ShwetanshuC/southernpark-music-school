@@ -8,13 +8,23 @@ import dj_database_url
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "dev-secret-key-change-me")
-DEBUG = os.environ.get("DJANGO_DEBUG", "1") not in {"0", "false", "False"}
+DEBUG = os.environ.get("DJANGO_DEBUG", "0") in {"1", "true", "True"}
 
 _ALLOWED = os.environ.get("DJANGO_ALLOWED_HOSTS", "")
 ALLOWED_HOSTS = (
     [h.strip() for h in _ALLOWED.split(",") if h.strip()]
     if _ALLOWED
-    else (["*"] if DEBUG else ["southernparkmusicschool.com", "www.southernparkmusicschool.com", "localhost", "127.0.0.1"])
+    else (
+        ["*"] if DEBUG 
+        else [
+            "southernparkmusicschool.com",
+            "www.southernparkmusicschool.com",
+            "localhost",
+            "127.0.0.1",
+            "*.amazonaws.com",  # AWS LightSail domains
+            "*.amazonlightsail.com",  # AWS LightSail container domains
+        ]
+    )
 )
 
 # Production security settings (only when DEBUG=False)
@@ -22,13 +32,16 @@ ALLOWED_HOSTS = (
 if not DEBUG:
     # Trust the X-Forwarded-Proto header from nginx/load balancer
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-    # Only redirect to HTTPS if we're NOT running behind a proxy
-    # (AWS LightSail already handles HTTPS, so we don't redirect here)
+    # Disable SSL redirect since load balancer already handles it
     SECURE_SSL_REDIRECT = False
+    # Only set secure cookies when behind HTTPS proxy
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
-    SECURE_HSTS_SECONDS = 31536000
-    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SESSION_COOKIE_HTTPONLY = True
+    # Relaxed HSTS settings to prevent lock-in issues
+    SECURE_HSTS_SECONDS = 3600  # 1 hour (can increase once stable)
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = False
+    SECURE_HSTS_PRELOAD = False
     SECURE_CONTENT_TYPE_NOSNIFF = True
     X_FRAME_OPTIONS = "SAMEORIGIN"  # needed for CKEditor iframes
 
