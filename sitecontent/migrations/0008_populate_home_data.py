@@ -11,7 +11,7 @@ def populate_home_data(apps, schema_editor):
     ss, _ = SiteSettings.objects.get_or_create(id=1)
     ss.hero_headline = "Where the Good<br><em>Become Great</em>"
     ss.hero_subtitle = "Private music lessons for all ages — inspiring students for over 60 years"
-    ss.phone_display = "704.676.1002"
+    ss.phone_display = "(704) 676-1002"
     ss.phone_tel = "+17046761002"
     ss.email = "info@southernparkmusicschool.com"
     ss.address = "4805 Park Rd STE 230\nCharlotte, NC 28209"

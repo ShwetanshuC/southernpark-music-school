@@ -28,21 +28,47 @@ function toggleFlip(card) {
   }
 }
 
+// Gallery lightbox state
+var _galleryItems = [];
+var _galleryIndex = 0;
+
+function _buildGalleryItems() {
+  var grid = document.getElementById('galleryGrid');
+  if (!grid) return;
+  _galleryItems = Array.prototype.slice.call(grid.querySelectorAll('.gallery-item'));
+}
+
+function _showModalAt(index) {
+  if (!_galleryItems.length) return;
+  index = (index + _galleryItems.length) % _galleryItems.length;
+  _galleryIndex = index;
+  var item = _galleryItems[index];
+  var img = item.querySelector('img');
+  var captionEl = item.querySelector('.gallery-caption');
+  var modalImg = document.getElementById('modalImage');
+  var modalCaption = document.getElementById('modalCaption');
+  var modalContainer = document.getElementById('imageModal');
+  if (!modalImg || !modalContainer) return;
+  modalImg.setAttribute('src', img ? img.getAttribute('src') : '');
+  modalImg.setAttribute('alt', img ? (img.getAttribute('alt') || '') : '');
+  if (modalCaption) modalCaption.textContent = captionEl ? captionEl.textContent : '';
+  modalContainer.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
 // Open gallery image in our custom modal
 function openModal(imgElement) {
-  var src = imgElement.getAttribute('src');
-  var modalImgEl = document.getElementById('modalImage');
-  var modalContainer = document.getElementById('imageModal');
-  if (modalImgEl && modalContainer) {
-    modalImgEl.setAttribute('src', src);
-    modalContainer.classList.add('show');
-  }
+  _buildGalleryItems();
+  var item = imgElement.closest ? imgElement.closest('.gallery-item') : null;
+  var index = item ? parseInt(item.getAttribute('data-index') || '0', 10) : 0;
+  _showModalAt(index);
 }
 
 // Close the modal
 function closeModal() {
   var modalContainer = document.getElementById('imageModal');
-  if (modalContainer) modalContainer.classList.remove('show');
+  if (modalContainer) modalContainer.style.display = 'none';
+  document.body.style.overflow = '';
 }
 
 // Initialize custom hero carousel (simple slideshow)
@@ -76,13 +102,15 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   // Set up gallery image click events (modal)
+  _buildGalleryItems();
   var galleryImages = document.querySelectorAll('.gallery-grid img');
   galleryImages.forEach(function (img) {
+    img.style.cursor = 'pointer';
     img.addEventListener('click', function () { openModal(img); });
   });
 
-  // Close modal when clicking outside the content or on close button
-  (function wireModalClose() {
+  // Wire modal close, prev, next
+  (function wireModal() {
     var modalContainer = document.getElementById('imageModal');
     if (!modalContainer) return;
     modalContainer.addEventListener('click', function (e) {
@@ -90,6 +118,17 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     var closeBtn = document.getElementById('modalCloseBtn');
     if (closeBtn) closeBtn.addEventListener('click', closeModal);
+    var prevBtn = document.getElementById('modalPrev');
+    if (prevBtn) prevBtn.addEventListener('click', function () { _showModalAt(_galleryIndex - 1); });
+    var nextBtn = document.getElementById('modalNext');
+    if (nextBtn) nextBtn.addEventListener('click', function () { _showModalAt(_galleryIndex + 1); });
+    // Keyboard navigation
+    document.addEventListener('keydown', function (e) {
+      if (modalContainer.style.display !== 'flex') return;
+      if (e.key === 'ArrowLeft') _showModalAt(_galleryIndex - 1);
+      else if (e.key === 'ArrowRight') _showModalAt(_galleryIndex + 1);
+      else if (e.key === 'Escape') closeModal();
+    });
   })();
 
   // ======================

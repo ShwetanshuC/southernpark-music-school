@@ -10,74 +10,59 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
 <style>
-    /* Premium Southern Park Dark Theme Overrides */
+    /* ============================================================
+       SOUTHERN PARK ADMIN – PREMIUM DARK THEME
+       ============================================================ */
     :root {
-        --primary: #c2410c; /* spms-accent orange */
-        --secondary: #9a3412; /* spms-accent-h deep orange */
+        --primary: #c2410c;
+        --secondary: #9a3412;
         --accent: #ea580c;
         --primary-fg: #fff;
-
-        /* Body Background & Foreground */
-        --body-bg: #1c1917; /* stone-900 */
-        --body-fg: #e7e5e4; /* stone-200 */
-        --body-quiet-color: #a8a29e; /* stone-400 */
+        --body-bg: #1c1917;
+        --body-fg: #e7e5e4;
+        --body-quiet-color: #a8a29e;
         --body-loud-color: #fff;
-
-        /* Header (Top Nav) */
-        --header-bg: #110f0e; /* deeper black-stone */
+        --header-bg: #110f0e;
         --header-color: #fff;
         --header-branding-color: #c2410c;
         --header-link-color: #d6d3d1;
-
-        /* Breadcrumbs Bar */
-        --breadcrumbs-bg: #292524; /* stone-800 */
+        --breadcrumbs-bg: #292524;
         --breadcrumbs-fg: #d6d3d1;
         --breadcrumbs-link-fg: #fff;
-
-        /* Links */
-        --link-fg: #f97316; /* orange-500 */
+        --link-fg: #f97316;
         --link-hover-color: #fb923c;
         --link-selected-fg: #fff;
-
-        /* Borders / Hairlines */
-        --hairline-color: #44403c; /* stone-700 */
-        --border-color: #57534e; /* stone-600 */
-
-        /* Logic Flags */
+        --hairline-color: #44403c;
+        --border-color: #57534e;
         --error-fg: #ef4444;
         --message-success-bg: #15803d;
         --message-warning-bg: #ca8a04;
         --message-error-bg: #b91c1c;
-
-        /* Modules & Cards */
-        --darkened-bg: #292524; /* stone-800 for module titles */
+        --darkened-bg: #292524;
         --selected-bg: #292524;
-        --selected-row: #44403c; /* stone-700 for hover row */
-
-        /* Buttons */
+        --selected-row: #44403c;
         --button-fg: #fff;
         --button-bg: #c2410c;
         --button-hover-bg: #9a3412;
         --default-button-bg: #44403c;
         --default-button-hover-bg: #57534e;
-
         font-family: 'Poppins', sans-serif !important;
     }
 
-    /* Core Layout Dark Mode Tweaks */
+    /* ── Base ── */
     body {
         background-color: var(--body-bg);
         color: var(--body-fg);
         font-family: 'Poppins', sans-serif;
     }
-    
+
+    /* ── Header ── */
     #header {
         background: var(--header-bg);
         color: var(--header-color);
         padding: 10px 40px;
         border-bottom: 2px solid var(--primary);
     }
-    
     #branding h1 {
         font-family: 'Playfair Display', Georgia, serif;
         font-weight: 700;
@@ -87,21 +72,20 @@
         align-items: center;
         gap: 12px;
     }
-    
-    #branding h1 a {
-        color: #fff;
-    }
-    
-    #branding img.logo {
-        height: 32px;
-        width: auto;
-    }
+    #branding h1 a { color: #fff; }
+    #branding img.logo { height: 32px; width: auto; }
 
-    /* Fix the "White on White" Contrast Issues */
-    /* Header labels in the main admin dashboard */
+    /* ── Remove Django nav sidebar & toggle button ── */
+    #nav-sidebar,
+    #toggle-nav-sidebar,
+    .toggle-nav-sidebar,
+    .sticky.shifted { display: none !important; }
+    .main { margin-inline-start: 0 !important; }
+
+    /* ── Module titles ── */
     .module h2, .module caption, .inline-group h2 {
-        background: #292524 !important; /* stone-800 */
-        color: #fff !important; /* Forces white on dark high contrast */
+        background: #292524 !important;
+        color: #fff !important;
         border-bottom: 2px solid var(--primary);
         font-family: 'Playfair Display', Georgia, serif;
         font-size: 1.2rem;
@@ -109,19 +93,20 @@
         letter-spacing: 0.02em;
         padding: 12px 15px;
     }
-    
+
+    /* ── Breadcrumbs ── */
     div.breadcrumbs {
         padding: 12px 40px;
         background: var(--breadcrumbs-bg);
         color: var(--breadcrumbs-fg);
         border-bottom: 1px solid var(--hairline-color);
     }
-    
     div.breadcrumbs a {
         color: var(--breadcrumbs-link-fg);
         font-weight: 500;
     }
-    
+
+    /* ── Page h1 ── */
     #content h1 {
         font-family: 'Playfair Display', Georgia, serif;
         color: #fff;
@@ -130,13 +115,12 @@
         font-size: 2rem;
     }
 
-    /* Tables */
+    /* ── Tables ── */
     table th, table td {
         background: transparent !important;
         color: var(--body-fg);
         border-bottom: 1px solid var(--hairline-color);
     }
-    
     table thead th {
         background: #292524 !important;
         color: #fff;
@@ -145,16 +129,10 @@
         font-size: 0.75rem;
         letter-spacing: 0.05em;
     }
-    
-    tr.row1, tr.row2 {
-        background: #1c1917 !important;
-    }
-    
-    tr:hover td, tr:hover th {
-        background: #44403c !important; /* stone-700 row hover */
-    }
+    tr.row1, tr.row2 { background: #1c1917 !important; }
+    tr:hover td, tr:hover th { background: #44403c !important; }
 
-    /* Forms */
+    /* ── Forms ── */
     .module {
         background: #292524;
         border: 1px solid var(--hairline-color);
@@ -162,17 +140,18 @@
         overflow: hidden;
         margin-bottom: 30px;
     }
-    
-    fieldset.module {
-        padding: 0;
-    }
-    
+    fieldset.module { padding: 0; }
     .form-row {
         padding: 15px 20px;
         border-bottom: 1px solid var(--hairline-color);
     }
-    
-    input[type=text], input[type=password], input[type=email], input[type=url], input[type=number], select, textarea {
+    input[type=text],
+    input[type=password],
+    input[type=email],
+    input[type=url],
+    input[type=number],
+    select,
+    textarea {
         background-color: #110f0e !important;
         color: #fff !important;
         border: 1px solid var(--border-color) !important;
@@ -180,16 +159,27 @@
         border-radius: 8px !important;
         font-size: 1rem !important;
     }
-    
     input[type=text]:focus, select:focus, textarea:focus {
         border-color: var(--primary) !important;
         outline: none;
         box-shadow: 0 0 0 2px rgba(194, 65, 12, 0.2);
     }
 
-    /* Buttons */
+    /* ── Search / Filter input – rounded pill ── */
+    #searchbar,
+    #changelist-search input[type=text],
+    #changelist-search input[type=search],
+    .search-input {
+        border-radius: 9999px !important;
+        padding: 9px 18px !important;
+    }
+    #changelist-search input[type=submit] {
+        border-radius: 9999px !important;
+    }
+
+    /* ── Buttons ── */
     .button, input[type=submit], input[type=button], .submit-row input, a.button {
-        border-radius: 9999px; 
+        border-radius: 9999px;
         padding: 10px 24px;
         font-weight: 600;
         background: var(--button-bg);
@@ -201,22 +191,14 @@
         font-size: 0.85rem;
         letter-spacing: 0.05em;
     }
-    
     .submit-row {
         background: #110f0e;
         border: none;
         border-radius: 0 0 12px 12px;
         padding: 20px;
     }
-    
-    .submit-row input.default {
-        background: var(--primary);
-    }
-    
-    .submit-row input.default:hover {
-        background: var(--secondary);
-    }
-    
+    .submit-row input.default { background: var(--primary); }
+    .submit-row input.default:hover { background: var(--secondary); }
     .submit-row a.deletelink {
         border-radius: 9999px;
         padding: 10px 24px;
@@ -224,19 +206,18 @@
         color: var(--error-fg);
         border: 1px solid var(--error-fg);
     }
-    
     .submit-row a.deletelink:hover {
         background: var(--error-fg);
         color: #fff;
     }
 
-    /* Help text */
+    /* ── Help text ── */
     .help, p.help {
         color: var(--body-quiet-color);
         font-style: italic;
     }
 
-    /* Hide the default Django color inputs if they look ugly */
+    /* ── Color input ── */
     input[type=color] {
         width: 60px;
         height: 60px;
@@ -246,12 +227,45 @@
         cursor: pointer;
     }
 
-    /* Sidebar / Navigation */
-    #content-main {
-        padding: 40px;
+    /* ── Content padding ── */
+    #content-main { padding: 40px; }
+
+    /* ── Recent actions: move to top via JS, style it nicely ── */
+    #recent-actions-module {
+        margin-bottom: 30px;
     }
 
-    /* Force Perfect Login Centering */
+    /* ── Color swatch palette (alert_color field) ── */
+    .spms-color-swatches {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-top: 10px;
+    }
+    .spms-swatch {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        border: 2px solid rgba(255,255,255,0.15);
+        cursor: pointer;
+        transition: transform 0.15s, border-color 0.15s;
+        flex-shrink: 0;
+    }
+    .spms-swatch:hover {
+        transform: scale(1.2);
+        border-color: rgba(255,255,255,0.6);
+    }
+    .spms-swatch-label {
+        font-size: 0.7rem;
+        color: #78716c;
+        margin-bottom: 4px;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+    }
+
+    /* ====================================================
+       LOGIN PAGE – Perfectly Centered Card
+       ==================================================== */
     body.login {
         position: fixed !important;
         inset: 0 !important;
@@ -261,9 +275,7 @@
         background: #110f0e !important;
         margin: 0 !important;
         padding: 16px !important;
-        z-index: 9999 !important;
     }
-    
     .login #container {
         position: relative !important;
         width: 100% !important;
@@ -275,37 +287,32 @@
         box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.9) !important;
         margin: 0 !important;
     }
-    
     .login #header {
         background: transparent !important;
         border: none !important;
         border-bottom: 1px solid var(--primary) !important;
         text-align: center !important;
-        padding: 30px !important;
+        padding: 30px 30px 20px !important;
     }
-    
-    .login #branding h1 {
-        justify-content: center !important;
-    }
-    .login #content {
-        padding: 30px 40px !important;
-        text-align: center !important;
-    }
-    
-    .login #header {
-        background: transparent !important;
-        border: none !important;
-        padding: 40px 0 20px !important;
-        text-align: center !important;
-    }
-    
+    .login #branding h1 { justify-content: center !important; }
     .login #header a {
         font-family: 'Playfair Display', Georgia, serif !important;
         font-size: 24px !important;
         color: #fff !important;
         text-decoration: none !important;
     }
-
+    .login #content {
+        padding: 24px 44px 32px !important;
+        text-align: center !important;
+    }
+    /* Remove "Log in" h1 heading (redundant with branding) */
+    .login #content h1 { display: none !important; }
+    /* #content-main inside login gets its own padding — zero it out */
+    .login #content-main {
+        padding: 0 !important;
+        width: 100% !important;
+        float: none !important;
+    }
     .login .form-row {
         background: transparent !important;
         border: none !important;
@@ -314,20 +321,18 @@
         flex-direction: column !important;
         align-items: center !important;
     }
-
     .login .form-row label {
         display: block !important;
         padding: 0 0 5px 0 !important;
         text-align: center !important;
         width: 100% !important;
     }
-
     .login .form-row input {
         width: 100% !important;
         max-width: 320px !important;
         margin: 0 auto !important;
+        border-radius: 8px !important;
     }
-
     .login .submit-row {
         background: transparent !important;
         padding: 20px 0 0 0 !important;
@@ -335,7 +340,6 @@
         display: flex !important;
         justify-content: center !important;
     }
-    
     .login .submit-row input {
         width: 100% !important;
         max-width: 320px !important;
@@ -343,107 +347,404 @@
         font-size: 1rem !important;
     }
 
-    /* Cropper Preview Styles */
-    .live-crop-preview-wrapper {
-        margin-top: 15px;
-        max-width: 600px;
-        border: 2px dashed #44403c;
-        border-radius: 8px;
-        padding: 10px;
+    /* ====================================================
+       MODERN IMAGE CROPPER
+       ==================================================== */
+    .spms-crop-wrapper {
+        margin-top: 16px;
         background: #110f0e;
-        display: none;
+        border: 1px solid #44403c;
+        border-radius: 12px;
+        overflow: hidden;
+        max-width: 680px;
     }
-    
-    .live-crop-preview-img {
+    .spms-crop-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 16px;
+        background: #292524;
+        border-bottom: 1px solid #44403c;
+    }
+    .spms-crop-title {
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: #c2410c;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+    }
+    .spms-crop-badge {
+        font-size: 0.72rem;
+        color: #a8a29e;
+        background: #1c1917;
+        border: 1px solid #44403c;
+        border-radius: 9999px;
+        padding: 2px 10px;
+    }
+    .spms-crop-canvas {
+        padding: 16px;
+        max-height: 400px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .spms-crop-canvas img {
         max-width: 100%;
+        max-height: 360px;
         display: block;
+    }
+    .spms-crop-footer {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 16px;
+        background: #292524;
+        border-top: 1px solid #44403c;
+    }
+    .spms-crop-btn {
+        border-radius: 9999px;
+        padding: 7px 18px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        cursor: pointer;
+        border: none;
+        transition: all 0.2s;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+    .spms-crop-btn-primary {
+        background: #c2410c;
+        color: #fff;
+    }
+    .spms-crop-btn-primary:hover { background: #9a3412; }
+    .spms-crop-btn-secondary {
+        background: transparent;
+        color: #a8a29e;
+        border: 1px solid #57534e;
+    }
+    .spms-crop-btn-secondary:hover { color: #fff; border-color: #a8a29e; }
+    .spms-crop-hint {
+        font-size: 0.72rem;
+        color: #78716c;
+        margin-left: auto;
+    }
+
+    /* ====================================================
+       CKEDITOR DARK THEME (chrome / toolbar)
+       ==================================================== */
+    .cke_chrome {
+        background: #1c1917 !important;
+        border: 1px solid #44403c !important;
+        border-radius: 8px !important;
+        overflow: hidden !important;
+    }
+    .cke_top {
+        background: #292524 !important;
+        border-bottom: 1px solid #44403c !important;
+        padding: 4px 6px !important;
+    }
+    .cke_bottom {
+        background: #1c1917 !important;
+        border-top: 1px solid #44403c !important;
+        padding: 4px 8px !important;
+    }
+    .cke_toolgroup {
+        background: transparent !important;
+        border-right: 1px solid #44403c !important;
+    }
+    .cke_button {
+        border-radius: 4px !important;
+    }
+    .cke_button:hover, .cke_button_on {
+        background: #44403c !important;
+        border-color: #57534e !important;
+    }
+    .cke_button__bold_icon,
+    .cke_button__italic_icon,
+    .cke_button__underline_icon,
+    .cke_button__numberedlist_icon,
+    .cke_button__bulletedlist_icon,
+    .cke_button__outdent_icon,
+    .cke_button__indent_icon,
+    .cke_button__justifyleft_icon,
+    .cke_button__justifycenter_icon,
+    .cke_button__justifyright_icon,
+    .cke_button__justifyblock_icon,
+    .cke_button__link_icon,
+    .cke_button__unlink_icon,
+    .cke_button__removeformat_icon,
+    .cke_button__source_icon {
+        filter: invert(0.7) !important;
+    }
+    .cke_combo_button {
+        background: #110f0e !important;
+        border: 1px solid #44403c !important;
+        border-radius: 6px !important;
+    }
+    .cke_combo_text {
+        color: #e7e5e4 !important;
+    }
+    .cke_panel_block {
+        background: #1c1917 !important;
+        border: 1px solid #44403c !important;
+    }
+    .cke_panel_listItem a {
+        color: #e7e5e4 !important;
+    }
+    .cke_panel_listItem a:hover {
+        background: #44403c !important;
+    }
+    .cke_path_item {
+        color: #a8a29e !important;
+    }
+    /* CKEditor inner iframe wrapper */
+    .cke_inner .cke_wysiwyg_frame {
+        background: #1c1917 !important;
     }
 </style>
 
-<!-- JavaScript Initializations -->
+<!-- ── Login centering fallback (JS) ── -->
 <script>
 document.addEventListener("DOMContentLoaded", function() {
-    // Admin Centering Fallback
     if (document.body.classList.contains('login')) {
-        var container = document.getElementById('container');
-        if (container) {
-            document.body.style.display = 'flex';
-            document.body.style.flexDirection = 'column';
-            document.body.style.alignItems = 'center';
-            document.body.style.justifyContent = 'center';
-            document.body.style.minHeight = '100dvh';
-            document.body.style.margin = '0';
-            document.body.style.padding = '16px';
-            document.body.style.background = '#110f0e';
-            container.style.margin = '0';
-        }
+        var b = document.body;
+        b.style.cssText += 'display:flex!important;align-items:center!important;justify-content:center!important;min-height:100dvh!important;margin:0!important;padding:16px!important;background:#110f0e!important;';
+        var c = document.getElementById('container');
+        if (c) c.style.margin = '0';
     }
 });
 </script>
+
+<!-- ── Cropper.js ── -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Live Cropper Implementation
-    const fileInputs = document.querySelectorAll('input[type="file"]');
-    
-    fileInputs.forEach(input => {
-        // Find if this input is related to a cropping field
-        const row = input.closest('.form-row');
-        if (!row) return;
-        
-        // We look for a related ImageRatioField by checking if the next row has a jcrop container or by naming convention
-        // Actually, we'll just check if there's a field ending in '-cropping' in the same form
-        const fieldName = input.name;
-        const form = input.form;
+    /* ────────────────────────────────────────────
+       1. Move Recent Actions to top of dashboard
+    ──────────────────────────────────────────── */
+    var ra = document.getElementById('recent-actions-module');
+    var cm = document.getElementById('content-main');
+    if (ra && cm) cm.insertBefore(ra, cm.firstChild);
+
+    /* ────────────────────────────────────────────
+       2. Remove sidebar residual layout padding
+    ──────────────────────────────────────────── */
+    var mainEl = document.querySelector('#main, .main');
+    if (mainEl) mainEl.style.marginInlineStart = '0';
+
+    /* ────────────────────────────────────────────
+       3. Modern Image Cropper
+       Only activates for file inputs that have
+       a companion "*_cropping" hidden field.
+       Uses a revision counter to handle rapid
+       re-selection without stale callbacks.
+    ──────────────────────────────────────────── */
+    var croppers = {}; // keyed by fieldName
+
+    document.querySelectorAll('input[type="file"]').forEach(function(input) {
+        var form = input.form;
         if (!form) return;
-        
-        input.addEventListener('change', function(e) {
-            if (!this.files || !this.files[0]) return;
-            
-            const file = this.files[0];
-            const reader = new FileReader();
-            
-            reader.onload = function(event) {
-                // Create preview element if not exists
-                let wrapper = row.querySelector('.live-crop-preview-wrapper');
-                if (!wrapper) {
-                    wrapper = document.createElement('div');
-                    wrapper.className = 'live-crop-preview-wrapper';
-                    wrapper.innerHTML = '<p style="color:var(--primary); font-size: 0.8rem; margin-bottom: 8px; font-weight: bold;">LIVE PREVIEW & CROP (Adjust before saving)</p><img class="live-crop-preview-img">';
-                    row.appendChild(wrapper);
-                }
-                
-                const img = wrapper.querySelector('img');
-                img.src = event.target.result;
-                wrapper.style.display = 'block';
-                
-                // Initialize Cropper.js
-                if (window.currentCropper) window.currentCropper.destroy();
-                
-                // Try to find the target cropping fields (box_coords)
-                // django-image-cropping hidden inputs are usually name + "_cropping"
-                const targetField = form.querySelector(`input[name="${fieldName}_cropping"]`);
-                
-                window.currentCropper = new Cropper(img, {
-                    aspectRatio: 16/9, // Default for Hero, we could parse this from the field data if needed
+
+        var fieldName = input.name;
+        var croppingInput = form.querySelector('input[name="' + fieldName + '_cropping"]');
+        if (!croppingInput) return; // No crop companion → skip
+
+        var row = input.closest('.form-row, .field-box, td');
+        if (!row) return;
+
+        // Per-input revision counter guards against stale async callbacks
+        var revision = 0;
+
+        input.addEventListener('change', function() {
+            var file = this.files && this.files[0];
+            if (!file || !file.type.startsWith('image/')) return;
+
+            var thisRevision = ++revision;
+
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                // If a newer change event fired while we were reading, bail out
+                if (thisRevision !== revision) return;
+
+                // ── Safely destroy previous Cropper instance ──
+                try {
+                    if (croppers[fieldName]) {
+                        croppers[fieldName].destroy();
+                    }
+                } catch(err) {}
+                croppers[fieldName] = null;
+
+                // ── Remove any previous wrapper ──
+                // Search the whole document by data-field to be robust to DOM moves
+                var existing = document.querySelector('.spms-crop-wrapper[data-field="' + fieldName + '"]');
+                if (existing) existing.remove();
+
+                // ── Detect aspect ratio from page URL ──
+                var pageUrl = window.location.pathname;
+                var ratio = NaN;
+                if (pageUrl.indexOf('heroslide') !== -1) ratio = 16/9;
+                else if (pageUrl.indexOf('homesection') !== -1) ratio = 3/2;
+
+                var badgeLabel = isNaN(ratio) ? 'Free crop'
+                    : (Math.abs(ratio - 16/9) < 0.01 ? '16 : 9 ratio' : '3 : 2 ratio');
+
+                // ── Build wrapper ──
+                var wrapper = document.createElement('div');
+                wrapper.className = 'spms-crop-wrapper';
+                wrapper.setAttribute('data-field', fieldName); // used for cleanup
+                wrapper.innerHTML =
+                    '<div class="spms-crop-header">' +
+                        '<span class="spms-crop-title">Adjust Crop</span>' +
+                        '<span class="spms-crop-badge">' + badgeLabel + '</span>' +
+                    '</div>' +
+                    '<div class="spms-crop-canvas">' +
+                        '<img class="spms-crop-img" src="' + e.target.result + '" alt="preview">' +
+                    '</div>' +
+                    '<div class="spms-crop-footer">' +
+                        '<button type="button" class="spms-crop-btn spms-crop-btn-primary" data-action="use-crop">Apply Crop</button>' +
+                        '<button type="button" class="spms-crop-btn spms-crop-btn-secondary" data-action="full-image">Use Full Image</button>' +
+                        '<span class="spms-crop-hint">Drag to adjust · Scroll to zoom</span>' +
+                    '</div>';
+                row.appendChild(wrapper);
+
+                // Use .spms-crop-img class (not an id) to avoid duplicate-id issues on re-select
+                var img = wrapper.querySelector('.spms-crop-img');
+
+                var cropper = new Cropper(img, {
+                    aspectRatio: ratio,
                     viewMode: 1,
-                    crop(event) {
-                        if (targetField) {
-                            // Update the hidden field with the new coordinates
-                            // Format: x1,y1,x2,y2
-                            const x1 = Math.round(event.detail.x);
-                            const y1 = Math.round(event.detail.y);
-                            const x2 = Math.round(event.detail.x + event.detail.width);
-                            const y2 = Math.round(event.detail.y + event.detail.height);
-                            targetField.value = `${x1},${y1},${x2},${y2}`;
-                        }
+                    autoCropArea: 1,
+                    movable: true,
+                    zoomable: true,
+                    scalable: false,
+                    ready: function() {
+                        // Default: full image selected
+                        var data = cropper.getData(true);
+                        croppingInput.value = data.x + ',' + data.y + ',' +
+                            (data.x + data.width) + ',' + (data.y + data.height);
+                    },
+                    crop: function(event) {
+                        var d = event.detail;
+                        croppingInput.value =
+                            Math.round(d.x) + ',' +
+                            Math.round(d.y) + ',' +
+                            Math.round(d.x + d.width) + ',' +
+                            Math.round(d.y + d.height);
                     }
                 });
+                croppers[fieldName] = cropper;
+
+                // "Apply Crop" — coordinates already live-updating; this is a visual confirm
+                wrapper.querySelector('[data-action="use-crop"]').addEventListener('click', function() {
+                    var btn = this;
+                    btn.textContent = '✓ Crop Applied';
+                    btn.style.background = '#15803d';
+                    setTimeout(function() { btn.textContent = 'Apply Crop'; btn.style.background = ''; }, 2000);
+                });
+
+                // "Use Full Image" — reset crop box to full dimensions
+                wrapper.querySelector('[data-action="full-image"]').addEventListener('click', function() {
+                    try {
+                        cropper.reset();
+                        var imgData = cropper.getImageData();
+                        croppingInput.value = '0,0,' +
+                            Math.round(imgData.naturalWidth) + ',' +
+                            Math.round(imgData.naturalHeight);
+                    } catch(err) {}
+                    var applyBtn = wrapper.querySelector('[data-action="use-crop"]');
+                    applyBtn.textContent = '✓ Full Image Set';
+                    applyBtn.style.background = '#15803d';
+                    setTimeout(function() { applyBtn.textContent = 'Apply Crop'; applyBtn.style.background = ''; }, 2000);
+                });
             };
-            
             reader.readAsDataURL(file);
         });
     });
+
+    /* ────────────────────────────────────────────
+       4. Alert Color Swatches
+       Injects preset color buttons next to the
+       alert_color field on Global Configuration.
+    ──────────────────────────────────────────── */
+    (function() {
+        var colorInput = document.querySelector('#id_alert_color');
+        if (!colorInput) return;
+
+        var SWATCHES = [
+            { hex: '#b00216', label: 'Red Alert' },
+            { hex: '#dc2626', label: 'Bright Red' },
+            { hex: '#c2410c', label: 'SPMS Orange' },
+            { hex: '#d97706', label: 'Amber' },
+            { hex: '#15803d', label: 'Green' },
+            { hex: '#1d4ed8', label: 'Blue' },
+            { hex: '#7c3aed', label: 'Purple' },
+            { hex: '#374151', label: 'Dark Gray' },
+        ];
+
+        var palette = document.createElement('div');
+        palette.className = 'spms-color-swatches';
+        palette.innerHTML = '<div class="spms-swatch-label" style="width:100%">Quick Colors</div>';
+
+        SWATCHES.forEach(function(s) {
+            var btn = document.createElement('button');
+            btn.type = 'button';
+            btn.title = s.label;
+            btn.className = 'spms-swatch';
+            btn.style.background = s.hex;
+            btn.addEventListener('click', function() {
+                // Set the text input value
+                colorInput.value = s.hex;
+                // Trigger change events so django-colorfield updates its preview
+                ['input', 'change'].forEach(function(evName) {
+                    colorInput.dispatchEvent(new Event(evName, { bubbles: true }));
+                });
+                // Also update any sibling color preview element colorfield might use
+                var preview = colorInput.parentElement.querySelector('[style*="background"]');
+                if (preview) preview.style.background = s.hex;
+            });
+            palette.appendChild(btn);
+        });
+
+        // Inject below the color field's form-row
+        var row = colorInput.closest('.form-row') || colorInput.parentElement;
+        if (row) row.appendChild(palette);
+    })();
+
+    /* ────────────────────────────────────────────
+       4. CKEditor Dark Theme (content area)
+    ──────────────────────────────────────────── */
+    var DARK_CSS =
+        'body { background:#1c1917!important; color:#e7e5e4!important; font-family:Poppins,sans-serif; padding:12px 16px; }' +
+        'p, li, td { color:#e7e5e4!important; }' +
+        'a { color:#f97316!important; }' +
+        'h1,h2,h3,h4,h5,h6 { color:#fff!important; }' +
+        'strong { color:#fff!important; }';
+
+    function applyCKDark(editor) {
+        try {
+            editor.document.appendStyleText(DARK_CSS);
+        } catch(e) {}
+    }
+
+    function hookCKEditor() {
+        if (typeof CKEDITOR === 'undefined') return;
+        // Hook future instances
+        CKEDITOR.on('instanceReady', function(ev) { applyCKDark(ev.editor); });
+        // Apply to already-initialized instances
+        for (var name in CKEDITOR.instances) {
+            if (CKEDITOR.instances[name].status === 'ready') {
+                applyCKDark(CKEDITOR.instances[name]);
+            } else {
+                CKEDITOR.instances[name].on('instanceReady', function(ev) { applyCKDark(ev.editor); });
+            }
+        }
+    }
+
+    // Try now, then again after a delay (CKEditor may load after DOMContentLoaded)
+    hookCKEditor();
+    setTimeout(hookCKEditor, 600);
+    setTimeout(hookCKEditor, 1500);
 });
 </script>
 {% endblock %}

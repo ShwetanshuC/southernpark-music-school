@@ -9,7 +9,24 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "dev-secret-key-change-me")
 DEBUG = os.environ.get("DJANGO_DEBUG", "1") not in {"0", "false", "False"}
-ALLOWED_HOSTS = ["*"]
+
+_ALLOWED = os.environ.get("DJANGO_ALLOWED_HOSTS", "")
+ALLOWED_HOSTS = (
+    [h.strip() for h in _ALLOWED.split(",") if h.strip()]
+    if _ALLOWED
+    else (["*"] if DEBUG else ["southernparkmusicschool.com", "www.southernparkmusicschool.com", "localhost", "127.0.0.1"])
+)
+
+# Production security settings (only when DEBUG=False)
+if not DEBUG:
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_HSTS_SECONDS = 31536000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    X_FRAME_OPTIONS = "SAMEORIGIN"  # needed for CKEditor iframes
 
 CSRF_TRUSTED_ORIGINS = [
     "https://southernparkmusicschool.com",
@@ -20,6 +37,7 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 INSTALLED_APPS = [
+    "daphne",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -160,11 +178,31 @@ CKEDITOR_CONFIGS = {
         ],
         'removePlugins': 'elementspath',
         'resize_enabled': False,
-    }
+    },
+    # Minimal toolbar for single-line rich fields (e.g. hero_headline)
+    'minimal': {
+        'toolbar': 'Custom',
+        'toolbar_Custom': [
+            ['Bold', 'Italic', 'Underline', '-', 'RemoveFormat'],
+            ['Source'],
+        ],
+        'height': 80,
+        'removePlugins': 'elementspath',
+        'resize_enabled': False,
+        'forcePasteAsPlainText': False,
+    },
 }
 
 # Speed Optimization: Aggressive caching for Lightsail
-WHITENOISE_MAX_AGE = 31536000 # 1 year
+WHITENOISE_MAX_AGE = 31536000  # 1 year
+WHITENOISE_AUTOREFRESH = DEBUG  # re-read files in dev, skip in prod
+
+# Thumbnail cache — avoid regenerating on every request
+THUMBNAIL_CACHE_DIMENSIONS = True
+THUMBNAIL_OPTIMIZE_COMMAND = {
+    "jpeg": "/bin/true",  # skip if no optimizer installed; set to jpegoptim path if available
+    "png": "/bin/true",
+}
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 

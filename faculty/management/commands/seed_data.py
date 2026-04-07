@@ -8,7 +8,7 @@ from django.core.files import File
 from django.core.management.base import BaseCommand
 
 from sitecontent.models import HeroSlide, SiteSettings
-from faculty.models import FacultyMember
+from faculty.models import FacultyMember, Instrument
 from gallery.models import GalleryPhoto
 from policies.models import PolicySection
 
@@ -327,8 +327,11 @@ class Command(BaseCommand):
         # Faculty
         if not FacultyMember.objects.exists():
             for data in FACULTY_DATA:
+                data = dict(data)  # don't mutate the module-level list
                 photo_filename = data.pop("photo")
-                member = FacultyMember(**data)
+                slug = data.pop("instrument_tag", "")
+                instrument = Instrument.objects.filter(slug=slug).first() if slug else None
+                member = FacultyMember(instrument=instrument, **data)
                 img_path = images_dir / photo_filename
                 if img_path.exists():
                     try:

@@ -47,7 +47,7 @@ class Command(BaseCommand):
         HomeFeature.objects.all().delete()
         features = [
             ('Recitals that Inspire', 'We host student performances about once a month during the school year — recitals are always free for performers and their guests.', 0),
-            ('Studios Built for Sound', 'Eight private studios, each with an acoustic piano. Every piano lesson is taught on a **grand piano** for the best feel and tone.', 1),
+            ('Studios Built for Sound', 'Eight private studios, each with an acoustic piano. Every piano lesson is taught on a grand piano for the best feel and tone.', 1),
             ('Exceptional Faculty', 'Experienced performers and educators — many holding advanced music degrees — with a genuine passion for teaching every student.', 2),
             ('Student Success', 'Our students thrive in festivals and competitions, earn awards, and develop a lifelong love of music that extends well beyond lessons.', 3),
         ]

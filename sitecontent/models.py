@@ -1,5 +1,6 @@
 from __future__ import annotations
 from django.db import models
+from ckeditor.fields import RichTextField
 
 
 class SiteSettings(models.Model):
@@ -19,7 +20,7 @@ class SiteSettings(models.Model):
     calendar_embed_url = models.URLField(max_length=1000, blank=True, default="")
 
     # Home Page Global Text
-    hero_headline = models.CharField(max_length=255, default="Where the Good<br><em>Become Great</em>")
+    hero_headline = RichTextField(config_name='minimal', default="Where the Good<br><em>Become Great</em>")
     hero_subtitle = models.CharField(max_length=255, default="Private music lessons for all ages — inspiring students for over 60 years")
     stats_description = models.TextField(blank=True, default="Since 1964, we've helped Charlotte families discover the joy of music.")
 

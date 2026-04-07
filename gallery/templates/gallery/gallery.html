@@ -56,10 +56,10 @@
       <div class="max-w-7xl mx-auto px-6 py-12">
         {% if videos %}<h2 class="gallery-section-heading">Photos</h2>{% endif %}
         {% if photos %}
-          <div class="gallery-grid">
+          <div class="gallery-grid" id="galleryGrid">
             {% for photo in photos %}
-            <div class="gallery-item">
-              <img src="{{ photo.image.url }}" alt="{{ photo.caption }}" loading="lazy" />
+            <div class="gallery-item" data-index="{{ forloop.counter0 }}">
+              <img src="{{ photo.image.url }}" alt="{{ photo.caption|default:'Gallery photo' }}" loading="lazy" />
               {% if photo.caption %}
               <div class="gallery-caption">{{ photo.caption }}</div>
               {% endif %}
@@ -76,4 +76,18 @@
     </section>
 
   </main>
+
+  {# ── Lightbox Modal ── #}
+  <div id="imageModal" role="dialog" aria-modal="true" aria-label="Photo viewer"
+    style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.92);align-items:center;justify-content:center;flex-direction:column;">
+    <button id="modalCloseBtn" aria-label="Close"
+      style="position:absolute;top:1rem;right:1.25rem;background:rgba(255,255,255,0.12);border:none;color:#fff;font-size:1.6rem;width:2.5rem;height:2.5rem;border-radius:50%;cursor:pointer;line-height:1;display:flex;align-items:center;justify-content:center;">&times;</button>
+    <button id="modalPrev" aria-label="Previous photo"
+      style="position:absolute;left:1rem;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.12);border:none;color:#fff;font-size:2rem;width:3rem;height:3rem;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;">&#8249;</button>
+    <img id="modalImage" src="" alt="" style="max-width:90vw;max-height:85vh;object-fit:contain;border-radius:4px;box-shadow:0 8px 40px rgba(0,0,0,0.6);" />
+    <div id="modalCaption" style="color:#d1d5db;font-size:0.9rem;margin-top:0.75rem;text-align:center;max-width:60ch;padding:0 1rem;"></div>
+    <button id="modalNext" aria-label="Next photo"
+      style="position:absolute;right:1rem;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.12);border:none;color:#fff;font-size:2rem;width:3rem;height:3rem;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;">&#8250;</button>
+  </div>
+
 {% endblock %}

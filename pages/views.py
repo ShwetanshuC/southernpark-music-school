@@ -53,3 +53,43 @@ def home(request):
 
 def calendar_view(request):
     return render(request, "pages/calendar.html")
+
+
+def robots_txt(request):
+    from django.http import HttpResponse
+    content = (
+        "User-agent: *\n"
+        "Allow: /\n"
+        "Disallow: /admin/\n"
+        "Disallow: /media/\n"
+        "\n"
+        "Sitemap: https://southernparkmusicschool.com/sitemap.xml\n"
+    )
+    return HttpResponse(content, content_type="text/plain")
+
+
+def sitemap_xml(request):
+    from django.http import HttpResponse
+    from django.utils import timezone
+    today = timezone.now().date().isoformat()
+    base = "https://southernparkmusicschool.com"
+    urls = [
+        (f"{base}/",          "weekly",  "1.0"),
+        (f"{base}/faculty/",  "monthly", "0.8"),
+        (f"{base}/gallery/",  "monthly", "0.6"),
+        (f"{base}/calendar/", "weekly",  "0.7"),
+        (f"{base}/policies/", "yearly",  "0.5"),
+    ]
+    lines = ['<?xml version="1.0" encoding="UTF-8"?>',
+             '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
+    for loc, freq, priority in urls:
+        lines += [
+            "  <url>",
+            f"    <loc>{loc}</loc>",
+            f"    <lastmod>{today}</lastmod>",
+            f"    <changefreq>{freq}</changefreq>",
+            f"    <priority>{priority}</priority>",
+            "  </url>",
+        ]
+    lines.append("</urlset>")
+    return HttpResponse("\n".join(lines), content_type="application/xml")
