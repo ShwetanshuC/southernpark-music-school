@@ -6,6 +6,10 @@ from django.urls import reverse
 from .models import SiteSettings, HeroSlide, HomeSection, HomeStat, HomeFeature, HomeHistoryItem
 from image_cropping import ImageCroppingMixin
 
+class CroppingAdminMediaMixin:
+    class Media:
+        js = ("js/admin-image-cropping.js",)
+
 _ALERT_COLOR_HELP = (
     "<div style='margin-top:8px'>"
     "<strong>Recommended alert colors:</strong>"
@@ -65,7 +69,7 @@ class SiteSettingsAdmin(admin.ModelAdmin):
             return super().changelist_view(request, extra_context)
 
 @admin.register(HeroSlide)
-class HeroSlideAdmin(ImageCroppingMixin, admin.ModelAdmin):
+class HeroSlideAdmin(CroppingAdminMediaMixin, ImageCroppingMixin, admin.ModelAdmin):
     list_display = ["__str__", "sort_order", "is_active"]
     list_editable = ["sort_order", "is_active"]
     
@@ -84,7 +88,7 @@ class HeroSlideAdmin(ImageCroppingMixin, admin.ModelAdmin):
     )
 
 @admin.register(HomeSection)
-class HomeSectionAdmin(ImageCroppingMixin, admin.ModelAdmin):
+class HomeSectionAdmin(CroppingAdminMediaMixin, ImageCroppingMixin, admin.ModelAdmin):
     list_display = ["get_section_type_display", "title"]
     readonly_fields = ["section_type"]
     
