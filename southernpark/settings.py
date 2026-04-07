@@ -147,7 +147,7 @@ STORAGES = {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
     "default": {
-        "BACKEND": "django.core.files.storage.FileSystemStorage",
+        "BACKEND": "southernpark.storage.ResizingFileSystemStorage",
     },
 }
 
@@ -167,7 +167,7 @@ if _s3_bucket:
         "CacheControl": "max-age=31536000, public",
     }
     STORAGES["default"] = {
-        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+        "BACKEND": "southernpark.storage.ResizingS3Storage",
         "OPTIONS": {
             "access_key": os.environ.get("S3_ACCESS_KEY"),
             "secret_key": os.environ.get("S3_SECRET_KEY"),

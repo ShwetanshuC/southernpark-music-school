@@ -59,7 +59,9 @@
           <div class="gallery-grid" id="galleryGrid">
             {% for photo in photos %}
             <div class="gallery-item" data-index="{{ forloop.counter0 }}">
-              <img src="{{ photo.image.url }}" alt="{{ photo.caption|default:'Gallery photo' }}" loading="lazy" />
+              <img src="{{ photo.image.url }}" alt="{{ photo.caption|default:'Gallery photo' }}"
+                {% if forloop.counter <= 4 %}loading="eager" fetchpriority="high"{% else %}loading="lazy"{% endif %}
+                decoding="async" />
               {% if photo.caption %}
               <div class="gallery-caption">{{ photo.caption }}</div>
               {% endif %}

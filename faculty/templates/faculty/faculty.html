@@ -42,9 +42,9 @@
             <div class="flip-card-inner">
               <div class="flip-card-front">
                 {% if member.photo %}
-                  <img src="{{ member.photo.url }}" alt="{{ member.name }}" />
+                  <img src="{{ member.photo.url }}" alt="{{ member.name }}" loading="lazy" decoding="async" />
                 {% else %}
-                  <img src="{% static 'images/piano.png' %}" alt="{{ member.name }}" />
+                  <img src="{% static 'images/piano.png' %}" alt="{{ member.name }}" loading="lazy" decoding="async" />
                 {% endif %}
                 <div class="p-3">
                   <h5>{{ member.name }}</h5>
