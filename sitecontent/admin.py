@@ -68,11 +68,38 @@ class SiteSettingsAdmin(admin.ModelAdmin):
 class HeroSlideAdmin(ImageCroppingMixin, admin.ModelAdmin):
     list_display = ["__str__", "sort_order", "is_active"]
     list_editable = ["sort_order", "is_active"]
+    
+    fieldsets = (
+        ('Image', {
+            'fields': ('image', 'cropping'),
+            'description': 'Upload an image and adjust the crop area below. Click and drag to define the 1600x900 crop region. Live preview updates as you crop.',
+        }),
+        ('Details', {
+            'fields': ('image_url', 'alt'),
+            'description': 'Alternative image URL (if not uploading) and alt text for accessibility.',
+        }),
+        ('Display', {
+            'fields': ('sort_order', 'is_active'),
+        }),
+    )
 
 @admin.register(HomeSection)
 class HomeSectionAdmin(ImageCroppingMixin, admin.ModelAdmin):
     list_display = ["get_section_type_display", "title"]
     readonly_fields = ["section_type"]
+    
+    fieldsets = (
+        ('Section Setup', {
+            'fields': ('section_type',),
+        }),
+        ('Content', {
+            'fields': ('title', 'description'),
+        }),
+        ('Image', {
+            'fields': ('image', 'cropping'),
+            'description': 'Upload an image and adjust the crop area below. Click and drag to define the 1200x800 crop region. Live preview updates as you crop.',
+        }),
+    )
 
 @admin.register(HomeStat)
 class HomeStatAdmin(admin.ModelAdmin):
