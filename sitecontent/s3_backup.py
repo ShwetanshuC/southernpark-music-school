@@ -37,29 +37,24 @@ def _db_path():
     return str(settings.DATABASES["default"]["NAME"])
 
 
-import threading
-import time
 import shutil
 
-def _run_backup():
-    # Small debounce to avoid overlapping uploads during rapid or bulk edits
-    time.sleep(5)
-    
+def backup_db():
+    """Upload the local SQLite DB to S3 synchronously.
+
+    Called via connection.on_commit() after every admin save.
+    Synchronous to ensure the backup completes before the request returns —
+    daemon threads are killed on container shutdown and lose in-flight backups.
+    """
     bucket = _bucket()
     client = _client()
     if not bucket or not client:
         return
     try:
         client.upload_file(_db_path(), bucket, S3_KEY)
-        logger.info(f"[s3_backup] Database backed up to S3 successfully.")
+        logger.info("[s3_backup] Database backed up to S3 successfully.")
     except Exception as e:
         logger.error(f"[s3_backup] Upload failed: {e}")
-
-def backup_db():
-    """Upload the local SQLite DB to S3 asynchronously with a debounce delay."""
-    thread = threading.Thread(target=_run_backup)
-    thread.daemon = True
-    thread.start()
 
 
 def restore_db():
