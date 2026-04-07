@@ -6,6 +6,11 @@
 {% block extra_head %}
 <meta name="description" content="Southern Park Music School offers private music lessons in Charlotte, NC for all ages. Piano, strings, voice, and more — since 1964." />
 <link rel="canonical" href="https://southernparkmusicschool.com/" />
+{% if hero_slides %}
+  {% for slide in hero_slides %}{% if forloop.first %}{% if slide.image %}<link rel="preload" as="image" href="{{ slide.image.url }}">{% elif slide.image_url %}<link rel="preload" as="image" href="{{ slide.image_url }}">{% endif %}{% endif %}{% endfor %}
+{% else %}
+  <link rel="preload" as="image" href="{% static 'images/carnegie.jpeg' %}">
+{% endif %}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -32,10 +37,11 @@
     <div id="heroCarousel">
       {% if hero_slides %}
         {% for slide in hero_slides %}
-          <div class="carousel-item {% if forloop.first %}active{% endif %}"
-            {% if slide.image %}style="background-image: url('{{ slide.image.url }}');"
-            {% elif slide.image_url %}style="background-image: url('{{ slide.image_url }}');"
-            {% endif %}>
+          <div class="carousel-item {% if forloop.first %}active{% endif %} slide-loading"
+            {% if slide.image %}data-bg="{{ slide.image.url }}"
+            {% elif slide.image_url %}data-bg="{{ slide.image_url }}"
+            {% endif %}
+            style="background-color:#2a1a0e;">
           </div>
         {% endfor %}
       {% else %}
@@ -104,9 +110,9 @@
           </div>
           <div class="rounded-xl overflow-hidden shadow-md reveal reveal-delay-2 transition-all duration-300 hover:shadow-xl">
             {% if about.image %}
-                <img src="{% cropped_thumbnail about 'cropping' scale=1 %}" class="w-full h-72 object-cover transition-transform duration-500 hover:scale-105" alt="{{ about.title }}" />
+                <img src="{{ about.image.url }}" loading="lazy" class="w-full h-72 object-cover transition-transform duration-500 hover:scale-105" alt="{{ about.title }}" />
             {% else %}
-                <img src="{% static 'images/school-new.jpg' %}" class="w-full h-72 object-cover transition-transform duration-500 hover:scale-105" alt="Southern Park Music School" />
+                <img src="{% static 'images/school-new.jpg' %}" loading="lazy" class="w-full h-72 object-cover transition-transform duration-500 hover:scale-105" alt="Southern Park Music School" />
             {% endif %}
           </div>
         </div>
@@ -162,9 +168,9 @@
           </div>
           <div class="rounded-xl overflow-hidden shadow-md">
             {% if history.image %}
-                <img src="{% cropped_thumbnail history 'cropping' scale=1 %}" class="w-full h-96 object-cover" alt="{{ history.title }}" />
+                <img src="{{ history.image.url }}" loading="lazy" class="w-full h-96 object-cover" alt="{{ history.title }}" />
             {% else %}
-                <img src="{% static 'images/school-old.jpg' %}" class="w-full h-96 object-cover" alt="Southern Park Music School history" />
+                <img src="{% static 'images/school-old.jpg' %}" loading="lazy" class="w-full h-96 object-cover" alt="Southern Park Music School history" />
             {% endif %}
           </div>
         </div>
