@@ -44,6 +44,11 @@ header { position: relative; display: block; line-height: 0; font-size: 0; }
   object-fit: cover;
   object-position: center;
   display: block;
+  opacity: 0;
+  transition: opacity 0.6s ease-in-out;
+}
+#heroCarousel .carousel-item img.loaded {
+  opacity: 1;
 }
 
 .hero-overlay {

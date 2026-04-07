@@ -71,6 +71,20 @@ function closeModal() {
   document.body.style.overflow = '';
 }
 
+// Fade hero images in once they've loaded (avoids hard pop-in)
+function initHeroImageFade() {
+  var imgs = document.querySelectorAll('#heroCarousel .carousel-item img');
+  imgs.forEach(function (img) {
+    if (img.complete && img.naturalWidth > 0) {
+      img.classList.add('loaded');
+    } else {
+      img.addEventListener('load', function () { img.classList.add('loaded'); });
+      // If the image never fires load (e.g. error), still show it
+      img.addEventListener('error', function () { img.classList.add('loaded'); });
+    }
+  });
+}
+
 // Initialize custom hero carousel (simple slideshow)
 function initHeroCarousel() {
   var hero = document.getElementById('heroCarousel');
@@ -87,6 +101,7 @@ function initHeroCarousel() {
     current = (current + 1) % slides.length;
     slides[current].classList.add('active');
   }, 5000);
+  initHeroImageFade();
 }
 
 // INIT ASAP (don’t wait for images)

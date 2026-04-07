@@ -3,17 +3,23 @@ Storage backends for Southern Park.
 
 Converts uploads to progressive JPEG (quality 95) — the image renders
 immediately blurry then sharpens in passes, eliminating top-to-bottom
-chunk loading. Also fixes EXIF rotation. No resolution change.
+chunk loading. Also fixes EXIF rotation. Caps width at MAX_PX (2560px)
+to keep file sizes web-appropriate; this covers any retina display with
+no visible quality difference.
 """
 from __future__ import annotations
 from io import BytesIO
 from django.core.files.base import ContentFile
 from django.core.files.storage import FileSystemStorage
 
+# Maximum dimension (longest edge). 2560px covers 4K/retina displays.
+MAX_PX = 2560
+
 
 def _process(content):
     """
-    Convert to progressive JPEG at quality 95 and fix EXIF rotation.
+    Convert to progressive JPEG at quality 95, fix EXIF rotation, and
+    downscale if either dimension exceeds MAX_PX (aspect ratio preserved).
     Returns (new_content, ext) where ext is '.jpg', or (original, None) on failure.
     """
     try:
@@ -21,6 +27,14 @@ def _process(content):
         content.seek(0)
         img = Image.open(content)
         img = ImageOps.exif_transpose(img)
+
+        # Downscale only if needed — longest edge capped at MAX_PX
+        w, h = img.size
+        if max(w, h) > MAX_PX:
+            if w >= h:
+                img = img.resize((MAX_PX, round(h * MAX_PX / w)), Image.LANCZOS)
+            else:
+                img = img.resize((round(w * MAX_PX / h), MAX_PX), Image.LANCZOS)
 
         if img.mode in ("RGBA", "P", "LA"):
             bg = Image.new("RGB", img.size, (255, 255, 255))
