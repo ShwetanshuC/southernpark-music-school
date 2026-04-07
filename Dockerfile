@@ -31,5 +31,5 @@ COPY . .
 # Collect static files at build time (needs a dummy secret key)
 RUN DJANGO_SECRET_KEY=build-placeholder python3 manage.py collectstatic --noinput
 
-# Startup: restore DB from S3, run migrations, seed data, then serve via Daphne (ASGI) with HTTP/2 support
-CMD ["sh", "-c", "python3 manage.py restore_db || true && python3 manage.py migrate --noinput && python3 manage.py load_initial_data || true && python3 manage.py create_superusers || true && daphne -b 0.0.0.0 -p 8000 -v 2 southernpark.asgi:application"]
+# Startup: restore DB from S3, run migrations, seed data, then serve via gunicorn
+CMD ["sh", "-c", "python3 manage.py restore_db || true && python3 manage.py migrate --noinput && python3 manage.py load_initial_data || true && python3 manage.py create_superusers || true && gunicorn southernpark.wsgi:application --bind 0.0.0.0:8000 --workers 2 --timeout 300 --keep-alive 5 --log-level info"]

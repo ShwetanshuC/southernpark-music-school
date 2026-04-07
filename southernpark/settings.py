@@ -54,7 +54,6 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 INSTALLED_APPS = [
-    "daphne",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -146,7 +145,8 @@ STORAGES = {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
     "default": {
-        "BACKEND": "django.core.files.storage.FileSystemStorage",
+        # Auto-resizes images to ≤1920px before saving (reduces memory + upload size)
+        "BACKEND": "sitecontent.storage.ResizingFileSystemStorage",
     },
 }
 
@@ -160,7 +160,7 @@ if _s3_bucket:
     AWS_QUERYSTRING_AUTH = False
     AWS_S3_FILE_OVERWRITE = False
     STORAGES["default"] = {
-        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+        "BACKEND": "sitecontent.storage.ResizingS3Storage",
         "OPTIONS": {
             "access_key": os.environ.get("S3_ACCESS_KEY"),
             "secret_key": os.environ.get("S3_SECRET_KEY"),
