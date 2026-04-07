@@ -9,7 +9,7 @@
 {% if hero_slides %}
   {% for slide in hero_slides %}{% if forloop.first %}{% if slide.image %}<link rel="preload" as="image" href="{{ slide.image.url }}" fetchpriority="high">{% elif slide.image_url %}<link rel="preload" as="image" href="{{ slide.image_url }}" fetchpriority="high">{% endif %}{% endif %}{% endfor %}
 {% else %}
-  <link rel="preload" as="image" href="{% static 'images/school-new.jpg' %}" fetchpriority="high">
+  <link rel="preload" as="image" href="{% static 'images/school-new.jpg' %}" fetchpriority="high" imagesrcset="">
 {% endif %}
 <script type="application/ld+json">
 {
@@ -37,16 +37,22 @@
     <div id="heroCarousel">
       {% if hero_slides %}
         {% for slide in hero_slides %}
-          <div class="carousel-item {% if forloop.first %}active{% endif %}"
-            {% if slide.image %}style="background-image:url('{{ slide.image.url }}');"
-            {% elif slide.image_url %}style="background-image:url('{{ slide.image_url }}');"
-            {% endif %}>
+          <div class="carousel-item {% if forloop.first %}active{% endif %}">
+            {% if slide.image %}
+              <img src="{{ slide.image.url }}" alt="{{ slide.alt }}"
+                {% if forloop.first %}fetchpriority="high" loading="eager"{% else %}loading="lazy"{% endif %}
+                decoding="async">
+            {% elif slide.image_url %}
+              <img src="{{ slide.image_url }}" alt="{{ slide.alt }}"
+                {% if forloop.first %}fetchpriority="high" loading="eager"{% else %}loading="lazy"{% endif %}
+                decoding="async">
+            {% endif %}
           </div>
         {% endfor %}
       {% else %}
-        <div class="carousel-item active" style='background-image:url("{% static "images/school-new.jpg" %}");'></div>
-        <div class="carousel-item" style='background-image:url("{% static "images/gallery1.jpg" %}");'></div>
-        <div class="carousel-item" style='background-image:url("{% static "images/gallery2.jpg" %}");'></div>
+        <div class="carousel-item active"><img src="{% static 'images/school-new.jpg' %}" alt="Southern Park Music School" fetchpriority="high" loading="eager" decoding="async"></div>
+        <div class="carousel-item"><img src="{% static 'images/gallery1.jpg' %}" alt="Southern Park Music School" loading="lazy" decoding="async"></div>
+        <div class="carousel-item"><img src="{% static 'images/gallery2.jpg' %}" alt="Southern Park Music School" loading="lazy" decoding="async"></div>
       {% endif %}
       <div class="hero-overlay">
         <div class="hero-label">Charlotte, NC &nbsp;·&nbsp; Est. 1964</div>

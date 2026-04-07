@@ -49,11 +49,24 @@ class ResizingFileSystemStorage(FileSystemStorage):
 
 def _make_resizing_s3():
     from storages.backends.s3boto3 import S3Boto3Storage
+    from django.conf import settings
+    from pathlib import Path
 
     class ResizingS3Storage(S3Boto3Storage):
         def _save(self, name: str, content):
             new_content, _ = _fix_orientation(content)
-            return super()._save(name, new_content)
+            saved_name = super()._save(name, new_content)
+
+            # Also write to local MEDIA_ROOT so nginx serves it instantly from disk
+            try:
+                local_path = Path(settings.MEDIA_ROOT) / saved_name
+                local_path.parent.mkdir(parents=True, exist_ok=True)
+                new_content.seek(0)
+                local_path.write_bytes(new_content.read())
+            except Exception:
+                pass  # Local cache failure is non-fatal; S3/CloudFront still works
+
+            return saved_name
 
     return ResizingS3Storage
 

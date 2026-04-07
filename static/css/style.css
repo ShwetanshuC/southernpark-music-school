@@ -34,13 +34,17 @@ header { position: relative; display: block; line-height: 0; font-size: 0; }
 #heroCarousel .carousel-item {
   position: absolute;
   inset: 0;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
   opacity: 0;
   transition: opacity 1.2s ease-in-out;
 }
 #heroCarousel .carousel-item.active { opacity: 1; z-index: 1; }
+#heroCarousel .carousel-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
 
 .hero-overlay {
   position: absolute;

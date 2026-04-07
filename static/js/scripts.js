@@ -211,15 +211,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // ===== Navbar shadow on scroll + hero parallax =====
   var mainNav = document.querySelector('nav');
-  var heroSlides = document.querySelectorAll('#heroCarousel .carousel-item');
+  var heroImgs = document.querySelectorAll('#heroCarousel .carousel-item img');
   var heroEl = document.getElementById('heroCarousel');
   window.addEventListener('scroll', function () {
     var sy = window.scrollY;
     if (mainNav) mainNav.classList.toggle('scrolled', sy > 10);
-    if (heroSlides.length && heroEl && sy < heroEl.offsetHeight * 1.2) {
+    if (heroImgs.length && heroEl && sy < heroEl.offsetHeight * 1.2) {
       var offset = sy * 0.18;
-      for (var i = 0; i < heroSlides.length; i++) {
-        heroSlides[i].style.transform = 'translateY(' + offset + 'px)';
+      for (var i = 0; i < heroImgs.length; i++) {
+        heroImgs[i].style.transform = 'translateY(' + offset + 'px)';
       }
     }
   }, { passive: true });
