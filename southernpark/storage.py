@@ -1,10 +1,9 @@
 """
 Storage backends for Southern Park.
 
-Images are stored at original quality — CloudFront caches them at the edge
-so they load as fast as static files after the first request.
-The only transform applied is stripping EXIF rotation metadata and baking
-it into the pixel data so browsers show photos with correct orientation.
+Converts uploads to progressive JPEG (quality 95) — the image renders
+immediately blurry then sharpens in passes, eliminating top-to-bottom
+chunk loading. Also fixes EXIF rotation. No resolution change.
 """
 from __future__ import annotations
 from io import BytesIO
@@ -12,38 +11,42 @@ from django.core.files.base import ContentFile
 from django.core.files.storage import FileSystemStorage
 
 
-def _fix_orientation(content):
+def _process(content):
     """
-    Bake EXIF rotation into pixels and return the file unchanged otherwise.
-    Preserves original format and uses quality='keep' for JPEG so no
-    recompression occurs. Returns (new_content, changed).
+    Convert to progressive JPEG at quality 95 and fix EXIF rotation.
+    Returns (new_content, ext) where ext is '.jpg', or (original, None) on failure.
     """
     try:
         from PIL import Image, ImageOps
         content.seek(0)
         img = Image.open(content)
-        original_format = img.format or "JPEG"
-
         img = ImageOps.exif_transpose(img)
 
+        if img.mode in ("RGBA", "P", "LA"):
+            bg = Image.new("RGB", img.size, (255, 255, 255))
+            mask = img.split()[-1] if img.mode in ("RGBA", "LA") else None
+            bg.paste(img, mask=mask)
+            img = bg
+        elif img.mode != "RGB":
+            img = img.convert("RGB")
+
         out = BytesIO()
-        if original_format == "JPEG":
-            img.save(out, format="JPEG", quality="keep", subsampling="keep")
-        else:
-            img.save(out, format=original_format)
+        img.save(out, format="JPEG", quality=95, progressive=True, optimize=True)
         out.seek(0)
-        return ContentFile(out.read()), True
+        return ContentFile(out.read()), ".jpg"
     except Exception:
         try:
             content.seek(0)
         except Exception:
             pass
-        return content, False
+        return content, None
 
 
 class ResizingFileSystemStorage(FileSystemStorage):
     def _save(self, name: str, content):
-        new_content, _ = _fix_orientation(content)
+        new_content, ext = _process(content)
+        if ext and "." in name:
+            name = name.rsplit(".", 1)[0] + ext
         return super()._save(name, new_content)
 
 
@@ -54,17 +57,19 @@ def _make_resizing_s3():
 
     class ResizingS3Storage(S3Boto3Storage):
         def _save(self, name: str, content):
-            new_content, _ = _fix_orientation(content)
+            new_content, ext = _process(content)
+            if ext and "." in name:
+                name = name.rsplit(".", 1)[0] + ext
             saved_name = super()._save(name, new_content)
 
-            # Also write to local MEDIA_ROOT so nginx serves it instantly from disk
+            # Mirror to local disk so nginx serves instantly without CloudFront round-trip
             try:
                 local_path = Path(settings.MEDIA_ROOT) / saved_name
                 local_path.parent.mkdir(parents=True, exist_ok=True)
                 new_content.seek(0)
                 local_path.write_bytes(new_content.read())
             except Exception:
-                pass  # Local cache failure is non-fatal; S3/CloudFront still works
+                pass
 
             return saved_name
 
