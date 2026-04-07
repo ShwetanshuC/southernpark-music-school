@@ -12,8 +12,8 @@ from io import BytesIO
 from django.core.files.base import ContentFile
 from django.core.files.storage import FileSystemStorage
 
-# Maximum dimension (longest edge). 2560px covers 4K/retina displays.
-MAX_PX = 2560
+# Maximum dimension (longest edge). 3840px = true 4K / MacBook Pro Liquid Retina.
+MAX_PX = 3840
 
 
 def _process(content):

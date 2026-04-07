@@ -4,6 +4,11 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+# Content apps whose saves should trigger an S3 backup.
+# Excludes 'admin' (LogEntry on every page click) and 'sessions' (every login).
+_BACKUP_APPS = frozenset(['sitecontent', 'faculty', 'pages', 'gallery', 'policies', 'auth'])
+
+
 class SitecontentConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
     name = "sitecontent"
@@ -20,10 +25,10 @@ class SitecontentConfig(AppConfig):
                 "[sitecontent] No S3 bucket configured — DB/media won't persist across redeploys."
             )
 
-        # Wire auto-backup: after every committed DB write, upload SQLite to S3 asynchronously
+        # Auto-backup: after any content model save/delete, upload SQLite to S3.
+        # Fires on every admin Save — no manual action required.
         def backup_on_change(sender, **kwargs):
-            managed_apps = ['sitecontent', 'faculty', 'pages', 'gallery', 'policies', 'auth', 'admin', 'sessions']
-            if sender._meta.app_label in managed_apps:
+            if sender._meta.app_label in _BACKUP_APPS:
                 try:
                     connection.on_commit(backup_db)
                 except Exception as e:

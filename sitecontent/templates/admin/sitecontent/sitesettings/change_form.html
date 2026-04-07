@@ -5,7 +5,14 @@
   <li>
     <a href="{{ backup_url }}"
        style="background:#1e5c2e;color:#fff;padding:6px 14px;border-radius:4px;text-decoration:none;font-weight:bold;display:inline-block">
-      &#128190; Backup DB to S3 Now
+      &#128190; Force Backup to S3
     </a>
   </li>
+{% endblock %}
+
+{% block content %}
+  <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:6px;padding:10px 16px;margin-bottom:16px;font-size:0.875rem;color:#166534">
+    &#10003; <strong>Changes save automatically to S3</strong> — every time you click Save below, your changes are backed up instantly. No extra steps needed.
+  </div>
+  {{ block.super }}
 {% endblock %}
