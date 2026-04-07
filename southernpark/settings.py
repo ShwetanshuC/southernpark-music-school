@@ -145,8 +145,7 @@ STORAGES = {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
     "default": {
-        # Auto-resizes images to ≤1920px before saving (reduces memory + upload size)
-        "BACKEND": "sitecontent.storage.ResizingFileSystemStorage",
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
     },
 }
 
@@ -160,7 +159,7 @@ if _s3_bucket:
     AWS_QUERYSTRING_AUTH = False
     AWS_S3_FILE_OVERWRITE = False
     STORAGES["default"] = {
-        "BACKEND": "sitecontent.storage.ResizingS3Storage",
+        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
         "OPTIONS": {
             "access_key": os.environ.get("S3_ACCESS_KEY"),
             "secret_key": os.environ.get("S3_SECRET_KEY"),
