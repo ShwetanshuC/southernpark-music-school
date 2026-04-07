@@ -53,7 +53,7 @@ INSTALLED_APPS = [
     "image_cropping",
     "easy_thumbnails",
     "colorfield",
-    "ckeditor", # Rich text editor for policies
+    "django_ckeditor_5", # Rich text editor for policies
 ]
 
 MIDDLEWARE = [
@@ -162,36 +162,25 @@ THUMBNAIL_PROCESSORS = (
 IMAGE_CROPPING_JQUERY_URL = 'https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js'
 IMAGE_CROPPING_THUMB_SIZE = (300, 300)
 
-# CKEditor Configuration for non-technical users
-CKEDITOR_BASEPATH = "/static/ckeditor/ckeditor/"
-CKEDITOR_UPLOAD_PATH = "uploads/"
-CKEDITOR_IMAGE_BACKEND = "pillow"
-
-CKEDITOR_CONFIGS = {
-    'default': {
-        'toolbar': 'Custom',
-        'toolbar_Custom': [
-            ['Bold', 'Italic', 'Underline'],
-            ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock'],
-            ['Link', 'Unlink'],
-            ['RemoveFormat', 'Source']
+# CKEditor 5 Configuration with Dark UI Theme
+CKEDITOR_5_CONFIGS = {
+    "default": {
+        "toolbar": [
+            "heading", "|", "bold", "italic", "underline", "strikethrough", "bulletedList", "numberedList",
+            "|", "outdent", "indent", "|", "link", "blockQuote", "insertTable", "|",
+            "sourceEditing", "removeFormat", "undo", "redo"
         ],
-        'removePlugins': 'elementspath',
-        'resize_enabled': False,
+        "height": 300,
+        "width": "100%",
     },
-    # Minimal toolbar for single-line rich fields (e.g. hero_headline)
-    'minimal': {
-        'toolbar': 'Custom',
-        'toolbar_Custom': [
-            ['Bold', 'Italic', 'Underline', '-', 'RemoveFormat'],
-            ['Source'],
-        ],
-        'height': 80,
-        'removePlugins': 'elementspath',
-        'resize_enabled': False,
-        'forcePasteAsPlainText': False,
+    "minimal": {
+        "toolbar": ["bold", "italic", "underline", "link", "|", "sourceEditing", "removeFormat"],
+        "height": 100,
+        "width": "100%",
     },
 }
+CKEDITOR_5_FILE_STORAGE = STORAGES["default"]["BACKEND"]
+CKEDITOR_5_UPLOAD_FILE_VIEW_NAME = "ckeditor_5_upload_file"
 
 # Speed Optimization: Aggressive caching for Lightsail
 WHITENOISE_MAX_AGE = 31536000  # 1 year

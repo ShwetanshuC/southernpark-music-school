@@ -1,9 +1,9 @@
-import ckeditor.fields
+from django_ckeditor_5.fields import CKEditor5Field
 from django.db import migrations
 
 
 class Migration(migrations.Migration):
-    """Change hero_headline from CharField to RichTextField so admin shows WYSIWYG editor."""
+    """Change hero_headline from CharField to CKEditor5Field for WYSIWYG editor."""
 
     dependencies = [
         ('sitecontent', '0009_fix_phone_format'),
@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='sitesettings',
             name='hero_headline',
-            field=ckeditor.fields.RichTextField(
+            field=CKEditor5Field(
                 config_name='minimal',
                 default='Where the Good<br><em>Become Great</em>',
             ),

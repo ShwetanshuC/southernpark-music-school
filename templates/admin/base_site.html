@@ -9,6 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+<link rel="stylesheet" href="{% static 'css/ckeditor-dark-theme.css' %}">
 <style>
     /* ============================================================
        SOUTHERN PARK ADMIN – PREMIUM DARK THEME
@@ -429,78 +430,6 @@
         margin-left: auto;
     }
 
-    /* ====================================================
-       CKEDITOR DARK THEME (chrome / toolbar)
-       ==================================================== */
-    .cke_chrome {
-        background: #1c1917 !important;
-        border: 1px solid #44403c !important;
-        border-radius: 8px !important;
-        overflow: hidden !important;
-    }
-    .cke_top {
-        background: #292524 !important;
-        border-bottom: 1px solid #44403c !important;
-        padding: 4px 6px !important;
-    }
-    .cke_bottom {
-        background: #1c1917 !important;
-        border-top: 1px solid #44403c !important;
-        padding: 4px 8px !important;
-    }
-    .cke_toolgroup {
-        background: transparent !important;
-        border-right: 1px solid #44403c !important;
-    }
-    .cke_button {
-        border-radius: 4px !important;
-    }
-    .cke_button:hover, .cke_button_on {
-        background: #44403c !important;
-        border-color: #57534e !important;
-    }
-    .cke_button__bold_icon,
-    .cke_button__italic_icon,
-    .cke_button__underline_icon,
-    .cke_button__numberedlist_icon,
-    .cke_button__bulletedlist_icon,
-    .cke_button__outdent_icon,
-    .cke_button__indent_icon,
-    .cke_button__justifyleft_icon,
-    .cke_button__justifycenter_icon,
-    .cke_button__justifyright_icon,
-    .cke_button__justifyblock_icon,
-    .cke_button__link_icon,
-    .cke_button__unlink_icon,
-    .cke_button__removeformat_icon,
-    .cke_button__source_icon {
-        filter: invert(0.7) !important;
-    }
-    .cke_combo_button {
-        background: #110f0e !important;
-        border: 1px solid #44403c !important;
-        border-radius: 6px !important;
-    }
-    .cke_combo_text {
-        color: #e7e5e4 !important;
-    }
-    .cke_panel_block {
-        background: #1c1917 !important;
-        border: 1px solid #44403c !important;
-    }
-    .cke_panel_listItem a {
-        color: #e7e5e4 !important;
-    }
-    .cke_panel_listItem a:hover {
-        background: #44403c !important;
-    }
-    .cke_path_item {
-        color: #a8a29e !important;
-    }
-    /* CKEditor inner iframe wrapper */
-    .cke_inner .cke_wysiwyg_frame {
-        background: #1c1917 !important;
-    }
 </style>
 
 <!-- ── Login centering fallback (JS) ── -->
@@ -711,40 +640,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (row) row.appendChild(palette);
     })();
 
-    /* ────────────────────────────────────────────
-       4. CKEditor Dark Theme (content area)
-    ──────────────────────────────────────────── */
-    var DARK_CSS =
-        'body { background:#1c1917!important; color:#e7e5e4!important; font-family:Poppins,sans-serif; padding:12px 16px; }' +
-        'p, li, td { color:#e7e5e4!important; }' +
-        'a { color:#f97316!important; }' +
-        'h1,h2,h3,h4,h5,h6 { color:#fff!important; }' +
-        'strong { color:#fff!important; }';
-
-    function applyCKDark(editor) {
-        try {
-            editor.document.appendStyleText(DARK_CSS);
-        } catch(e) {}
-    }
-
-    function hookCKEditor() {
-        if (typeof CKEDITOR === 'undefined') return;
-        // Hook future instances
-        CKEDITOR.on('instanceReady', function(ev) { applyCKDark(ev.editor); });
-        // Apply to already-initialized instances
-        for (var name in CKEDITOR.instances) {
-            if (CKEDITOR.instances[name].status === 'ready') {
-                applyCKDark(CKEDITOR.instances[name]);
-            } else {
-                CKEDITOR.instances[name].on('instanceReady', function(ev) { applyCKDark(ev.editor); });
-            }
-        }
-    }
-
-    // Try now, then again after a delay (CKEditor may load after DOMContentLoaded)
-    hookCKEditor();
-    setTimeout(hookCKEditor, 600);
-    setTimeout(hookCKEditor, 1500);
 });
 </script>
 {% endblock %}

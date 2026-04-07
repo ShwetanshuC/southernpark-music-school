@@ -12,6 +12,7 @@ urlpatterns = [
     path("faculty/", include("faculty.urls")),
     path("gallery/", include("gallery.urls")),
     path("policies/", include("policies.urls")),
+    path("ckeditor5/", include("django_ckeditor_5.urls")),
     path("", include("pages.urls")),
     re_path(r"^media/(?P<path>.*)$", serve, {"document_root": settings.MEDIA_ROOT}),
 ]

@@ -1,0 +1,161 @@
+/* Django Admin Dark Theme for CKEditor 5 */
+
+/* Admin body dark theme */
+body {
+    background-color: #1a1a1a;
+    color: #e0e0e0;
+}
+
+/* Admin form container */
+.form-row, .form-group, fieldset {
+    background-color: #2a2a2a;
+    border-color: #3a3a3a;
+    color: #e0e0e0;
+}
+
+/* Input fields in admin */
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="number"],
+input[type="date"],
+input[type="time"],
+textarea,
+select {
+    background-color: #1f1f1f;
+    color: #e0e0e0;
+    border-color: #3a3a3a;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="email"]:focus,
+input[type="number"]:focus,
+input[type="date"]:focus,
+input[type="time"]:focus,
+textarea:focus,
+select:focus {
+    border-color: #C2410C;
+    box-shadow: 0 0 0 1px #C2410C;
+}
+
+/* Admin headers and titles */
+h1, h2, h3, h4, h5, h6 {
+    color: #ffffff;
+}
+
+/* Admin links */
+a {
+    color: #64b5f6;
+}
+
+a:hover {
+    color: #90caf9;
+}
+
+/* Admin buttons */
+.button, input[type="submit"], input[type="button"] {
+    background-color: #C2410C;
+    color: #ffffff;
+    border-color: #C2410C;
+}
+
+.button:hover, input[type="submit"]:hover, input[type="button"]:hover {
+    background-color: #9A3412;
+    border-color: #9A3412;
+}
+
+/* Admin table styling */
+table, th, td {
+    background-color: #2a2a2a;
+    border-color: #3a3a3a;
+    color: #e0e0e0;
+}
+
+thead {
+    background-color: #1f1f1f;
+}
+
+/* Admin sidebar */
+.sidebar, .sidebar h2 {
+    background-color: #2a2a2a;
+    border-color: #3a3a3a;
+    color: #e0e0e0;
+}
+
+/* Admin toolbar */
+.submit-row {
+    background-color: #2a2a2a;
+    border-color: #3a3a3a;
+}
+
+/* CKEditor 5 Editor container in admin */
+.django-ckeditor-widget {
+    background-color: #1f1f1f;
+}
+
+.ck.ck-editor {
+    --ck-color-base-background: #1f1f1f;
+}
+
+/* Labels */
+label {
+    color: #e0e0e0;
+}
+
+/* Help text */
+.help-text, .helptext, p.help, .help_text {
+    color: #a0a0a0;
+}
+
+/* Error messages */
+.errorlist, .error {
+    color: #ff6b6b;
+    background-color: #3a2020;
+    border-color: #ff6b6b;
+}
+
+/* Success messages */
+.success {
+    color: #81c784;
+    background-color: #1f3a1f;
+    border-color: #81c784;
+}
+
+/* Info messages */
+.messagelist li {
+    background-color: #2a3a4a;
+    border-color: #64b5f6;
+}
+
+/* Breadcrumbs */
+.breadcrumbs {
+    background-color: #2a2a2a;
+    border-color: #3a3a3a;
+    color: #e0e0e0;
+}
+
+/* Pagination */
+.pagination {
+    background-color: #2a2a2a;
+}
+
+.pagination a, .pagination span {
+    border-color: #3a3a3a;
+    color: #e0e0e0;
+}
+
+.pagination .step-links a:hover {
+    background-color: #363636;
+}
+
+/* Search box */
+.search form {
+    background-color: #2a2a2a;
+}
+
+.search input[type="text"] {
+    background-color: #1f1f1f;
+    color: #e0e0e0;
+    border-color: #3a3a3a;
+}

@@ -2,7 +2,7 @@ Django>=4.2,<5
 Pillow>=10.0
 boto3
 dj-database-url>=2.1
-django-ckeditor-5
+django-ckeditor-5>=0.2.20
 django-colorfield
 django-image-cropping
 django-storages
@@ -11,3 +11,6 @@ daphne>=4.0
 gunicorn>=21.0
 psycopg2-binary>=2.9
 whitenoise>=6.6
+Twisted[http2,tls]>=23.10
+h2>=4.1
+priority>=1.3

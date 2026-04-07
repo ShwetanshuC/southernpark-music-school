@@ -1,0 +1,143 @@
+/* CKEditor 5 Dark Theme UI Styling */
+
+/* Main editor container */
+.django-ckeditor-widget {
+    --ck-color-base-background: #2a2a2a;
+    --ck-color-base-foreground: #1f1f1f;
+}
+
+/* Editor toolbar dark background */
+.ck.ck-editor__top {
+    background-color: #2a2a2a;
+    border-bottom: 1px solid #3a3a3a;
+}
+
+.ck.ck-toolbar {
+    background-color: #2a2a2a;
+    border-bottom: 1px solid #3a3a3a;
+}
+
+/* Toolbar buttons */
+.ck.ck-button,
+.ck.ck-splitbutton > .ck-splitbutton__action {
+    color: #e0e0e0;
+}
+
+.ck.ck-button:hover:not(.ck-disabled),
+.ck.ck-splitbutton > .ck-splitbutton__action:hover:not(.ck-disabled) {
+    background-color: #363636;
+    color: #ffffff;
+}
+
+.ck.ck-button.ck-on {
+    background-color: #C2410C;
+    border-color: #C2410C;
+    color: #ffffff;
+}
+
+.ck.ck-button.ck-on:hover {
+    background-color: #9A3412;
+    border-color: #9A3412;
+}
+
+/* Toolbar separator */
+.ck.ck-toolbar__separator {
+    background-color: #3a3a3a;
+}
+
+/* Editor content area - white background for readability */
+.ck.ck-editor__main > .ck-editor__editable {
+    background-color: #ffffff;
+    color: #1f1f1f;
+    border: 1px solid #d0d0d0;
+}
+
+.ck.ck-editor__editable {
+    background-color: #ffffff;
+    color: #1f1f1f;
+}
+
+.ck.ck-editor__editable:focus {
+    border-color: #C2410C;
+    box-shadow: 0 0 0 1px #C2410C;
+}
+
+/* Dropdown panels (for headings, etc.) */
+.ck.ck-dropdown__panel {
+    background-color: #2a2a2a;
+    border: 1px solid #3a3a3a;
+    color: #e0e0e0;
+}
+
+.ck.ck-list__item {
+    color: #e0e0e0;
+}
+
+.ck.ck-list__item:hover {
+    background-color: #363636;
+}
+
+.ck.ck-list__item.ck-on {
+    background-color: #C2410C;
+    color: #ffffff;
+}
+
+/* Input fields in dialogs */
+.ck.ck-input {
+    background-color: #1f1f1f;
+    color: #e0e0e0;
+    border: 1px solid #3a3a3a;
+}
+
+.ck.ck-input:focus {
+    border-color: #C2410C;
+    background-color: #262626;
+}
+
+/* Labels */
+.ck.ck-label {
+    color: #e0e0e0;
+}
+
+/* Dialog boxes */
+.ck.ck-dialog {
+    background-color: #2a2a2a;
+    border: 1px solid #3a3a3a;
+    color: #e0e0e0;
+}
+
+.ck.ck-dialog__header {
+    background-color: #1f1f1f;
+    border-bottom: 1px solid #3a3a3a;
+}
+
+/* Balloon/floating panels */
+.ck.ck-balloon-panel {
+    background-color: #2a2a2a;
+    border: 1px solid #3a3a3a;
+    color: #e0e0e0;
+}
+
+/* Content styles - keep text readable */
+.ck.ck-content {
+    color: #1f1f1f;
+}
+
+.ck.ck-content h1,
+.ck.ck-content h2,
+.ck.ck-content h3,
+.ck.ck-content h4,
+.ck.ck-content h5,
+.ck.ck-content h6 {
+    color: #000000;
+}
+
+.ck.ck-content a {
+    color: #0066cc;
+}
+
+.ck.ck-content code {
+    background-color: #f0f0f0;
+    color: #1f1f1f;
+}
+

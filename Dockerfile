@@ -9,10 +9,21 @@ ENV PYTHONUNBUFFERED 1
 # Copy the dependencies file to the working directory
 WORKDIR /app
 
+# Install build dependencies for Twisted http2/tls extras and other packages
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    libssl-dev \
+    libffi-dev \
+    libjpeg-dev \
+    zlib1g-dev \
+    && rm -rf /var/lib/apt/lists/*
+
 COPY requirements.txt .
 
-# Install any dependencies
-RUN pip install -r requirements.txt
+# Install Python dependencies with pip cache optimization
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip install --upgrade pip setuptools wheel && \
+    pip install -r requirements.txt
 
 # Copy the content of the local src directory to the working directory
 COPY . .
@@ -20,9 +31,9 @@ COPY . .
 # Collect static files at build time (needs a dummy secret key)
 RUN DJANGO_SECRET_KEY=build-placeholder python3 manage.py collectstatic --noinput
 
-# Startup: restore DB from S3, run migrations, seed data, then serve via Daphne (ASGI)
+# Startup: restore DB from S3, run migrations, seed data, then serve via Daphne (ASGI) with HTTP/2 support
 CMD python3 manage.py restore_db || true && \
     python3 manage.py migrate --noinput && \
     python3 manage.py load_initial_data || true && \
     python3 manage.py create_superusers || true && \
-    daphne -b 0.0.0.0 -p 8000 southernpark.asgi:application
+    daphne -b 0.0.0.0 -p 8000 -v 2 southernpark.asgi:application
