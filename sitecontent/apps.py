@@ -13,36 +13,15 @@ class SitecontentConfig(AppConfig):
         import os
         from django.db.models.signals import post_save, post_delete
         from django.db import connection
-        from django.core.management import call_command
-        from sitecontent.s3_backup import restore_db, backup_db
+        from sitecontent.s3_backup import backup_db
 
-        # Restore DB on startup if on Lightsail/Production and not yet restored
-        has_bucket = "S3_AWS_STORAGE_BUCKET_NAME" in os.environ
-        has_not_restored = os.environ.get("DB_RESTORED") != "True"
-
-        if not has_bucket and not settings.DEBUG:
+        if not os.environ.get("S3_AWS_STORAGE_BUCKET_NAME") and not settings.DEBUG:
             logger.warning(
-                "[sitecontent] No S3 bucket configured. Database and media will not persist across redeploys. "
-                "Set S3_AWS_STORAGE_BUCKET_NAME, S3_ACCESS_KEY, and S3_SECRET_KEY for persistence."
+                "[sitecontent] No S3 bucket configured — DB/media won't persist across redeploys."
             )
 
-        if has_bucket and has_not_restored:
-            try:
-                # 1. Download database from S3
-                if restore_db():
-                    os.environ["DB_RESTORED"] = "True"
-                    logger.info("[sitecontent] Database restored from S3 successfully.")
-                
-                # 2. RUN MIGRATIONS: This ensures the database schema matches the latest code
-                # Even if we restored an old DB version, this will add missing columns (like alert_color)
-                call_command('migrate', interactive=False)
-                logger.info("[sitecontent] Database schema synchronized with current code.")
-                
-            except Exception as e:
-                logger.error(f"[sitecontent] DB startup sync failed: {e}")
-
+        # Wire auto-backup: after every committed DB write, upload SQLite to S3 asynchronously
         def backup_on_change(sender, **kwargs):
-            # Only trigger on models within our apps
             managed_apps = ['sitecontent', 'faculty', 'pages', 'gallery', 'policies', 'auth', 'admin', 'sessions']
             if sender._meta.app_label in managed_apps:
                 try:
