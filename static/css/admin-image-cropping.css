@@ -1,0 +1,93 @@
+/* Southern Park Admin — Crop Modal (CropperJS) */
+
+.sp-cropper-modal {
+  position: fixed; inset: 0; z-index: 1200;
+  background: rgba(0,0,0,0.65);
+  display: flex; align-items: center; justify-content: center; padding: 16px;
+}
+
+.sp-cropper-dialog {
+  width: min(960px, 96vw); max-height: 94vh;
+  background: #1a1714; border: 1px solid #2c2825; border-radius: 6px;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.55);
+  display: flex; flex-direction: column; color: #ede5db; overflow: hidden;
+}
+
+.sp-cropper-header { padding: 14px 18px; border-bottom: 1px solid #2c2825; background: #0f0d0c; }
+.sp-cropper-title  { font-size: 15px; font-weight: 700; color: #ede5db; }
+
+.sp-cropper-ratios {
+  display: flex; align-items: center; gap: 6px;
+  padding: 10px 18px; background: #141210;
+  border-bottom: 1px solid #2c2825; flex-wrap: wrap;
+}
+.sp-cropper-tools-label {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+  text-transform: uppercase; color: #5a4f49; margin-right: 4px;
+}
+.sp-cropper-ratios .button,
+.sp-cropper-scale-out,
+.sp-cropper-scale-in {
+  background: #201d1a !important; border: 1px solid #3a322c !important;
+  color: #c5bab2 !important; font-size: 11px !important;
+  padding: 5px 12px !important; border-radius: 3px;
+  cursor: pointer; transition: background 0.12s;
+}
+.sp-cropper-ratios .button:hover,
+.sp-cropper-scale-out:hover,
+.sp-cropper-scale-in:hover {
+  background: #C2410C !important; border-color: #C2410C !important; color: #fff !important;
+}
+.sp-cropper-scale-out, .sp-cropper-scale-in {
+  min-width: 34px; font-size: 15px !important; font-weight: 700 !important; text-align: center;
+}
+
+.sp-cropper-body {
+  flex: 1; min-height: 360px; background: #0a0806; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+}
+.sp-cropper-image { max-width: 100%; display: block; }
+
+.sp-cropper-actions {
+  border-top: 1px solid #2c2825; padding: 12px 16px;
+  display: flex; gap: 8px; justify-content: flex-end;
+  background: #0f0d0c; flex-wrap: wrap;
+}
+.sp-cropper-actions .button {
+  background: #201d1a !important; border: 1px solid #3a322c !important;
+  color: #c5bab2 !important; font-size: 12px !important;
+  padding: 7px 16px !important; border-radius: 3px;
+  cursor: pointer; transition: background 0.12s;
+}
+.sp-cropper-actions .button:hover {
+  background: #2c2825 !important; color: #ede5db !important;
+}
+.sp-cropper-actions .button-primary {
+  background: #C2410C !important; border-color: #C2410C !important; color: #fff !important;
+}
+.sp-cropper-actions .button-primary:hover {
+  background: #9A3412 !important; border-color: #9A3412 !important;
+}
+
+/* Select / dropdown modernization */
+select {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  background: linear-gradient(180deg, #25211d 0%, #1b1815 100%) !important;
+  border: 1px solid #3b342f !important;
+  color: #f6efe8 !important;
+  -webkit-text-fill-color: #f6efe8 !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23C2410C' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 12px center !important;
+  background-size: 14px !important;
+  padding-right: 36px !important;
+  cursor: pointer;
+}
+select:hover  { border-color: #5a4a43 !important; }
+select:focus  {
+  border-color: #C2410C !important;
+  box-shadow: 0 0 0 3px rgba(194,65,12,0.2) !important;
+  outline: none !important;
+}
+select option, select optgroup { color: #f2ece6; background: #181411; }

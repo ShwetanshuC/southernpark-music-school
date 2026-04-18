@@ -2,24 +2,6 @@ from django.shortcuts import render
 from sitecontent.models import SiteSettings, HeroSlide, HomeSection, HomeStat, HomeFeature, HomeHistoryItem
 
 
-def _crop_url(obj, img_field, crop_field, size):
-    """Return a cropped thumbnail URL for a model instance, or fall back to the raw image URL."""
-    if not obj:
-        return None
-    img = getattr(obj, img_field, None)
-    if not img:
-        return None
-    crop = getattr(obj, crop_field, '') or ''
-    try:
-        from easy_thumbnails.files import get_thumbnailer
-        opts = {'size': size, 'crop': True, 'detail': True, 'upscale': True}
-        if crop:
-            opts['box'] = crop
-        return get_thumbnailer(img).get_thumbnail(opts).url
-    except Exception:
-        return getattr(img, 'url', None)
-
-
 def home(request):
     site_settings = SiteSettings.objects.first()
     hero_slides = HeroSlide.objects.filter(is_active=True)
@@ -56,10 +38,6 @@ def home(request):
             description="Since 1964, we've helped Charlotte families discover the joy of music with inspiring teachers, a welcoming community, and spaces built for sound."
         )
 
-    # Pre-compute cropped image URLs so templates use the correct crop per section
-    about_img_url = _crop_url(about, 'image', 'cropping_about', (1200, 585))
-    history_img_url = _crop_url(history, 'image', 'cropping', (1200, 800))
-
     context = {
         "site_settings": site_settings,
         "hero_slides": hero_slides,
@@ -69,8 +47,6 @@ def home(request):
         "stats": stats,
         "features": features,
         "history_items": history_items,
-        "about_img_url": about_img_url,
-        "history_img_url": history_img_url,
     }
     return render(request, "pages/home.html", context)
 

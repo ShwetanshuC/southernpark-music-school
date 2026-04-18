@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load static cropping %}
+{% load static %}
 
 {% block title %}Southern Park Music School — Charlotte, NC{% endblock %}
 
@@ -85,7 +85,6 @@
                   data-suffix=""
                   style="font-family:'Playfair Display',Georgia,serif">{{ stat.number }}</span>
                 <span class="block text-xs font-medium text-stone-400 group-hover:text-stone-200 uppercase tracking-widest mt-1 transition-colors">{{ stat.label }}</span>
-                <span class="block text-stone-600 text-xs mt-1 group-hover:text-orange-400 transition-colors" aria-hidden="true">&#8594;</span>
               </a>
               {% else %}
               <span class="block font-bold text-3xl text-orange-400 stat-num"
@@ -125,10 +124,8 @@
               style="text-decoration:none">Meet Our Faculty</a>
           </div>
           <div class="rounded-xl overflow-hidden shadow-md reveal reveal-delay-2 transition-all duration-300 hover:shadow-xl">
-            {% if about_img_url %}
-                <img src="{{ about_img_url }}" loading="lazy" decoding="async" class="w-full h-72 object-cover transition-transform duration-500 hover:scale-105" alt="{{ about.title }}" />
-            {% elif about.image %}
-                <img src="{{ about.image.url }}" loading="lazy" decoding="async" class="w-full h-72 object-cover transition-transform duration-500 hover:scale-105" alt="{{ about.title }}" />
+            {% if about.image %}
+                <img src="{{ about.image.url }}" loading="lazy" decoding="async" class="w-full h-72 object-cover transition-transform duration-500 hover:scale-105" style="object-position:center {{ about.image_focal_y|default:50 }}%;" alt="{{ about.title }}" />
             {% else %}
                 <img src="{% static 'images/school-new.jpg' %}" loading="lazy" decoding="async" class="w-full h-72 object-cover transition-transform duration-500 hover:scale-105" alt="Southern Park Music School" />
             {% endif %}
@@ -185,10 +182,8 @@
             {% endfor %}
           </div>
           <div class="rounded-xl overflow-hidden shadow-md">
-            {% if history_img_url %}
-                <img src="{{ history_img_url }}" loading="lazy" decoding="async" class="w-full h-96 object-cover" alt="{{ history.title }}" />
-            {% elif history.image %}
-                <img src="{{ history.image.url }}" loading="lazy" decoding="async" class="w-full h-96 object-cover" alt="{{ history.title }}" />
+            {% if history.image %}
+                <img src="{{ history.image.url }}" loading="lazy" decoding="async" class="w-full h-96 object-cover" style="object-position:center {{ history.image_focal_y|default:50 }}%;" alt="{{ history.title }}" />
             {% else %}
                 <img src="{% static 'images/school-old.jpg' %}" loading="lazy" decoding="async" class="w-full h-96 object-cover" alt="Southern Park Music School history" />
             {% endif %}

@@ -1,34 +1,30 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from image_cropping import ImageCroppingMixin
 from .models import GalleryPhoto, GalleryVideo
 
 
-class CroppingAdminMediaMixin:
+class ImageToolsAdminMixin:
     class Media:
-        js = ("js/admin-image-cropping.js",)
+        css = {"all": [
+            "https://unpkg.com/cropperjs@1.6.2/dist/cropper.min.css",
+            "css/admin-image-cropping.css",
+        ]}
+        js = [
+            "https://unpkg.com/cropperjs@1.6.2/dist/cropper.min.js",
+            "js/admin-image-cropping.js",
+            "js/admin-focal-point-picker.js",
+        ]
 
 
 @admin.register(GalleryPhoto)
-class GalleryPhotoAdmin(CroppingAdminMediaMixin, ImageCroppingMixin, admin.ModelAdmin):
+class GalleryPhotoAdmin(ImageToolsAdminMixin, admin.ModelAdmin):
     list_display = ["thumbnail_preview", "display_name", "sort_order", "is_active"]
     list_editable = ["sort_order", "is_active"]
     list_display_links = ["thumbnail_preview", "display_name"]
 
     fieldsets = (
         ("Photo", {
-            "fields": ("image", "cropping"),
-            "description": (
-                "<div style='background:#fff3cd;border:1px solid #ffc107;border-radius:6px;padding:12px 16px;margin-bottom:8px'>"
-                "<strong style='font-size:1.05em'>&#128247; How to use the crop tool:</strong><br>"
-                "<ol style='margin:8px 0 0 16px;padding:0;line-height:1.9'>"
-                "<li>Click <strong>Choose File</strong> to upload a photo.</li>"
-                "<li>A crop box will appear on the image below.</li>"
-                "<li><strong>Click and drag</strong> the box to choose which part of the photo to show.</li>"
-                "<li>Drag the <strong>corners</strong> to resize the crop area.</li>"
-                "<li>Click <strong>Save</strong> when you are happy with the selection.</li>"
-                "</ol></div>"
-            ),
+            "fields": ("image", "image_focal_y"),
         }),
         ("Details", {
             "fields": ("caption", "sort_order", "is_active"),
@@ -39,10 +35,9 @@ class GalleryPhotoAdmin(CroppingAdminMediaMixin, ImageCroppingMixin, admin.Model
     def thumbnail_preview(self, obj):
         if obj.image:
             try:
-                url = obj.image.url
                 return format_html(
-                    '<img src="{}" style="height:48px;width:64px;object-fit:cover;border-radius:4px;" />',
-                    url,
+                    '<img src="{}" style="height:48px;width:64px;object-fit:cover;object-position:center {}%;border-radius:4px;" />',
+                    obj.image.url, obj.image_focal_y,
                 )
             except Exception:
                 pass

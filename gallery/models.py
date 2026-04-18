@@ -1,12 +1,13 @@
 import re
 from django.db import models
-from image_cropping import ImageRatioField
 
 
 class GalleryPhoto(models.Model):
     image = models.ImageField(upload_to="gallery/")
-    # Gallery thumbnails display at ~237×200px (1.18:1); free_crop lets admins adjust freely
-    cropping = ImageRatioField("image", "800x675", free_crop=True, allow_fullsize=True)
+    image_focal_y = models.PositiveSmallIntegerField(
+        default=50,
+        help_text="Vertical focal point (0=top, 50=center, 100=bottom). Drag the preview bar above to set this.",
+    )
     caption = models.CharField(max_length=200, blank=True)
     sort_order = models.PositiveIntegerField(default=0)
     is_active = models.BooleanField(default=True)

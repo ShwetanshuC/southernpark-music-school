@@ -6,11 +6,19 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
 from django.urls import reverse, path
 from .models import SiteSettings, HeroSlide, HomeSection, HomeStat, HomeFeature, HomeHistoryItem
-from image_cropping import ImageCroppingMixin
 
-class CroppingAdminMediaMixin:
+
+class ImageToolsAdminMixin:
     class Media:
-        js = ("js/admin-image-cropping.js",)
+        css = {"all": [
+            "https://unpkg.com/cropperjs@1.6.2/dist/cropper.min.css",
+            "css/admin-image-cropping.css",
+        ]}
+        js = [
+            "https://unpkg.com/cropperjs@1.6.2/dist/cropper.min.js",
+            "js/admin-image-cropping.js",
+            "js/admin-focal-point-picker.js",
+        ]
 
 _ALERT_COLOR_HELP = (
     "<div style='margin-top:8px'>"
@@ -90,77 +98,38 @@ class SiteSettingsAdmin(admin.ModelAdmin):
         return super().change_view(request, object_id, form_url, extra_context)
 
 @admin.register(HeroSlide)
-class HeroSlideAdmin(CroppingAdminMediaMixin, ImageCroppingMixin, admin.ModelAdmin):
+class HeroSlideAdmin(ImageToolsAdminMixin, admin.ModelAdmin):
     list_display = ["__str__", "sort_order", "is_active"]
     list_editable = ["sort_order", "is_active"]
-    
+
     fieldsets = (
         ('Image', {
-            'fields': ('image', 'cropping'),
-            'description': 'Upload an image and adjust the crop area below. Click and drag to define the 1600x900 crop region. Live preview updates as you crop.',
+            'fields': ('image', 'image_focal_y'),
         }),
         ('Details', {
             'fields': ('image_url', 'alt'),
-            'description': 'Alternative image URL (if not uploading) and alt text for accessibility.',
         }),
         ('Display', {
             'fields': ('sort_order', 'is_active'),
         }),
     )
 
-_CROP_HELP_ABOUT = (
-    "<div style='background:#fff3cd;border:1px solid #ffc107;border-radius:6px;padding:12px 16px;margin-bottom:8px'>"
-    "<strong style='font-size:1.05em'>&#128247; How to crop this image (About section — wide 2:1 view):</strong><br>"
-    "<ol style='margin:8px 0 0 16px;padding:0;line-height:1.9'>"
-    "<li>Click <strong>Choose File</strong> to upload a photo.</li>"
-    "<li>A wide crop box (matching exactly how this image appears on the site) will appear.</li>"
-    "<li><strong>Click and drag</strong> the box to frame the best part of the photo.</li>"
-    "<li>Click <strong>Save</strong> when done.</li>"
-    "</ol></div>"
-)
-
-_CROP_HELP_HISTORY = (
-    "<div style='background:#fff3cd;border:1px solid #ffc107;border-radius:6px;padding:12px 16px;margin-bottom:8px'>"
-    "<strong style='font-size:1.05em'>&#128247; How to crop this image (History section — 3:2 view):</strong><br>"
-    "<ol style='margin:8px 0 0 16px;padding:0;line-height:1.9'>"
-    "<li>Click <strong>Choose File</strong> to upload a photo.</li>"
-    "<li>A crop box (matching exactly how this image appears on the site) will appear.</li>"
-    "<li><strong>Click and drag</strong> the box to frame the best part of the photo.</li>"
-    "<li>Click <strong>Save</strong> when done.</li>"
-    "</ol></div>"
-)
-
 @admin.register(HomeSection)
-class HomeSectionAdmin(CroppingAdminMediaMixin, ImageCroppingMixin, admin.ModelAdmin):
+class HomeSectionAdmin(ImageToolsAdminMixin, admin.ModelAdmin):
     list_display = ["get_section_type_display", "title"]
     readonly_fields = ["section_type"]
 
-    def get_fieldsets(self, request, obj=None):
-        is_about = obj and obj.section_type == 'about'
-        crop_field = 'cropping_about' if is_about else 'cropping'
-        crop_help = _CROP_HELP_ABOUT if is_about else _CROP_HELP_HISTORY
-        return (
-            ('Section Setup', {
-                'fields': ('section_type',),
-            }),
-            ('Content', {
-                'fields': ('title', 'description'),
-            }),
-            ('Image', {
-                'fields': ('image', crop_field),
-                'description': crop_help,
-            }),
-        )
-
-_STAT_LINK_HELP = (
-    "<div style='background:#e8f4fd;border:1px solid #90caf9;border-radius:6px;padding:12px 16px;margin-bottom:8px'>"
-    "<strong style='font-size:1.05em'>&#128279; How to make a stat clickable:</strong><br>"
-    "<p style='margin:8px 0 0;line-height:1.8'>"
-    "Each stat on the home page can link to another page on the website when clicked.<br>"
-    "In the <strong>\"Links to page\"</strong> dropdown below, select which page this stat should go to.<br>"
-    "If you do not want it to be a link, leave it set to <strong>\"No link\"</strong>."
-    "</p></div>"
-)
+    fieldsets = (
+        ('Section Setup', {
+            'fields': ('section_type',),
+        }),
+        ('Content', {
+            'fields': ('title', 'description'),
+        }),
+        ('Image', {
+            'fields': ('image', 'image_focal_y'),
+        }),
+    )
 
 @admin.register(HomeStat)
 class HomeStatAdmin(admin.ModelAdmin):
@@ -169,11 +138,9 @@ class HomeStatAdmin(admin.ModelAdmin):
     fieldsets = (
         ("Stat Content", {
             "fields": ("number", "label", "sort_order"),
-            "description": "The large number and the label shown beneath it on the home page.",
         }),
         ("Link Setting", {
             "fields": ("link_url",),
-            "description": _STAT_LINK_HELP,
         }),
     )
 

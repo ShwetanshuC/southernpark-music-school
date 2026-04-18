@@ -32,11 +32,12 @@ class SiteSettings(models.Model):
         return "Global Configuration"
 
 
-from image_cropping import ImageRatioField
-
 class HeroSlide(models.Model):
     image = models.ImageField(upload_to="hero/", blank=True, null=True)
-    cropping = ImageRatioField("image", "1600x900")
+    image_focal_y = models.PositiveSmallIntegerField(
+        default=50,
+        help_text="Vertical focal point (0=top, 50=center, 100=bottom). Drag the preview bar above to set this.",
+    )
     image_url = models.URLField(blank=True, default="", max_length=800)
     alt = models.CharField(max_length=160, blank=True)
     sort_order = models.PositiveIntegerField(default=0)
@@ -60,10 +61,10 @@ class HomeSection(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True)
     image = models.ImageField(upload_to="home/", blank=True, null=True)
-    # About section displays at ~2:1 (592px wide × 288px tall h-72)
-    cropping_about = ImageRatioField('image', "1200x585", allow_fullsize=True)
-    # History section displays at ~3:2 (592px wide × 384px tall h-96)
-    cropping = ImageRatioField('image', "1200x800", allow_fullsize=True)
+    image_focal_y = models.PositiveSmallIntegerField(
+        default=50,
+        help_text="Vertical focal point (0=top, 50=center, 100=bottom). Drag the preview bar above to set this.",
+    )
     
     class Meta:
         verbose_name = "Home Section"

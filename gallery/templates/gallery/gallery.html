@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load static cropping %}
+{% load static %}
 
 {% block title %}Gallery – Southern Park Music School{% endblock %}
 
@@ -61,15 +61,10 @@
             <div class="gallery-item" data-index="{{ forloop.counter0 }}"
               data-full="{{ photo.image.url }}"
               data-caption="{{ photo.caption|default:'' }}">
-              {% if photo.cropping %}
-                <img src="{% cropped_thumbnail photo 'image' %}" alt="{{ photo.caption|default:'Gallery photo' }}"
-                  {% if forloop.counter <= 4 %}loading="eager" fetchpriority="high"{% else %}loading="lazy"{% endif %}
-                  decoding="async" />
-              {% else %}
-                <img src="{{ photo.image.url }}" alt="{{ photo.caption|default:'Gallery photo' }}"
-                  {% if forloop.counter <= 4 %}loading="eager" fetchpriority="high"{% else %}loading="lazy"{% endif %}
-                  decoding="async" />
-              {% endif %}
+              <img src="{{ photo.image.url }}" alt="{{ photo.caption|default:'Gallery photo' }}"
+                style="object-position:center {{ photo.image_focal_y|default:50 }}%;"
+                {% if forloop.counter <= 4 %}loading="eager" fetchpriority="high"{% else %}loading="lazy"{% endif %}
+                decoding="async" />
               {% if photo.caption %}
               <div class="gallery-caption">{{ photo.caption }}</div>
               {% endif %}

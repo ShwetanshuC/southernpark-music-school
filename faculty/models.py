@@ -1,5 +1,4 @@
 from django.db import models
-from image_cropping import ImageRatioField
 
 
 class Instrument(models.Model):
@@ -34,7 +33,10 @@ class FacultyMember(models.Model):
         help_text="Select an instrument category. Use the + button to add a new one.",
     )
     photo = models.ImageField(upload_to="faculty/", blank=True, null=True)
-    photo_cropping = ImageRatioField("photo", "400x400", allow_fullsize=True)
+    image_focal_y = models.PositiveSmallIntegerField(
+        default=50,
+        help_text="Vertical focal point (0=top, 50=center, 100=bottom). Drag the preview bar above to set this.",
+    )
     bio = models.TextField(blank=True)
     sort_order = models.PositiveIntegerField(default=0)
     is_active = models.BooleanField(default=True)
