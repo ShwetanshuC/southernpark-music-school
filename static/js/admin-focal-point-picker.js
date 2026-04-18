@@ -1,24 +1,25 @@
 (function () {
   "use strict";
 
-  // Per-admin-page crop fraction (how much of the image height is visible on the site)
-  var CROP_FRAC_BY_URL = [
-    { key: "heroslide",     cropFrac: 0.34, boxH: 180 },  // 80vh full-width hero banner
-    { key: "homesection",   cropFrac: 0.50, boxH: 220 },  // about / history sections
-    { key: "galleryphoto",  cropFrac: 0.85, boxH: 200 },  // nearly-square gallery tiles
-    { key: "facultymember", cropFrac: 0.90, boxH: 220 },  // square faculty portraits
+  // Container aspect ratios (W/H) matching actual CSS display on site:
+  //   heroslide   → 100vw × 80vh     ≈ 2:1
+  //   homesection → ~580px × 288px   ≈ 2:1  (h-72 / h-96 half-grid)
+  //   galleryphoto→ ~220px × 200px   ≈ 1.1:1
+  //   facultymember→~220px × 240px   ≈ 0.92:1 (60% of 400px card)
+  var CONTAINER_ASPECT = [
+    { key: "heroslide",      aw: 16, ah: 8  },
+    { key: "homesection",    aw: 2,  ah: 1  },
+    { key: "galleryphoto",   aw: 11, ah: 10 },
+    { key: "facultymember",  aw: 11, ah: 12 },
   ];
 
-  var CROP_FRACS   = { "image_focal_y": 0.50 };
-  var BOX_H_DEFAULT = 200;
-
-  function getConfig(focalKey) {
+  function getContainerAspect() {
     var path = window.location.pathname.toLowerCase();
-    for (var i = 0; i < CROP_FRAC_BY_URL.length; i++) {
-      if (path.indexOf(CROP_FRAC_BY_URL[i].key) !== -1)
-        return { cropFrac: CROP_FRAC_BY_URL[i].cropFrac, boxH: CROP_FRAC_BY_URL[i].boxH };
+    for (var i = 0; i < CONTAINER_ASPECT.length; i++) {
+      if (path.indexOf(CONTAINER_ASPECT[i].key) !== -1)
+        return CONTAINER_ASPECT[i].aw / CONTAINER_ASPECT[i].ah;
     }
-    return { cropFrac: CROP_FRACS[focalKey] || 0.50, boxH: BOX_H_DEFAULT };
+    return 1.5; // fallback
   }
 
   var FILE_INPUT_SELECTORS = [
@@ -52,18 +53,29 @@
     input.dataset.focalInit = "1";
 
     var form = input.closest("form") || document;
-    var focalKey = input.name.replace(/^.*-/, "");
-    var cfg      = getConfig(focalKey);
-    var cropFrac = cfg.cropFrac;
+    var containerAspect = getContainerAspect();
+
+    // Compute preview box dimensions capped at 420×300
+    var MAX_W = 420, MAX_H = 300;
+    var rawH = Math.round(MAX_W / containerAspect);
+    var BOX_W, BOX_H;
+    if (rawH > MAX_H) {
+      BOX_H = MAX_H;
+      BOX_W = Math.round(MAX_H * containerAspect);
+    } else {
+      BOX_H = rawH;
+      BOX_W = MAX_W;
+    }
+
+    // cropFrac will be recomputed when image loads; use fallback until then
+    var cropFrac = 0.6;
+    var WINDOW_H = Math.round(BOX_H * cropFrac);
+    var HALF_W   = Math.round(WINDOW_H / 2);
 
     var imageFileInput = findFirst(form, FILE_INPUT_SELECTORS);
     var imageUrlInput  = findFirst(form, URL_INPUT_SELECTORS);
 
-    var BOX_W    = 420;
-    var BOX_H    = cfg.boxH;
-    var WINDOW_H = Math.round(BOX_H * cropFrac);
-    var HALF_W   = Math.round(WINDOW_H / 2);
-
+    // ── Build preview DOM ──────────────────────────────────────────────
     var wrap = document.createElement("div");
     wrap.style.cssText = "margin-top:10px;";
 
@@ -147,6 +159,7 @@
     var row = input.closest(".form-row") || input.parentNode;
     row.parentNode.insertBefore(wrap, row.nextSibling);
 
+    // ── Focal application ──────────────────────────────────────────────
     function applyFocal(pct) {
       pct = Math.max(0, Math.min(100, pct));
       var centerPx = (pct / 100) * BOX_H;
@@ -174,6 +187,24 @@
       applyFocal(pct);
     }
 
+    // ── Recompute cropFrac after image loads ───────────────────────────
+    previewImg.addEventListener("load", function () {
+      var IW = previewImg.naturalWidth;
+      var IH = previewImg.naturalHeight;
+      if (!IW || !IH) return;
+      var imageAspect = IW / IH;
+      // object-fit:cover: if image is narrower than container, scale by width → partial height visible
+      if (imageAspect < containerAspect) {
+        cropFrac = imageAspect / containerAspect;
+      } else {
+        cropFrac = 1.0; // landscape image fills full height
+      }
+      WINDOW_H = Math.max(4, Math.round(BOX_H * cropFrac));
+      HALF_W   = Math.round(WINDOW_H / 2);
+      applyFocal(parseInt(input.value) || 50);
+    });
+
+    // ── Drag interaction ───────────────────────────────────────────────
     var dragging = false;
     function pctFromEvent(e) {
       var rect = previewBox.getBoundingClientRect();
@@ -188,6 +219,7 @@
     document.addEventListener("touchmove",    function (e) { if (dragging) setFocal(pctFromEvent(e)); }, { passive: true });
     document.addEventListener("touchend",     function ()  { dragging = false; });
 
+    // ── Image source resolution ────────────────────────────────────────
     function showImage(src) {
       if (!src) {
         previewImg.removeAttribute("src");
@@ -215,7 +247,7 @@
     }
 
     if (imageFileInput) imageFileInput.addEventListener("change", function () { showImage(getCurrentImageUrl()); });
-    if (imageUrlInput)  { imageUrlInput.addEventListener("input", function () { showImage(getCurrentImageUrl()); }); }
+    if (imageUrlInput)  imageUrlInput.addEventListener("input",   function () { showImage(getCurrentImageUrl()); });
 
     showImage(getCurrentImageUrl());
     applyFocal(parseInt(input.value) || 50);
