@@ -60,7 +60,10 @@ class HomeSection(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True)
     image = models.ImageField(upload_to="home/", blank=True, null=True)
-    cropping = ImageRatioField('image', "1200x800")
+    # About section displays at ~2:1 (592px wide × 288px tall h-72)
+    cropping_about = ImageRatioField('image', "1200x585", allow_fullsize=True)
+    # History section displays at ~3:2 (592px wide × 384px tall h-96)
+    cropping = ImageRatioField('image', "1200x800", allow_fullsize=True)
     
     class Meta:
         verbose_name = "Home Section"
@@ -70,8 +73,26 @@ class HomeSection(models.Model):
         return self.get_section_type_display()
 
 class HomeStat(models.Model):
+    LINK_CHOICES = [
+        ('', '— No link (stat is just text, not clickable) —'),
+        ('/faculty/', 'Teachers / Faculty page'),
+        ('/gallery/', 'Photo Gallery page'),
+        ('/calendar/', 'Calendar page'),
+        ('/policies/', 'Policies page'),
+    ]
     number = models.CharField(max_length=20)
     label = models.CharField(max_length=100)
+    link_url = models.CharField(
+        max_length=200,
+        blank=True,
+        default='',
+        choices=LINK_CHOICES,
+        verbose_name="Links to page",
+        help_text=(
+            "Pick a page from the list. When someone clicks this stat on the website, "
+            "they will be taken to that page. Leave blank if you do not want it to be clickable."
+        ),
+    )
     sort_order = models.PositiveIntegerField(default=0)
 
     class Meta:

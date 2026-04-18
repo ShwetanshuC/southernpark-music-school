@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static cropping %}
 
 {% block title %}Faculty – Southern Park Music School{% endblock %}
 
@@ -42,7 +42,11 @@
             <div class="flip-card-inner">
               <div class="flip-card-front">
                 {% if member.photo %}
-                  <img src="{{ member.photo.url }}" alt="{{ member.name }}" loading="lazy" decoding="async" />
+                  {% if member.photo_cropping %}
+                    <img src="{% cropped_thumbnail member 'photo' %}" alt="{{ member.name }}" loading="lazy" decoding="async" />
+                  {% else %}
+                    <img src="{{ member.photo.url }}" alt="{{ member.name }}" loading="lazy" decoding="async" />
+                  {% endif %}
                 {% else %}
                   <img src="{% static 'images/piano.png' %}" alt="{{ member.name }}" loading="lazy" decoding="async" />
                 {% endif %}

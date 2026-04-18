@@ -49,9 +49,11 @@ function _showModalAt(index) {
   var modalCaption = document.getElementById('modalCaption');
   var modalContainer = document.getElementById('imageModal');
   if (!modalImg || !modalContainer) return;
-  modalImg.setAttribute('src', img ? img.getAttribute('src') : '');
+  // Use full-res URL from data-full if available (cropped thumbnails are smaller)
+  var fullSrc = item.getAttribute('data-full') || (img ? img.getAttribute('src') : '');
+  modalImg.setAttribute('src', fullSrc);
   modalImg.setAttribute('alt', img ? (img.getAttribute('alt') || '') : '');
-  if (modalCaption) modalCaption.textContent = captionEl ? captionEl.textContent : '';
+  if (modalCaption) modalCaption.textContent = captionEl ? captionEl.textContent : (item.getAttribute('data-caption') || '');
   modalContainer.style.display = 'flex';
   document.body.style.overflow = 'hidden';
 }
