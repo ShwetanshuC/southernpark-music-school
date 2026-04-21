@@ -42,11 +42,8 @@
             <div class="flip-card-inner">
               <div class="flip-card-front">
                 {% if member.photo %}
-                  {% if member.photo_cropping %}
-                    <img src="{% cropped_thumbnail member 'photo' %}" alt="{{ member.name }}" loading="lazy" decoding="async" />
-                  {% else %}
-                    <img src="{{ member.photo.url }}" alt="{{ member.name }}" loading="lazy" decoding="async" />
-                  {% endif %}
+                  <img src="{{ member.photo.url }}" alt="{{ member.name }}" loading="lazy" decoding="async"
+                       style="object-position:center {{ member.image_focal_y|default:50 }}%;" />
                 {% else %}
                   <img src="{% static 'images/piano.png' %}" alt="{{ member.name }}" loading="lazy" decoding="async" />
                 {% endif %}
