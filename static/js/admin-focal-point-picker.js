@@ -2,7 +2,6 @@
   "use strict";
 
   // Rendered pixel dimensions of each image container on the live site.
-  // desktop: 1440×900 viewport | mobile: 375×667 (iPhone SE)
   var CONFIGS = {
     heroslide:           { desktop: [1440, 720], mobile: [375, 534] },
     galleryphoto:        { desktop: [260,  200], mobile: [375, 200] },
@@ -13,10 +12,8 @@
   };
 
   var PREVIEW_MAX_W = 460;
-  var PREVIEW_MAX_H = 260;
+  var PREVIEW_MAX_IMG_H = 380; // max height for the full-image display
 
-  // Maps focal_y field name → which view to use for that picker
-  // Fields ending in _mobile use the mobile viewport; others use desktop.
   function getViewDims(inputName) {
     var isMobile = inputName.indexOf("_mobile") !== -1;
     var cfg = detectModelConfig();
@@ -40,14 +37,6 @@
     return CONFIGS.heroslide;
   }
 
-  function boxSize(dims) {
-    var aspect = dims[0] / dims[1];
-    var w = PREVIEW_MAX_W, h = Math.round(w / aspect);
-    if (h > PREVIEW_MAX_H) { h = PREVIEW_MAX_H; w = Math.round(h * aspect); }
-    return [w, h];
-  }
-
-  // File input selectors keyed by whether this is a mobile field
   var DESKTOP_FILE_SELECTORS = [
     "input[type='file'][name='image']",
     "input[type='file'][name='photo']",
@@ -71,14 +60,7 @@
     return null;
   }
 
-  document.addEventListener("DOMContentLoaded", function () {
-    document.querySelectorAll(
-      "input[name='image_focal_y'], input[name$='-image_focal_y']," +
-      "input[name='image_focal_y_mobile'], input[name$='-image_focal_y_mobile']"
-    ).forEach(initPicker);
-  });
-
-  // ── SVG icons ────────────────────────────────────────────────────────────
+  // ── SVG icons ─────────────────────────────────────────────────────────────
   var ICON_DESKTOP = [
     '<svg width="13" height="10" viewBox="0 0 13 10" fill="none">',
     '<rect x="0.5" y="0.5" width="12" height="7.5" rx="1" stroke="currentColor" stroke-width="1.1"/>',
@@ -92,38 +74,37 @@
     '</svg>',
   ].join("");
 
+  document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(
+      "input[name='image_focal_y'], input[name$='-image_focal_y']," +
+      "input[name='image_focal_y_mobile'], input[name$='-image_focal_y_mobile']"
+    ).forEach(initPicker);
+  });
+
   function initPicker(input) {
     if (input.dataset.focalInit) return;
     input.dataset.focalInit = "1";
 
     var form   = input.closest("form") || document;
-    var vd     = getViewDims(input.name);     // { dims:[w,h], isMobile:bool }
-    var dims   = vd.dims;
-    var sz     = boxSize(dims);
-    var imgNaturalAspect = 0;
+    var vd     = getViewDims(input.name);
+    var dims   = vd.dims;   // container dimensions [w, h] on the live site
+    var imgNaturalAspect = 0; // set when image loads
 
     var fileSelectors = vd.isMobile ? MOBILE_FILE_SELECTORS : DESKTOP_FILE_SELECTORS;
     var imageFileInput = findFirst(form, fileSelectors);
-    // Only look for image_url on desktop pickers (hero slides with URL option)
     var imageUrlInput  = vd.isMobile ? null : findFirst(form, URL_INPUT_SELECTORS);
 
-    function getContainerAspect() { return dims[0] / dims[1]; }
-    function getCropFrac() {
-      if (!imgNaturalAspect) return 0.6;
-      var ca = getContainerAspect();
-      return imgNaturalAspect < ca ? imgNaturalAspect / ca : 1.0;
-    }
+    var containerAspect = dims[0] / dims[1];
+    var barColor = vd.isMobile ? "#2563eb" : "#C2410C";
+    var barGlow  = vd.isMobile ? "rgba(37,99,235,0.5)" : "rgba(194,65,12,0.6)";
 
-    // ── Build wrapper ────────────────────────────────────────────────────
+    // ── Build wrapper ──────────────────────────────────────────────────────
     var wrap = document.createElement("div");
     wrap.style.cssText = "margin-top:10px;";
 
-    // ── Header row: label + dimensions + crop-% ──────────────────────────
+    // ── Header ────────────────────────────────────────────────────────────
     var header = document.createElement("div");
-    header.style.cssText = [
-      "display:flex", "align-items:center", "gap:8px",
-      "margin-bottom:7px", "flex-wrap:wrap",
-    ].join(";");
+    header.style.cssText = "display:flex;align-items:center;gap:8px;margin-bottom:7px;flex-wrap:wrap;";
 
     var deviceBadge = document.createElement("span");
     deviceBadge.style.cssText = [
@@ -139,58 +120,69 @@
 
     var infoLabel = document.createElement("span");
     infoLabel.style.cssText = "font-size:10px;color:#5a4f49;font-family:monospace;";
-    infoLabel.textContent = dims[0] + "×" + dims[1] + "px";
+    infoLabel.textContent = dims[0] + "\u00d7" + dims[1] + "px";
 
     var cropLabel = document.createElement("span");
     cropLabel.style.cssText = "font-size:10px;font-family:monospace;";
 
+    function getCropFrac() {
+      if (!imgNaturalAspect) return null;
+      return imgNaturalAspect < containerAspect ? imgNaturalAspect / containerAspect : 1.0;
+    }
     function updateCropLabel() {
-      var pct = Math.round(getCropFrac() * 100);
-      cropLabel.textContent = "— " + pct + "% of image height visible";
+      var cf = getCropFrac();
+      if (cf === null) { cropLabel.textContent = ""; return; }
+      var pct = Math.round(cf * 100);
+      cropLabel.textContent = "\u2014 " + pct + "% of image height visible";
       cropLabel.style.color = pct < 50 ? "#C2410C" : "#5a4f49";
     }
-    updateCropLabel();
 
     header.appendChild(deviceBadge);
     header.appendChild(infoLabel);
     header.appendChild(cropLabel);
     wrap.appendChild(header);
 
-    // ── Preview box ───────────────────────────────────────────────────────
+    // ── Preview container (shows FULL image, crop rect overlaid) ──────────
+    // Height is determined by image aspect ratio once loaded; width is capped.
     var previewBox = document.createElement("div");
     previewBox.style.cssText = [
-      "position:relative", "width:100%",
-      "max-width:" + sz[0] + "px",
-      "height:" + sz[1] + "px",
+      "position:relative",
+      "width:100%",
+      "max-width:" + PREVIEW_MAX_W + "px",
       "background:#1a1714",
       "border:1px solid " + (vd.isMobile ? "#1e3050" : "#3a322c"),
       "border-radius:4px",
-      "overflow:hidden", "cursor:ns-resize",
+      "overflow:hidden",
+      "cursor:ns-resize",
       "user-select:none", "-webkit-user-select:none",
     ].join(";");
 
     var previewImg = document.createElement("img");
-    previewImg.style.cssText = "width:100%;height:100%;object-fit:cover;display:block;pointer-events:none;";
-
-    var shadeTop = document.createElement("div");
-    shadeTop.style.cssText = "position:absolute;left:0;right:0;top:0;background:rgba(0,0,0,0.55);pointer-events:none;z-index:1;";
-
-    var shadeBot = document.createElement("div");
-    shadeBot.style.cssText = "position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,0.55);pointer-events:none;z-index:1;";
-
-    var barColor = vd.isMobile ? "#2563eb" : "#C2410C";
-    var barGlow  = vd.isMobile ? "rgba(37,99,235,0.6)" : "rgba(194,65,12,0.7)";
-
-    var barTop = document.createElement("div");
-    barTop.style.cssText = [
-      "position:absolute", "left:0", "right:0", "height:3px",
-      "background:" + barColor, "pointer-events:none", "z-index:2",
-      "box-shadow:0 0 6px " + barGlow,
+    previewImg.style.cssText = [
+      "display:block",
+      "width:100%",
+      "height:auto",       // natural aspect — full image visible
+      "pointer-events:none",
     ].join(";");
 
-    var barBot = document.createElement("div");
-    barBot.style.cssText = barTop.style.cssText;
+    // Dimming overlays (outside the crop rectangle)
+    var dimTop = document.createElement("div");
+    dimTop.style.cssText = "position:absolute;left:0;right:0;top:0;background:rgba(0,0,0,0.55);pointer-events:none;z-index:1;";
+    var dimBot = document.createElement("div");
+    dimBot.style.cssText = "position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,0.55);pointer-events:none;z-index:1;";
 
+    // Crop-window border lines
+    var lineTop = document.createElement("div");
+    lineTop.style.cssText = [
+      "position:absolute", "left:0", "right:0", "height:2px",
+      "background:" + barColor,
+      "box-shadow:0 0 6px " + barGlow,
+      "pointer-events:none", "z-index:2",
+    ].join(";");
+    var lineBot = document.createElement("div");
+    lineBot.style.cssText = lineTop.style.cssText;
+
+    // Drag handle (centered on crop rectangle)
     var handle = document.createElement("div");
     handle.style.cssText = [
       "position:absolute", "left:50%", "transform:translateX(-50%)",
@@ -201,6 +193,7 @@
     ].join(";");
     handle.innerHTML = '<svg width="16" height="10" viewBox="0 0 16 10" fill="none"><path d="M2 3.5h12M2 6.5h12" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg>';
 
+    // Position badge
     var badge = document.createElement("div");
     badge.style.cssText = [
       "position:absolute", "right:8px", "top:8px",
@@ -216,22 +209,22 @@
       "display:flex", "align-items:center", "justify-content:center",
       "color:#5a4f49", "font-size:11px", "font-weight:600",
       "letter-spacing:0.06em", "text-transform:uppercase",
-      "text-align:center", "padding:0 16px", "z-index:0",
+      "text-align:center", "padding:0 16px", "min-height:80px",
     ].join(";");
     placeholder.textContent = "Upload an image above to see the preview";
 
     previewBox.appendChild(previewImg);
     previewBox.appendChild(placeholder);
-    previewBox.appendChild(shadeTop);
-    previewBox.appendChild(shadeBot);
-    previewBox.appendChild(barTop);
-    previewBox.appendChild(barBot);
+    previewBox.appendChild(dimTop);
+    previewBox.appendChild(dimBot);
+    previewBox.appendChild(lineTop);
+    previewBox.appendChild(lineBot);
     previewBox.appendChild(handle);
     previewBox.appendChild(badge);
 
     var hint = document.createElement("p");
     hint.style.cssText = "margin:5px 0 0;font-size:11px;color:#8c7d74;";
-    hint.textContent = "Drag up or down — the area between the bars is what visitors see on " +
+    hint.textContent = "Drag up or down — the highlighted area between the lines is what visitors see on " +
       (vd.isMobile ? "mobile" : "desktop") + ".";
 
     wrap.appendChild(previewBox);
@@ -240,24 +233,38 @@
     var row = input.closest(".form-row") || input.parentNode;
     row.parentNode.insertBefore(wrap, row.nextSibling);
 
-    // ── Focal application ─────────────────────────────────────────────────
+    // ── Core: apply focal point ────────────────────────────────────────────
+    // cropFrac = fraction of image height that is visible in the container.
+    // When the image is wider than the container aspect, the full height is shown (cropFrac=1).
+    // When the image is taller (more portrait) than the container, only a portion is shown.
+    //
+    // CSS object-position: center Y% semantics:
+    //   The image is scaled so that the narrower axis fills the container.
+    //   Y% of the (image height in preview) aligns with Y% of the container height.
+    //   Equivalently: cropTop (in image coords) = focal_y/100 * (imgH - containerH_in_img_coords)
+    //
+    // In our preview (full image shown):
+    //   fullH = previewBox.clientHeight  (= natural image height scaled to preview width)
+    //   cropH = fullH * cropFrac
+    //   cropTop = (focal_y/100) * (fullH - cropH)
+
     function applyFocal(pct) {
       pct = Math.max(0, Math.min(100, pct));
-      var BOX_H = previewBox.clientHeight || sz[1];
-      var cropF = getCropFrac();
-      var windowH = Math.max(4, Math.round(BOX_H * cropF));
-      var half    = Math.round(windowH / 2);
-      var centerPx = Math.round((pct / 100) * BOX_H);
-      centerPx = Math.max(half, Math.min(BOX_H - half, centerPx));
-      var topPx = centerPx - half;
-      var botPx = centerPx + half;
+      var cf = getCropFrac();
+      if (cf === null) return; // no image loaded yet
 
-      shadeTop.style.height = topPx + "px";
-      barTop.style.top      = topPx + "px";
-      shadeBot.style.height = (BOX_H - botPx) + "px";
-      barBot.style.top      = (botPx - 3) + "px";
-      handle.style.top      = (centerPx - 9) + "px";
-      previewImg.style.objectPosition = "center " + pct + "%";
+      var fullH = previewBox.clientHeight;
+      if (!fullH) return;
+
+      var cropH   = Math.round(fullH * cf);
+      var cropTop = Math.round((pct / 100) * (fullH - cropH));
+      var cropBot = cropTop + cropH;
+
+      dimTop.style.height  = cropTop + "px";
+      dimBot.style.height  = (fullH - cropBot) + "px";
+      lineTop.style.top    = cropTop + "px";
+      lineBot.style.top    = (cropBot - 2) + "px";
+      handle.style.top     = (cropTop + Math.round(cropH / 2) - 9) + "px";
 
       badge.textContent =
         pct < 15 ? "Top" : pct < 35 ? "Upper" : pct < 65 ? "Center" : pct < 85 ? "Lower" : "Bottom";
@@ -269,22 +276,23 @@
       applyFocal(pct);
     }
 
-    // ── Image load ────────────────────────────────────────────────────────
-    previewImg.addEventListener("load", function () {
-      var IW = previewImg.naturalWidth, IH = previewImg.naturalHeight;
-      if (!IW || !IH) return;
-      imgNaturalAspect = IW / IH;
-      updateCropLabel();
-      applyFocal(parseInt(input.value) || 50);
-    });
-
-    // ── Drag ─────────────────────────────────────────────────────────────
-    var dragging = false;
+    // Convert a clientY mouse/touch position → focal_y percentage
+    // Click-to-center: we want the crop window to center on the click point.
+    //   focal_y = clamp( (y_in_img - cropH/2) / (fullH - cropH) * 100, 0, 100 )
     function pctFromEvent(e) {
       var rect = previewBox.getBoundingClientRect();
       var clientY = e.touches ? e.touches[0].clientY : e.clientY;
-      return ((clientY - rect.top) / rect.height) * 100;
+      var yInImg = clientY - rect.top;
+      var cf = getCropFrac();
+      if (cf === null || cf >= 1) return (yInImg / rect.height) * 100;
+      var cropH = rect.height * cf;
+      var denom = rect.height - cropH;
+      if (denom <= 0) return 50;
+      return ((yInImg - cropH / 2) / denom) * 100;
     }
+
+    // ── Drag ──────────────────────────────────────────────────────────────
+    var dragging = false;
     previewBox.addEventListener("mousedown",  function (e) { dragging = true; setFocal(pctFromEvent(e)); e.preventDefault(); });
     document.addEventListener("mousemove",    function (e) { if (dragging) setFocal(pctFromEvent(e)); });
     document.addEventListener("mouseup",      function ()  { dragging = false; });
@@ -292,13 +300,46 @@
     document.addEventListener("touchmove",    function (e) { if (dragging) setFocal(pctFromEvent(e)); }, { passive: true });
     document.addEventListener("touchend",     function ()  { dragging = false; });
 
+    // ── Image load ────────────────────────────────────────────────────────
+    previewImg.addEventListener("load", function () {
+      var IW = previewImg.naturalWidth, IH = previewImg.naturalHeight;
+      if (!IW || !IH) return;
+      imgNaturalAspect = IW / IH;
+
+      // Cap preview height
+      var previewW = Math.min(previewBox.parentElement ? previewBox.parentElement.clientWidth : PREVIEW_MAX_W, PREVIEW_MAX_W);
+      var naturalH = previewW / imgNaturalAspect;
+      if (naturalH > PREVIEW_MAX_IMG_H) {
+        // constrain: set explicit height and use object-fit to show full image scaled down
+        previewImg.style.height = PREVIEW_MAX_IMG_H + "px";
+        previewImg.style.objectFit = "contain";
+        previewImg.style.objectPosition = "center top";
+        previewImg.style.background = "#1a1714";
+      } else {
+        previewImg.style.height = "";
+        previewImg.style.objectFit = "";
+        previewImg.style.objectPosition = "";
+      }
+
+      updateCropLabel();
+      // Defer applyFocal one tick so the DOM height has settled
+      setTimeout(function () { applyFocal(parseInt(input.value) || 50); }, 0);
+    });
+
     // ── Image source ──────────────────────────────────────────────────────
     function showImage(src) {
       if (!src) {
-        previewImg.removeAttribute("src"); previewImg.style.display = "none";
-        placeholder.style.display = "flex"; return;
+        previewImg.removeAttribute("src");
+        previewImg.style.display = "none";
+        placeholder.style.display = "flex";
+        dimTop.style.height = "0"; dimBot.style.height = "0";
+        lineTop.style.top = "-4px"; lineBot.style.top = "-4px";
+        handle.style.top = "-20px";
+        badge.textContent = "";
+        return;
       }
-      previewImg.src = src; previewImg.style.display = "block";
+      previewImg.src = src;
+      previewImg.style.display = "block";
       placeholder.style.display = "none";
     }
 
@@ -323,7 +364,6 @@
 
     // ── Init ──────────────────────────────────────────────────────────────
     showImage(getCurrentImageUrl());
-    applyFocal(parseInt(input.value) || 50);
   }
 
 })();
