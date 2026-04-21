@@ -16,7 +16,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         for u in SUPERUSERS:
-            if not User.objects.filter(username=u["username"]).exists():
+            if not User.objects.filter(username__iexact=u["username"]).exists():
                 User.objects.create_superuser(
                     username=u["username"],
                     email=u["email"],

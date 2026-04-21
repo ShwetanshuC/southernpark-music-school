@@ -16,6 +16,15 @@ class CaseInsensitiveModelBackend(ModelBackend):
         except UserModel.DoesNotExist:
             UserModel().set_password(password)  # mitigate timing attacks
             return None
+        except UserModel.MultipleObjectsReturned:
+            # Duplicate usernames differing only in case — use exact match if possible
+            try:
+                user = UserModel.objects.get(
+                    **{UserModel.USERNAME_FIELD: username}
+                )
+            except (UserModel.DoesNotExist, UserModel.MultipleObjectsReturned):
+                UserModel().set_password(password)
+                return None
         if user.check_password(password) and self.user_can_authenticate(user):
             return user
         return None
