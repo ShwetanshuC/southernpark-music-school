@@ -61,10 +61,13 @@
             <div class="gallery-item" data-index="{{ forloop.counter0 }}"
               data-full="{{ photo.image.url }}"
               data-caption="{{ photo.caption|default:'' }}">
-              <img src="{{ photo.image.url }}" alt="{{ photo.caption|default:'Gallery photo' }}"
-                style="object-position:center {{ photo.image_focal_y|default:50 }}%;"
-                {% if forloop.counter <= 4 %}loading="eager" fetchpriority="high"{% else %}loading="lazy"{% endif %}
-                decoding="async" />
+              <picture>
+                {% if photo.image_mobile %}<source media="(max-width:640px)" srcset="{{ photo.image_mobile.url }}">{% endif %}
+                <img src="{{ photo.image.url }}" alt="{{ photo.caption|default:'Gallery photo' }}"
+                  style="--fy:{{ photo.image_focal_y|default:50 }}%;--fy-m:{{ photo.image_focal_y_mobile|default:photo.image_focal_y|default:50 }}%;"
+                  {% if forloop.counter <= 4 %}loading="eager" fetchpriority="high"{% else %}loading="lazy"{% endif %}
+                  decoding="async" />
+              </picture>
               {% if photo.caption %}
               <div class="gallery-caption">{{ photo.caption }}</div>
               {% endif %}

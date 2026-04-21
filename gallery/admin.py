@@ -23,8 +23,13 @@ class GalleryPhotoAdmin(ImageToolsAdminMixin, admin.ModelAdmin):
     list_display_links = ["thumbnail_preview", "display_name"]
 
     fieldsets = (
-        ("Photo", {
+        ("Desktop Image", {
             "fields": ("image", "image_focal_y"),
+            "description": "Shown on desktop. Displayed at ~260×200 px in the grid.",
+        }),
+        ("Mobile Image", {
+            "fields": ("image_mobile", "image_focal_y_mobile"),
+            "description": "Optional: separate image for phones (&lt;640 px). Falls back to the desktop image if empty.",
         }),
         ("Details", {
             "fields": ("caption", "sort_order", "is_active"),

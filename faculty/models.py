@@ -37,6 +37,14 @@ class FacultyMember(models.Model):
         default=50,
         help_text="Vertical focal point (0=top, 50=center, 100=bottom). Drag the preview bar above to set this.",
     )
+    photo_mobile = models.ImageField(
+        upload_to="faculty_mobile/", blank=True, null=True,
+        help_text="Optional image for mobile (<576 px). Falls back to the desktop photo if empty.",
+    )
+    image_focal_y_mobile = models.PositiveSmallIntegerField(
+        default=50,
+        help_text="Mobile focal point (0=top, 50=center, 100=bottom).",
+    )
     bio = models.TextField(blank=True)
     sort_order = models.PositiveIntegerField(default=0)
     is_active = models.BooleanField(default=True)

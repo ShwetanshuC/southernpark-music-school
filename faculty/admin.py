@@ -28,8 +28,13 @@ class FacultyMemberAdmin(ImageToolsAdminMixin, admin.ModelAdmin):
     list_filter = ["instrument", "is_active"]
 
     fieldsets = (
-        ("Photo", {
+        ("Desktop Photo", {
             "fields": ("photo", "image_focal_y"),
+            "description": "Shown on desktop. The card crops the photo to a square (roughly 240×240 px).",
+        }),
+        ("Mobile Photo", {
+            "fields": ("photo_mobile", "image_focal_y_mobile"),
+            "description": "Optional: separate photo for phones (&lt;576 px). Falls back to the desktop photo if empty.",
         }),
         ("Teacher Information", {
             "fields": ("name", "title", "instrument", "bio"),

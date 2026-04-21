@@ -42,10 +42,15 @@ header { position: relative; display: block; line-height: 0; font-size: 0; }
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center;
+  object-position: center var(--fy, 50%);
   display: block;
   opacity: 0;
   transition: opacity 0.6s ease-in-out;
+}
+@media (max-width: 640px) {
+  #heroCarousel .carousel-item img {
+    object-position: center var(--fy-m, var(--fy, 50%));
+  }
 }
 #heroCarousel .carousel-item img.loaded {
   opacity: 1;
@@ -294,6 +299,12 @@ header { position: relative; display: block; line-height: 0; font-size: 0; }
   width: 100%;
   height: 60%;
   object-fit: cover;
+  object-position: center var(--fy, 50%);
+}
+@media (max-width: 576px) {
+  .flip-card-front img {
+    object-position: center var(--fy-m, var(--fy, 50%));
+  }
 }
 .flip-card-front .p-3 { padding: 1rem; }
 .flip-card-front h5 {
@@ -468,10 +479,16 @@ header { position: relative; display: block; line-height: 0; font-size: 0; }
   width: 100%;
   height: 200px;
   object-fit: cover;
+  object-position: center var(--fy, 50%);
   border-radius: var(--radius);
   cursor: pointer;
   display: block;
   transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+@media (max-width: 640px) {
+  .gallery-grid img {
+    object-position: center var(--fy-m, var(--fy, 50%));
+  }
 }
 .gallery-grid img:hover {
   transform: scale(1.03);
@@ -628,4 +645,19 @@ nav.scrolled { box-shadow: 0 4px 16px rgba(0,0,0,0.25); }
 .card-lift:hover {
   transform: translateY(-6px);
   box-shadow: 0 12px 32px rgba(0,0,0,0.1);
+}
+
+/* ===== Focal-point CSS custom properties =====
+   --fy  = desktop focal position (set via inline style on each img)
+   --fy-m = mobile focal position
+   Applied via object-position with media-query fallback.
+   hero, gallery, faculty: handled in their own blocks above.
+   Home section images use Tailwind object-cover; add position here. */
+.home-focal-img {
+  object-position: center var(--fy, 50%);
+}
+@media (max-width: 767px) {
+  .home-focal-img {
+    object-position: center var(--fy-m, var(--fy, 50%));
+  }
 }

@@ -38,6 +38,14 @@ class HeroSlide(models.Model):
         default=50,
         help_text="Vertical focal point (0=top, 50=center, 100=bottom). Drag the preview bar above to set this.",
     )
+    image_mobile = models.ImageField(
+        upload_to="hero_mobile/", blank=True, null=True,
+        help_text="Optional portrait-oriented image shown on phones (<640 px wide). Falls back to the desktop image if empty.",
+    )
+    image_focal_y_mobile = models.PositiveSmallIntegerField(
+        default=50,
+        help_text="Mobile focal point (0=top, 50=center, 100=bottom).",
+    )
     image_url = models.URLField(blank=True, default="", max_length=800)
     alt = models.CharField(max_length=160, blank=True)
     sort_order = models.PositiveIntegerField(default=0)
@@ -65,7 +73,15 @@ class HomeSection(models.Model):
         default=50,
         help_text="Vertical focal point (0=top, 50=center, 100=bottom). Drag the preview bar above to set this.",
     )
-    
+    image_mobile = models.ImageField(
+        upload_to="home_mobile/", blank=True, null=True,
+        help_text="Optional image for mobile (<768 px). Falls back to the desktop image if empty.",
+    )
+    image_focal_y_mobile = models.PositiveSmallIntegerField(
+        default=50,
+        help_text="Mobile focal point (0=top, 50=center, 100=bottom).",
+    )
+
     class Meta:
         verbose_name = "Home Section"
         verbose_name_plural = "Home Sections"
