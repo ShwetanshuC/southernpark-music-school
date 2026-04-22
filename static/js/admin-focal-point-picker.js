@@ -343,24 +343,41 @@
       placeholder.style.display = "none";
     }
 
-    function getCurrentImageUrl() {
-      if (imageFileInput && imageFileInput.files && imageFileInput.files.length)
-        return URL.createObjectURL(imageFileInput.files[0]);
-      if (imageFileInput) {
-        var c = imageFileInput.closest("p.file-upload")
-             || imageFileInput.closest(".field-box")
-             || imageFileInput.parentElement;
-        if (c) {
-          var a = c.querySelector("a[href]");
-          if (a && a.href && a.href !== window.location.href) return a.href;
-        }
+    // Desktop file/URL inputs used as fallback for mobile pickers with no mobile image.
+    var desktopFileInput = vd.isMobile ? findFirst(form, DESKTOP_FILE_SELECTORS) : null;
+    var desktopUrlInput  = vd.isMobile ? findFirst(form, URL_INPUT_SELECTORS)    : null;
+
+    function getUrlFromFileInput(fi) {
+      if (!fi) return null;
+      if (fi.files && fi.files.length) return URL.createObjectURL(fi.files[0]);
+      var c = fi.closest("p.file-upload") || fi.closest(".field-box") || fi.parentElement;
+      if (c) {
+        var a = c.querySelector("a[href]");
+        if (a && a.href && a.href !== window.location.href) return a.href;
       }
+      return null;
+    }
+
+    function getCurrentImageUrl() {
+      // Primary source: mobile-specific file input (or desktop file input for desktop pickers)
+      var url = getUrlFromFileInput(imageFileInput);
+      if (url) return url;
+      // URL text field
       if (imageUrlInput && imageUrlInput.value.trim()) return imageUrlInput.value.trim();
+      // Fallback for mobile pickers: show desktop image so crop preview is never blank
+      if (vd.isMobile) {
+        var fallback = getUrlFromFileInput(desktopFileInput);
+        if (fallback) return fallback;
+        if (desktopUrlInput && desktopUrlInput.value.trim()) return desktopUrlInput.value.trim();
+      }
       return null;
     }
 
     if (imageFileInput) imageFileInput.addEventListener("change", function () { showImage(getCurrentImageUrl()); });
     if (imageUrlInput)  imageUrlInput.addEventListener("input",   function () { showImage(getCurrentImageUrl()); });
+    // Re-render mobile preview when the desktop image changes (fallback path)
+    if (vd.isMobile && desktopFileInput) desktopFileInput.addEventListener("change", function () { showImage(getCurrentImageUrl()); });
+    if (vd.isMobile && desktopUrlInput)  desktopUrlInput.addEventListener("input",   function () { showImage(getCurrentImageUrl()); });
 
     // ── Init ──────────────────────────────────────────────────────────────
     showImage(getCurrentImageUrl());
