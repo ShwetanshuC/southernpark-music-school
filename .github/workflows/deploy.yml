@@ -33,6 +33,29 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      - name: 🧹 Prune old nginx images
+        run: |
+          aws lightsail get-container-images \
+            --service-name ${{ env.AWS_LIGHTSAIL_SERVICE_NAME }} \
+            --output json \
+          | python3 - <<'PYEOF'
+          import json, sys, subprocess
+          data = json.load(sys.stdin)
+          images = [
+            img["image"] for img in data.get("containerImages", [])
+            if ".nginx." in img.get("image", "")
+          ]
+          # Keep the most recent 1; delete the rest
+          for img in images[1:]:
+            print(f"Deleting old image: {img}")
+            subprocess.run(
+              ["aws", "lightsail", "delete-container-image",
+               "--service-name", "${{ env.AWS_LIGHTSAIL_SERVICE_NAME }}",
+               "--image", img],
+              check=False
+            )
+          PYEOF
+        continue-on-error: true
       - name: 📦 Collect static files
         run: |
           pip3 install -r requirements.txt
@@ -66,6 +89,29 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      - name: 🧹 Prune old django images
+        run: |
+          aws lightsail get-container-images \
+            --service-name ${{ env.AWS_LIGHTSAIL_SERVICE_NAME }} \
+            --output json \
+          | python3 - <<'PYEOF'
+          import json, sys, subprocess
+          data = json.load(sys.stdin)
+          images = [
+            img["image"] for img in data.get("containerImages", [])
+            if ".django." in img.get("image", "")
+          ]
+          # Keep the most recent 1; delete the rest
+          for img in images[1:]:
+            print(f"Deleting old image: {img}")
+            subprocess.run(
+              ["aws", "lightsail", "delete-container-image",
+               "--service-name", "${{ env.AWS_LIGHTSAIL_SERVICE_NAME }}",
+               "--image", img],
+              check=False
+            )
+          PYEOF
+        continue-on-error: true
       - name: 🐳 Build django image
         run: docker build -t django:latest .
       - name: 📬 Push django to Lightsail
