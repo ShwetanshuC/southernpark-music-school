@@ -149,6 +149,7 @@
       "position:relative",
       "width:100%",
       "max-width:" + PREVIEW_MAX_W + "px",
+      "min-height:80px",
       "background:#1a1714",
       "border:1px solid " + (vd.isMobile ? "#1e3050" : "#3a322c"),
       "border-radius:4px",
@@ -357,12 +358,18 @@
     function getUrlFromFileInput(fi) {
       if (!fi) return null;
       if (fi.files && fi.files.length) return URL.createObjectURL(fi.files[0]);
-      // Only look inside the Django ClearableFileInput wrapper (p.file-upload).
-      // Falling back to parentElement risks picking up unrelated admin nav links.
-      var c = fi.closest("p.file-upload") || fi.closest(".field-box");
+      // Walk up: p.file-upload (Django ClearableFileInput wrapper when file is saved),
+      // then .field-box, then .form-row as broader fallback.
+      var c = fi.closest("p.file-upload") || fi.closest(".field-box") || fi.closest(".form-row");
       if (c) {
-        var a = c.querySelector("a[href]");
-        if (a && a.href && a.href !== window.location.href) return a.href;
+        var anchors = c.querySelectorAll("a[href]");
+        for (var i = 0; i < anchors.length; i++) {
+          var href = anchors[i].href;
+          if (href && href !== window.location.href &&
+              (/\/media\//.test(href) || /\.(jpe?g|png|gif|webp|svg|bmp)(\?[^"]*)?$/i.test(href))) {
+            return href;
+          }
+        }
       }
       return null;
     }
