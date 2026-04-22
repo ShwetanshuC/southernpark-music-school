@@ -326,6 +326,13 @@
       setTimeout(function () { applyFocal(parseInt(input.value) || 50); }, 0);
     });
 
+    previewImg.addEventListener("error", function () {
+      previewImg.removeAttribute("src");
+      previewImg.style.display = "none";
+      placeholder.style.display = "flex";
+      placeholder.textContent = "Image could not be loaded — try re-uploading.";
+    });
+
     // ── Image source ──────────────────────────────────────────────────────
     function showImage(src) {
       if (!src) {
@@ -350,7 +357,9 @@
     function getUrlFromFileInput(fi) {
       if (!fi) return null;
       if (fi.files && fi.files.length) return URL.createObjectURL(fi.files[0]);
-      var c = fi.closest("p.file-upload") || fi.closest(".field-box") || fi.parentElement;
+      // Only look inside the Django ClearableFileInput wrapper (p.file-upload).
+      // Falling back to parentElement risks picking up unrelated admin nav links.
+      var c = fi.closest("p.file-upload") || fi.closest(".field-box");
       if (c) {
         var a = c.querySelector("a[href]");
         if (a && a.href && a.href !== window.location.href) return a.href;
