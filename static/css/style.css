@@ -49,7 +49,7 @@ header { position: relative; display: block; line-height: 0; font-size: 0; }
 }
 @media (max-width: 640px) {
   #heroCarousel .carousel-item img {
-    object-position: center var(--fy-m, var(--fy, 50%));
+    object-position: var(--fx-m, 50%) var(--fy-m, var(--fy, 50%));
   }
 }
 #heroCarousel .carousel-item img.loaded {
@@ -303,7 +303,7 @@ header { position: relative; display: block; line-height: 0; font-size: 0; }
 }
 @media (max-width: 576px) {
   .flip-card-front img {
-    object-position: center var(--fy-m, var(--fy, 50%));
+    object-position: var(--fx-m, 50%) var(--fy-m, var(--fy, 50%));
   }
 }
 .flip-card-front .p-3 { padding: 1rem; }
@@ -487,7 +487,7 @@ header { position: relative; display: block; line-height: 0; font-size: 0; }
 }
 @media (max-width: 640px) {
   .gallery-grid img {
-    object-position: center var(--fy-m, var(--fy, 50%));
+    object-position: var(--fx-m, 50%) var(--fy-m, var(--fy, 50%));
   }
 }
 .gallery-grid img:hover {
@@ -658,6 +658,6 @@ nav.scrolled { box-shadow: 0 4px 16px rgba(0,0,0,0.25); }
 }
 @media (max-width: 767px) {
   .home-focal-img {
-    object-position: center var(--fy-m, var(--fy, 50%));
+    object-position: var(--fx-m, 50%) var(--fy-m, var(--fy, 50%));
   }
 }

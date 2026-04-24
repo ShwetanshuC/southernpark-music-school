@@ -108,8 +108,8 @@ class HeroSlideAdmin(ImageToolsAdminMixin, admin.ModelAdmin):
             'description': 'Shown on all screens. Use a wide landscape photo (16:9 or wider recommended).',
         }),
         ('Mobile Image', {
-            'fields': ('image_mobile', 'image_focal_y_mobile'),
-            'description': 'Optional: a portrait or tighter crop shown on phones (&lt;640 px). Leave empty to use the desktop image on mobile too.',
+            'fields': ('image_mobile', 'image_focal_y_mobile', 'image_focal_x_mobile'),
+            'description': 'Optional: a portrait or tighter crop shown on phones (&lt;640 px). Leave empty to use the desktop image on mobile too. Both focal point pickers show accurate mobile crop previews.',
         }),
         ('Details', {
             'fields': ('image_url', 'alt'),
@@ -136,8 +136,8 @@ class HomeSectionAdmin(ImageToolsAdminMixin, admin.ModelAdmin):
             'description': 'Shown on desktop (≥768 px). Image appears at roughly 2:1 aspect ratio.',
         }),
         ('Mobile Image', {
-            'fields': ('image_mobile', 'image_focal_y_mobile'),
-            'description': 'Optional: separate image for phones (&lt;768 px). The image fills full width at fixed height — a tighter or portrait crop often works better here.',
+            'fields': ('image_mobile', 'image_focal_y_mobile', 'image_focal_x_mobile'),
+            'description': 'Optional: separate image for phones (&lt;768 px). The image fills full width at fixed height — a tighter or portrait crop often works better here. Both focal point pickers show accurate mobile crop previews.',
         }),
     )
 

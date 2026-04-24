@@ -45,7 +45,7 @@
                   <picture>
                     {% if member.photo_mobile %}<source media="(max-width:576px)" srcset="{{ member.photo_mobile.url }}">{% endif %}
                     <img src="{{ member.photo.url }}" alt="{{ member.name }}" loading="lazy" decoding="async"
-                         style="--fy:{{ member.image_focal_y|default:50 }}%;--fy-m:{{ member.image_focal_y_mobile|default:member.image_focal_y|default:50 }}%;" />
+                         style="--fy:{{ member.image_focal_y|default:50 }}%;--fy-m:{{ member.image_focal_y_mobile|default:member.image_focal_y|default:50 }}%;--fx-m:{{ member.image_focal_x_mobile|default:50 }}%;" />
                   </picture>
                 {% else %}
                   <img src="{% static 'images/piano.png' %}" alt="{{ member.name }}" loading="lazy" decoding="async" />

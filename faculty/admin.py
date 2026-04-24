@@ -33,8 +33,8 @@ class FacultyMemberAdmin(ImageToolsAdminMixin, admin.ModelAdmin):
             "description": "Shown on desktop. The card crops the photo to a square (roughly 240×240 px).",
         }),
         ("Mobile Photo", {
-            "fields": ("photo_mobile", "image_focal_y_mobile"),
-            "description": "Optional: separate photo for phones (&lt;576 px). Falls back to the desktop photo if empty.",
+            "fields": ("photo_mobile", "image_focal_y_mobile", "image_focal_x_mobile"),
+            "description": "Optional: separate photo for phones (&lt;576 px). Falls back to the desktop photo if empty. Both focal point pickers show accurate mobile crop previews.",
         }),
         ("Teacher Information", {
             "fields": ("name", "title", "instrument", "bio"),

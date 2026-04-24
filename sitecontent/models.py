@@ -44,7 +44,11 @@ class HeroSlide(models.Model):
     )
     image_focal_y_mobile = models.PositiveSmallIntegerField(
         default=50,
-        help_text="Mobile focal point (0=top, 50=center, 100=bottom).",
+        help_text="Vertical focal point on phones (0=top, 50=center, 100=bottom).",
+    )
+    image_focal_x_mobile = models.PositiveSmallIntegerField(
+        default=50,
+        help_text="Horizontal focal point on phones (0=left, 50=center, 100=right).",
     )
     image_url = models.URLField(blank=True, default="", max_length=800)
     alt = models.CharField(max_length=160, blank=True)
@@ -79,7 +83,11 @@ class HomeSection(models.Model):
     )
     image_focal_y_mobile = models.PositiveSmallIntegerField(
         default=50,
-        help_text="Mobile focal point (0=top, 50=center, 100=bottom).",
+        help_text="Vertical focal point on phones (0=top, 50=center, 100=bottom).",
+    )
+    image_focal_x_mobile = models.PositiveSmallIntegerField(
+        default=50,
+        help_text="Horizontal focal point on phones (0=left, 50=center, 100=right).",
     )
 
     class Meta:

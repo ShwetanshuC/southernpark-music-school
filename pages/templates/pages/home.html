@@ -42,13 +42,13 @@
               <picture>
                 {% if slide.image_mobile %}<source media="(max-width:640px)" srcset="{{ slide.image_mobile.url }}">{% endif %}
                 <img src="{{ slide.image.url }}" alt="{{ slide.alt }}"
-                  style="--fy:{{ slide.image_focal_y|default:50 }}%;--fy-m:{{ slide.image_focal_y_mobile|default:slide.image_focal_y|default:50 }}%;"
+                  style="--fy:{{ slide.image_focal_y|default:50 }}%;--fy-m:{{ slide.image_focal_y_mobile|default:slide.image_focal_y|default:50 }}%;--fx-m:{{ slide.image_focal_x_mobile|default:50 }}%;"
                   {% if forloop.first %}fetchpriority="high" loading="eager"{% else %}loading="lazy"{% endif %}
                   decoding="async">
               </picture>
             {% elif slide.image_url %}
               <img src="{{ slide.image_url }}" alt="{{ slide.alt }}"
-                style="--fy:{{ slide.image_focal_y|default:50 }}%;--fy-m:{{ slide.image_focal_y_mobile|default:slide.image_focal_y|default:50 }}%;"
+                style="--fy:{{ slide.image_focal_y|default:50 }}%;--fy-m:{{ slide.image_focal_y_mobile|default:slide.image_focal_y|default:50 }}%;--fx-m:{{ slide.image_focal_x_mobile|default:50 }}%;"
                 {% if forloop.first %}fetchpriority="high" loading="eager"{% else %}loading="lazy"{% endif %}
                 decoding="async">
             {% endif %}
@@ -134,7 +134,7 @@
                   {% if about.image_mobile %}<source media="(max-width:767px)" srcset="{{ about.image_mobile.url }}">{% endif %}
                   <img src="{{ about.image.url }}" loading="lazy" decoding="async"
                     class="w-full h-72 object-cover home-focal-img transition-transform duration-500 hover:scale-105"
-                    style="--fy:{{ about.image_focal_y|default:50 }}%;--fy-m:{{ about.image_focal_y_mobile|default:about.image_focal_y|default:50 }}%;"
+                    style="--fy:{{ about.image_focal_y|default:50 }}%;--fy-m:{{ about.image_focal_y_mobile|default:about.image_focal_y|default:50 }}%;--fx-m:{{ about.image_focal_x_mobile|default:50 }}%;"
                     alt="{{ about.title }}" />
                 </picture>
             {% else %}
@@ -198,7 +198,7 @@
                   {% if history.image_mobile %}<source media="(max-width:767px)" srcset="{{ history.image_mobile.url }}">{% endif %}
                   <img src="{{ history.image.url }}" loading="lazy" decoding="async"
                     class="w-full h-96 object-cover home-focal-img"
-                    style="--fy:{{ history.image_focal_y|default:50 }}%;--fy-m:{{ history.image_focal_y_mobile|default:history.image_focal_y|default:50 }}%;"
+                    style="--fy:{{ history.image_focal_y|default:50 }}%;--fy-m:{{ history.image_focal_y_mobile|default:history.image_focal_y|default:50 }}%;--fx-m:{{ history.image_focal_x_mobile|default:50 }}%;"
                     alt="{{ history.title }}" />
                 </picture>
             {% else %}

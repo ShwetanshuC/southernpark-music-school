@@ -64,7 +64,7 @@
               <picture>
                 {% if photo.image_mobile %}<source media="(max-width:640px)" srcset="{{ photo.image_mobile.url }}">{% endif %}
                 <img src="{{ photo.image.url }}" alt="{{ photo.caption|default:'Gallery photo' }}"
-                  style="--fy:{{ photo.image_focal_y|default:50 }}%;--fy-m:{{ photo.image_focal_y_mobile|default:photo.image_focal_y|default:50 }}%;"
+                  style="--fy:{{ photo.image_focal_y|default:50 }}%;--fy-m:{{ photo.image_focal_y_mobile|default:photo.image_focal_y|default:50 }}%;--fx-m:{{ photo.image_focal_x_mobile|default:50 }}%;"
                   {% if forloop.counter <= 4 %}loading="eager" fetchpriority="high"{% else %}loading="lazy"{% endif %}
                   decoding="async" />
               </picture>

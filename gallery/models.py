@@ -14,7 +14,11 @@ class GalleryPhoto(models.Model):
     )
     image_focal_y_mobile = models.PositiveSmallIntegerField(
         default=50,
-        help_text="Mobile focal point (0=top, 50=center, 100=bottom).",
+        help_text="Vertical focal point on phones (0=top, 50=center, 100=bottom).",
+    )
+    image_focal_x_mobile = models.PositiveSmallIntegerField(
+        default=50,
+        help_text="Horizontal focal point on phones (0=left, 50=center, 100=right).",
     )
     caption = models.CharField(max_length=200, blank=True)
     sort_order = models.PositiveIntegerField(default=0)

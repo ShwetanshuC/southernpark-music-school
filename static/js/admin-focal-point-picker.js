@@ -12,12 +12,12 @@
   };
 
   var PREVIEW_MAX_W = 460;
-  var PREVIEW_MAX_IMG_H = 380; // max height for the full-image display
+  var PREVIEW_MAX_IMG_H = 380;
 
   function getViewDims(inputName) {
     var isMobile = inputName.indexOf("_mobile") !== -1;
     var cfg = detectModelConfig();
-    return { dims: cfg[isMobile ? "mobile" : "desktop"], isMobile: isMobile };
+    return { dims: cfg[isMobile ? "mobile" : "desktop"] || cfg.desktop, isMobile: isMobile };
   }
 
   function detectModelConfig() {
@@ -87,8 +87,16 @@
 
     var form   = input.closest("form") || document;
     var vd     = getViewDims(input.name);
-    var dims   = vd.dims;   // container dimensions [w, h] on the live site
-    var imgNaturalAspect = 0; // set when image loads
+    var dims   = vd.dims;
+    var imgNaturalAspect = 0;
+    var cropMode = "vertical"; // "vertical" or "horizontal"
+
+    // For mobile pickers: locate the corresponding X focal input
+    var focalXInput = null;
+    if (vd.isMobile) {
+      focalXInput = form.querySelector("input[name='image_focal_x_mobile']") ||
+                    form.querySelector("input[name$='-image_focal_x_mobile']");
+    }
 
     var fileSelectors = vd.isMobile ? MOBILE_FILE_SELECTORS : DESKTOP_FILE_SELECTORS;
     var imageFileInput = findFirst(form, fileSelectors);
@@ -120,20 +128,24 @@
 
     var infoLabel = document.createElement("span");
     infoLabel.style.cssText = "font-size:10px;color:#5a4f49;font-family:monospace;";
-    infoLabel.textContent = dims[0] + "\u00d7" + dims[1] + "px";
+    infoLabel.textContent = dims[0] + "×" + dims[1] + "px";
 
     var cropLabel = document.createElement("span");
     cropLabel.style.cssText = "font-size:10px;font-family:monospace;";
 
     function getCropFrac() {
       if (!imgNaturalAspect) return null;
+      if (cropMode === "horizontal") {
+        return imgNaturalAspect > containerAspect ? containerAspect / imgNaturalAspect : 1.0;
+      }
       return imgNaturalAspect < containerAspect ? imgNaturalAspect / containerAspect : 1.0;
     }
     function updateCropLabel() {
       var cf = getCropFrac();
       if (cf === null) { cropLabel.textContent = ""; return; }
       var pct = Math.round(cf * 100);
-      cropLabel.textContent = "\u2014 " + pct + "% of image height visible";
+      var axis = cropMode === "horizontal" ? "width" : "height";
+      cropLabel.textContent = "— " + pct + "% of image " + axis + " visible";
       cropLabel.style.color = pct < 50 ? "#C2410C" : "#5a4f49";
     }
 
@@ -142,8 +154,7 @@
     header.appendChild(cropLabel);
     wrap.appendChild(header);
 
-    // ── Preview container (shows FULL image, crop rect overlaid) ──────────
-    // Height is determined by image aspect ratio once loaded; width is capped.
+    // ── Preview container ──────────────────────────────────────────────────
     var previewBox = document.createElement("div");
     previewBox.style.cssText = [
       "position:relative",
@@ -162,17 +173,23 @@
     previewImg.style.cssText = [
       "display:block",
       "width:100%",
-      "height:auto",       // natural aspect — full image visible
+      "height:auto",
       "pointer-events:none",
     ].join(";");
 
-    // Dimming overlays (outside the crop rectangle)
+    // Vertical crop overlays (top/bottom)
     var dimTop = document.createElement("div");
     dimTop.style.cssText = "position:absolute;left:0;right:0;top:0;background:rgba(0,0,0,0.55);pointer-events:none;z-index:1;";
     var dimBot = document.createElement("div");
     dimBot.style.cssText = "position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,0.55);pointer-events:none;z-index:1;";
 
-    // Crop-window border lines
+    // Horizontal crop overlays (left/right) — hidden until horizontal mode activates
+    var dimLeft = document.createElement("div");
+    dimLeft.style.cssText = "position:absolute;top:0;bottom:0;left:0;background:rgba(0,0,0,0.55);pointer-events:none;z-index:1;display:none;";
+    var dimRight = document.createElement("div");
+    dimRight.style.cssText = "position:absolute;top:0;bottom:0;right:0;background:rgba(0,0,0,0.55);pointer-events:none;z-index:1;display:none;";
+
+    // Vertical crop-window border lines
     var lineTop = document.createElement("div");
     lineTop.style.cssText = [
       "position:absolute", "left:0", "right:0", "height:2px",
@@ -183,16 +200,38 @@
     var lineBot = document.createElement("div");
     lineBot.style.cssText = lineTop.style.cssText;
 
-    // Drag handle (centered on crop rectangle)
-    var handle = document.createElement("div");
-    handle.style.cssText = [
+    // Horizontal crop-window border lines — hidden until horizontal mode activates
+    var lineLeft = document.createElement("div");
+    lineLeft.style.cssText = [
+      "position:absolute", "top:0", "bottom:0", "width:2px",
+      "background:" + barColor,
+      "box-shadow:0 0 6px " + barGlow,
+      "pointer-events:none", "z-index:2", "display:none",
+    ].join(";");
+    var lineRight = document.createElement("div");
+    lineRight.style.cssText = lineLeft.style.cssText;
+
+    // Drag handle (vertical mode: horizontal bar centered on crop rect)
+    var handleV = document.createElement("div");
+    handleV.style.cssText = [
       "position:absolute", "left:50%", "transform:translateX(-50%)",
       "background:" + barColor, "border-radius:8px",
       "width:52px", "height:18px",
       "display:flex", "align-items:center", "justify-content:center",
       "z-index:3", "pointer-events:none",
     ].join(";");
-    handle.innerHTML = '<svg width="16" height="10" viewBox="0 0 16 10" fill="none"><path d="M2 3.5h12M2 6.5h12" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg>';
+    handleV.innerHTML = '<svg width="16" height="10" viewBox="0 0 16 10" fill="none"><path d="M2 3.5h12M2 6.5h12" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg>';
+
+    // Drag handle (horizontal mode: vertical bar centered on crop rect) — hidden until used
+    var handleH = document.createElement("div");
+    handleH.style.cssText = [
+      "position:absolute", "top:50%", "transform:translateY(-50%)",
+      "background:" + barColor, "border-radius:8px",
+      "width:18px", "height:52px",
+      "display:none", "align-items:center", "justify-content:center",
+      "z-index:3", "pointer-events:none",
+    ].join(";");
+    handleH.innerHTML = '<svg width="10" height="16" viewBox="0 0 10 16" fill="none"><path d="M3.5 2v12M6.5 2v12" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg>';
 
     // Position badge
     var badge = document.createElement("div");
@@ -218,9 +257,14 @@
     previewBox.appendChild(placeholder);
     previewBox.appendChild(dimTop);
     previewBox.appendChild(dimBot);
+    previewBox.appendChild(dimLeft);
+    previewBox.appendChild(dimRight);
     previewBox.appendChild(lineTop);
     previewBox.appendChild(lineBot);
-    previewBox.appendChild(handle);
+    previewBox.appendChild(lineLeft);
+    previewBox.appendChild(lineRight);
+    previewBox.appendChild(handleV);
+    previewBox.appendChild(handleH);
     previewBox.appendChild(badge);
 
     var hint = document.createElement("p");
@@ -234,62 +278,82 @@
     var row = input.closest(".form-row") || input.parentNode;
     row.parentNode.insertBefore(wrap, row.nextSibling);
 
-    // ── Core: apply focal point ────────────────────────────────────────────
-    // cropFrac = fraction of image height that is visible in the container.
-    // When the image is wider than the container aspect, the full height is shown (cropFrac=1).
-    // When the image is taller (more portrait) than the container, only a portion is shown.
-    //
-    // CSS object-position: center Y% semantics:
-    //   The image is scaled so that the narrower axis fills the container.
-    //   Y% of the (image height in preview) aligns with Y% of the container height.
-    //   Equivalently: cropTop (in image coords) = focal_y/100 * (imgH - containerH_in_img_coords)
-    //
-    // In our preview (full image shown):
-    //   fullH = previewBox.clientHeight  (= natural image height scaled to preview width)
-    //   cropH = fullH * cropFrac
-    //   cropTop = (focal_y/100) * (fullH - cropH)
-
-    function applyFocal(pct) {
-      pct = Math.max(0, Math.min(100, pct));
+    // ── Apply focal (vertical) ─────────────────────────────────────────────
+    function applyFocalV(pct) {
       var cf = getCropFrac();
-      if (cf === null) return; // no image loaded yet
-
+      if (cf === null) return;
       var fullH = previewBox.clientHeight;
       if (!fullH) return;
-
       var cropH   = Math.round(fullH * cf);
       var cropTop = Math.round((pct / 100) * (fullH - cropH));
       var cropBot = cropTop + cropH;
-
       dimTop.style.height  = cropTop + "px";
       dimBot.style.height  = (fullH - cropBot) + "px";
       lineTop.style.top    = cropTop + "px";
       lineBot.style.top    = (cropBot - 2) + "px";
-      handle.style.top     = (cropTop + Math.round(cropH / 2) - 9) + "px";
+      handleV.style.top    = (cropTop + Math.round(cropH / 2) - 9) + "px";
+      badge.textContent = pct < 15 ? "Top" : pct < 35 ? "Upper" : pct < 65 ? "Center" : pct < 85 ? "Lower" : "Bottom";
+    }
 
-      badge.textContent =
-        pct < 15 ? "Top" : pct < 35 ? "Upper" : pct < 65 ? "Center" : pct < 85 ? "Lower" : "Bottom";
+    // ── Apply focal (horizontal) ───────────────────────────────────────────
+    function applyFocalH(pct) {
+      var cf = getCropFrac();
+      if (cf === null) return;
+      var fullW = previewBox.clientWidth;
+      if (!fullW) return;
+      var cropW    = Math.round(fullW * cf);
+      var cropLeft = Math.round((pct / 100) * (fullW - cropW));
+      var cropRight = cropLeft + cropW;
+      dimLeft.style.width   = cropLeft + "px";
+      dimRight.style.width  = (fullW - cropRight) + "px";
+      lineLeft.style.left   = cropLeft + "px";
+      lineRight.style.left  = (cropRight - 2) + "px";
+      var fullH = previewBox.clientHeight;
+      handleH.style.left    = (cropLeft + Math.round(cropW / 2) - 9) + "px";
+      handleH.style.top     = (Math.round(fullH / 2) - 26) + "px";
+      badge.textContent = pct < 15 ? "Left" : pct < 35 ? "L-center" : pct < 65 ? "Center" : pct < 85 ? "R-center" : "Right";
+    }
+
+    function applyFocal(pct) {
+      pct = Math.max(0, Math.min(100, pct));
+      if (cropMode === "horizontal") {
+        applyFocalH(pct);
+      } else {
+        applyFocalV(pct);
+      }
     }
 
     function setFocal(pct) {
       pct = Math.round(Math.max(0, Math.min(100, pct)));
-      input.value = pct;
+      if (cropMode === "horizontal") {
+        if (focalXInput) focalXInput.value = pct;
+      } else {
+        input.value = pct;
+      }
       applyFocal(pct);
     }
 
-    // Convert a clientY mouse/touch position → focal_y percentage
-    // Click-to-center: we want the crop window to center on the click point.
-    //   focal_y = clamp( (y_in_img - cropH/2) / (fullH - cropH) * 100, 0, 100 )
+    // ── Convert mouse/touch position → focal percentage ────────────────────
     function pctFromEvent(e) {
       var rect = previewBox.getBoundingClientRect();
-      var clientY = e.touches ? e.touches[0].clientY : e.clientY;
-      var yInImg = clientY - rect.top;
       var cf = getCropFrac();
-      if (cf === null || cf >= 1) return (yInImg / rect.height) * 100;
-      var cropH = rect.height * cf;
-      var denom = rect.height - cropH;
-      if (denom <= 0) return 50;
-      return ((yInImg - cropH / 2) / denom) * 100;
+      if (cropMode === "horizontal") {
+        var clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        var xInImg = clientX - rect.left;
+        if (cf === null || cf >= 1) return (xInImg / rect.width) * 100;
+        var cropW = rect.width * cf;
+        var denomW = rect.width - cropW;
+        if (denomW <= 0) return 50;
+        return ((xInImg - cropW / 2) / denomW) * 100;
+      } else {
+        var clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        var yInImg = clientY - rect.top;
+        if (cf === null || cf >= 1) return (yInImg / rect.height) * 100;
+        var cropH = rect.height * cf;
+        var denomH = rect.height - cropH;
+        if (denomH <= 0) return 50;
+        return ((yInImg - cropH / 2) / denomH) * 100;
+      }
     }
 
     // ── Drag ──────────────────────────────────────────────────────────────
@@ -311,7 +375,6 @@
       var previewW = Math.min(previewBox.parentElement ? previewBox.parentElement.clientWidth : PREVIEW_MAX_W, PREVIEW_MAX_W);
       var naturalH = previewW / imgNaturalAspect;
       if (naturalH > PREVIEW_MAX_IMG_H) {
-        // constrain: set explicit height and use object-fit to show full image scaled down
         previewImg.style.height = PREVIEW_MAX_IMG_H + "px";
         previewImg.style.objectFit = "contain";
         previewImg.style.objectPosition = "center top";
@@ -322,9 +385,42 @@
         previewImg.style.objectPosition = "";
       }
 
+      // Determine crop direction: horizontal only for mobile pickers with an X input
+      var useHorizontal = vd.isMobile && focalXInput && (imgNaturalAspect > containerAspect);
+      if (useHorizontal !== (cropMode === "horizontal")) {
+        cropMode = useHorizontal ? "horizontal" : "vertical";
+
+        if (cropMode === "horizontal") {
+          // Switch to horizontal overlays
+          dimTop.style.display  = "none"; dimBot.style.display   = "none";
+          lineTop.style.display = "none"; lineBot.style.display  = "none";
+          handleV.style.display = "none";
+          dimLeft.style.display  = "block"; dimRight.style.display  = "block";
+          lineLeft.style.display  = "block"; lineRight.style.display  = "block";
+          handleH.style.display  = "flex";
+          previewBox.style.cursor = "ew-resize";
+          hint.textContent = "Drag left or right — the highlighted area between the lines is what visitors see on mobile.";
+        } else {
+          // Switch to vertical overlays
+          dimLeft.style.display  = "none"; dimRight.style.display  = "none";
+          lineLeft.style.display  = "none"; lineRight.style.display  = "none";
+          handleH.style.display  = "none";
+          dimTop.style.display  = "block"; dimBot.style.display   = "block";
+          lineTop.style.display = "block"; lineBot.style.display  = "block";
+          handleV.style.display = "flex";
+          previewBox.style.cursor = "ns-resize";
+          hint.textContent = "Drag up or down — the highlighted area between the lines is what visitors see on " +
+            (vd.isMobile ? "mobile" : "desktop") + ".";
+        }
+      }
+
       updateCropLabel();
-      // Defer applyFocal one tick so the DOM height has settled
-      setTimeout(function () { applyFocal(parseInt(input.value) || 50); }, 0);
+      setTimeout(function () {
+        var pct = cropMode === "horizontal"
+          ? (focalXInput ? parseInt(focalXInput.value) || 50 : 50)
+          : (parseInt(input.value) || 50);
+        applyFocal(pct);
+      }, 0);
     });
 
     previewImg.addEventListener("error", function () {
@@ -342,7 +438,9 @@
         placeholder.style.display = "flex";
         dimTop.style.height = "0"; dimBot.style.height = "0";
         lineTop.style.top = "-4px"; lineBot.style.top = "-4px";
-        handle.style.top = "-20px";
+        handleV.style.top = "-20px";
+        dimLeft.style.width = "0"; dimRight.style.width = "0";
+        lineLeft.style.left = "-4px"; lineRight.style.left = "-4px";
         badge.textContent = "";
         return;
       }
@@ -358,8 +456,6 @@
     function getUrlFromFileInput(fi) {
       if (!fi) return null;
       if (fi.files && fi.files.length) return URL.createObjectURL(fi.files[0]);
-      // Walk up: p.file-upload (Django ClearableFileInput wrapper when file is saved),
-      // then .field-box, then .form-row as broader fallback.
       var c = fi.closest("p.file-upload") || fi.closest(".field-box") || fi.closest(".form-row");
       if (c) {
         var anchors = c.querySelectorAll("a[href]");
@@ -375,12 +471,9 @@
     }
 
     function getCurrentImageUrl() {
-      // Primary source: mobile-specific file input (or desktop file input for desktop pickers)
       var url = getUrlFromFileInput(imageFileInput);
       if (url) return url;
-      // URL text field
       if (imageUrlInput && imageUrlInput.value.trim()) return imageUrlInput.value.trim();
-      // Fallback for mobile pickers: show desktop image so crop preview is never blank
       if (vd.isMobile) {
         var fallback = getUrlFromFileInput(desktopFileInput);
         if (fallback) return fallback;
@@ -391,7 +484,6 @@
 
     if (imageFileInput) imageFileInput.addEventListener("change", function () { showImage(getCurrentImageUrl()); });
     if (imageUrlInput)  imageUrlInput.addEventListener("input",   function () { showImage(getCurrentImageUrl()); });
-    // Re-render mobile preview when the desktop image changes (fallback path)
     if (vd.isMobile && desktopFileInput) desktopFileInput.addEventListener("change", function () { showImage(getCurrentImageUrl()); });
     if (vd.isMobile && desktopUrlInput)  desktopUrlInput.addEventListener("input",   function () { showImage(getCurrentImageUrl()); });
 

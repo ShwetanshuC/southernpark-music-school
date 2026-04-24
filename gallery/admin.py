@@ -28,8 +28,8 @@ class GalleryPhotoAdmin(ImageToolsAdminMixin, admin.ModelAdmin):
             "description": "Shown on desktop. Displayed at ~260×200 px in the grid.",
         }),
         ("Mobile Image", {
-            "fields": ("image_mobile", "image_focal_y_mobile"),
-            "description": "Optional: separate image for phones (&lt;640 px). Falls back to the desktop image if empty.",
+            "fields": ("image_mobile", "image_focal_y_mobile", "image_focal_x_mobile"),
+            "description": "Optional: separate image for phones (&lt;640 px). Falls back to the desktop image if empty. Both focal point pickers show accurate mobile crop previews.",
         }),
         ("Details", {
             "fields": ("caption", "sort_order", "is_active"),
