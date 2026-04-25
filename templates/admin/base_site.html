@@ -472,16 +472,34 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 </script>
 
-<!-- ── Select readable text: overlay approach (bypasses macOS native text rendering) ── -->
+<!-- ── Select readable text: opacity-0 native + styled shell overlay ── -->
 <style>
-.spms-sel-shell { position: relative; display: inline-block; vertical-align: middle; }
-.spms-sel-shell select { color: transparent !important; -webkit-text-fill-color: transparent !important; }
+.spms-sel-shell {
+    position: relative; display: inline-block; vertical-align: middle;
+    background-color: #1e1a17; border: 1px solid #3b342f; border-radius: 4px;
+    cursor: pointer; box-sizing: border-box;
+}
+.spms-sel-shell:hover { border-color: #5a4a43; }
+.spms-sel-shell:focus-within { border-color: #C2410C; box-shadow: 0 0 0 3px rgba(194,65,12,0.2); }
+.spms-sel-shell::after {
+    content: ''; position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+    width: 14px; height: 14px; pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23C2410C' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-size: 14px;
+}
+.spms-sel-shell select {
+    position: absolute !important; inset: 0 !important;
+    width: 100% !important; height: 100% !important;
+    opacity: 0 !important; cursor: pointer !important;
+    margin: 0 !important; padding: 0 !important;
+    border: none !important; background: none !important;
+}
 .spms-sel-ov {
-    position: absolute; top: 0; left: 14px; right: 36px; bottom: 0;
     display: flex; align-items: center;
+    padding: 8px 36px 8px 14px; min-height: 36px;
     color: #f6efe8; font-size: 14px; font-family: 'Poppins', sans-serif;
     pointer-events: none; overflow: hidden; white-space: nowrap;
-    text-decoration: none !important;
+    text-decoration: none !important; line-height: 1;
 }
 </style>
 <script>
@@ -489,10 +507,11 @@ document.addEventListener("DOMContentLoaded", function() {
     function wrap(sel) {
         if (sel._spmsWrapped) return;
         sel._spmsWrapped = true;
+        var w = sel.offsetWidth || 200;
         var par = sel.parentElement;
         var shell = document.createElement('span');
         shell.className = 'spms-sel-shell';
-        shell.style.width = sel.offsetWidth ? sel.offsetWidth + 'px' : 'auto';
+        shell.style.width = w + 'px';
         par.insertBefore(shell, sel);
         shell.appendChild(sel);
         var ov = document.createElement('span');
