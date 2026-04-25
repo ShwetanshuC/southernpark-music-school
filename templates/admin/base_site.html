@@ -472,24 +472,46 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 </script>
 
-<!-- ── Select text color: JS fallback for macOS/Safari system color override ── -->
+<!-- ── Select readable text: overlay approach (bypasses macOS native text rendering) ── -->
+<style>
+.spms-sel-shell { position: relative; display: inline-block; vertical-align: middle; }
+.spms-sel-shell select { color: transparent !important; -webkit-text-fill-color: transparent !important; }
+.spms-sel-ov {
+    position: absolute; top: 0; left: 14px; right: 36px; bottom: 0;
+    display: flex; align-items: center;
+    color: #f6efe8; font-size: 14px; font-family: 'Poppins', sans-serif;
+    pointer-events: none; overflow: hidden; white-space: nowrap;
+}
+</style>
 <script>
 (function() {
-    function fixSelects() {
-        document.querySelectorAll('select').forEach(function(s) {
-            s.style.setProperty('color', '#f6efe8', 'important');
-            s.style.setProperty('-webkit-text-fill-color', '#f6efe8', 'important');
-            s.style.setProperty('background-color', '#1e1a17', 'important');
-        });
+    function wrap(sel) {
+        if (sel._spmsWrapped) return;
+        sel._spmsWrapped = true;
+        var par = sel.parentElement;
+        var shell = document.createElement('span');
+        shell.className = 'spms-sel-shell';
+        shell.style.width = sel.offsetWidth ? sel.offsetWidth + 'px' : 'auto';
+        par.insertBefore(shell, sel);
+        shell.appendChild(sel);
+        var ov = document.createElement('span');
+        ov.className = 'spms-sel-ov';
+        shell.appendChild(ov);
+        function sync() {
+            var opt = sel.options[sel.selectedIndex];
+            ov.textContent = opt ? opt.text : '';
+        }
+        sel.addEventListener('change', sync);
+        sync();
     }
-    document.addEventListener('DOMContentLoaded', fixSelects);
-    // Cover selects added dynamically (inline admin rows, popups)
+    function run() {
+        document.querySelectorAll('select:not([multiple]):not([size])').forEach(wrap);
+    }
+    document.addEventListener('DOMContentLoaded', run);
     if (window.MutationObserver) {
-        var timer;
-        new MutationObserver(function() {
-            clearTimeout(timer);
-            timer = setTimeout(fixSelects, 50);
-        }).observe(document.documentElement, { childList: true, subtree: true });
+        var t;
+        new MutationObserver(function() { clearTimeout(t); t = setTimeout(run, 60); })
+            .observe(document.documentElement, { childList: true, subtree: true });
     }
 })();
 </script>
