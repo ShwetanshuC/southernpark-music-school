@@ -166,13 +166,15 @@
         appearance: none !important;
         -webkit-appearance: none !important;
         -moz-appearance: none !important;
-        background-color: #110f0e !important;
+        forced-color-adjust: none !important;
+        color-scheme: dark !important;
+        background-color: #1e1a17 !important;
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23c2410c' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
         background-repeat: no-repeat !important;
         background-position: right 12px center !important;
         background-size: 14px !important;
-        color: #fff !important;
-        -webkit-text-fill-color: #fff !important;
+        color: #f6efe8 !important;
+        -webkit-text-fill-color: #f6efe8 !important;
         border: 1px solid var(--border-color) !important;
         padding: 10px 36px 10px 14px !important;
         border-radius: 8px !important;
@@ -182,8 +184,8 @@
 
     select option,
     select optgroup {
-        color: #e7e5e4;
-        background: #1c1917;
+        color: #f6efe8;
+        background: #1e1a17;
     }
 
     input[type=text]:focus, select:focus, textarea:focus {
@@ -468,6 +470,28 @@ document.addEventListener("DOMContentLoaded", function() {
         if (c) c.style.margin = '0';
     }
 });
+</script>
+
+<!-- ── Select text color: JS fallback for macOS/Safari system color override ── -->
+<script>
+(function() {
+    function fixSelects() {
+        document.querySelectorAll('select').forEach(function(s) {
+            s.style.setProperty('color', '#f6efe8', 'important');
+            s.style.setProperty('-webkit-text-fill-color', '#f6efe8', 'important');
+            s.style.setProperty('background-color', '#1e1a17', 'important');
+        });
+    }
+    document.addEventListener('DOMContentLoaded', fixSelects);
+    // Cover selects added dynamically (inline admin rows, popups)
+    if (window.MutationObserver) {
+        var timer;
+        new MutationObserver(function() {
+            clearTimeout(timer);
+            timer = setTimeout(fixSelects, 50);
+        }).observe(document.documentElement, { childList: true, subtree: true });
+    }
+})();
 </script>
 
 <!-- ── Cropper.js ── -->
