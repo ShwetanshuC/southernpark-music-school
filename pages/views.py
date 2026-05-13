@@ -68,6 +68,12 @@ def robots_txt(request):
     return HttpResponse(content, content_type="text/plain")
 
 
+def program_view(request):
+    from .models import RecitalProgram
+    program = RecitalProgram.objects.first()
+    return render(request, "pages/program.html", {"program": program})
+
+
 def sitemap_xml(request):
     from django.http import HttpResponse
     from django.utils import timezone
