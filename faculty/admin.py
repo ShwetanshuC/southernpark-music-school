@@ -1,4 +1,5 @@
 from django.contrib import admin
+from adminsortable2.admin import SortableAdminMixin
 from .models import Instrument, FacultyMember
 
 
@@ -38,9 +39,8 @@ class ImageToolsAdminMixin:
 
 
 @admin.register(Instrument)
-class InstrumentAdmin(AutoBackupMixin, admin.ModelAdmin):
-    list_display = ["name", "slug", "sort_order"]
-    list_editable = ["sort_order"]
+class InstrumentAdmin(AutoBackupMixin, SortableAdminMixin, admin.ModelAdmin):
+    list_display = ["name", "slug"]
 
 
 @admin.register(FacultyMember)

@@ -70,6 +70,7 @@ INSTALLED_APPS = [
     "easy_thumbnails",
     "colorfield",
     "django_ckeditor_5", # Rich text editor for policies
+    "adminsortable2",
 ]
 
 MIDDLEWARE = [
