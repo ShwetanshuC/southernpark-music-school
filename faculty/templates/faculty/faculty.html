@@ -32,39 +32,84 @@
         </div>
       </section>
 
-      {% for label, members in faculty_groups %}
-      <section class="faculty-section py-8" data-section="{{ label }}">
-        <h2 class="faculty-section-heading">{{ label }}</h2>
-        <div class="faculty-grid">
-          {% for member in members %}
-          <div class="flip-card" onclick="toggleFlip(this)" role="button" tabindex="0" aria-expanded="false"
-            data-tags="{{ member.instrument_tag }}">
-            <div class="flip-card-inner">
-              <div class="flip-card-front">
-                {% if member.photo %}
-                  <picture>
-                    {% if member.photo_mobile %}<source media="(max-width:576px)" srcset="{{ member.photo_mobile.url }}">{% endif %}
-                    <img src="{{ member.photo.url }}" alt="{{ member.name }}" loading="lazy" decoding="async"
-                         style="--fy:{{ member.image_focal_y|default:50 }}%;--fy-m:{{ member.image_focal_y_mobile|default:member.image_focal_y|default:50 }}%;--fx-m:{{ member.image_focal_x_mobile|default:50 }}%;" />
-                  </picture>
-                {% else %}
-                  <img src="{% static 'images/piano.png' %}" alt="{{ member.name }}" loading="lazy" decoding="async" />
-                {% endif %}
-                <div class="p-3">
-                  <h5>{{ member.name }}</h5>
-                  <p>{{ member.title }}</p>
+      {% for row in faculty_rows %}
+
+        {% if row.type == "full" %}
+          {# ── Full-width section ── #}
+          <section class="faculty-section py-8" data-section="{{ row.label }}">
+            <h2 class="faculty-section-heading">{{ row.label }}</h2>
+            <div class="faculty-grid">
+              {% for member in row.members %}
+              <div class="flip-card" onclick="toggleFlip(this)" role="button" tabindex="0" aria-expanded="false"
+                data-tags="{{ member.instrument_tag }}">
+                <div class="flip-card-inner">
+                  <div class="flip-card-front">
+                    {% if member.photo %}
+                      <picture>
+                        {% if member.photo_mobile %}<source media="(max-width:576px)" srcset="{{ member.photo_mobile.url }}">{% endif %}
+                        <img src="{{ member.photo.url }}" alt="{{ member.name }}" loading="lazy" decoding="async"
+                             style="--fy:{{ member.image_focal_y|default:50 }}%;--fy-m:{{ member.image_focal_y_mobile|default:member.image_focal_y|default:50 }}%;--fx-m:{{ member.image_focal_x_mobile|default:50 }}%;" />
+                      </picture>
+                    {% else %}
+                      <img src="{% static 'images/piano.png' %}" alt="{{ member.name }}" loading="lazy" decoding="async" />
+                    {% endif %}
+                    <div class="p-3">
+                      <h5>{{ member.name }}</h5>
+                      <p>{{ member.title }}</p>
+                    </div>
+                  </div>
+                  <div class="flip-card-back">
+                    <h5>{{ member.name }}</h5>
+                    <p>{{ member.bio }}</p>
+                    <a href="mailto:{{ site_settings.email }}?subject=Lesson%20Inquiry" class="btn">Request Lesson</a>
+                  </div>
                 </div>
               </div>
-              <div class="flip-card-back">
-                <h5>{{ member.name }}</h5>
-                <p>{{ member.bio }}</p>
-                <a href="mailto:{{ site_settings.email }}?subject=Lesson%20Inquiry" class="btn">Request Lesson</a>
-              </div>
+              {% endfor %}
             </div>
+          </section>
+
+        {% else %}
+          {# ── Packed row: multiple small sections side-by-side ── #}
+          <div class="faculty-row-packed">
+            {% for label, members in row.groups %}
+            <section class="faculty-section faculty-section-packed" data-section="{{ label }}">
+              <h2 class="faculty-section-heading">{{ label }}</h2>
+              <div class="faculty-grid">
+                {% for member in members %}
+                <div class="flip-card" onclick="toggleFlip(this)" role="button" tabindex="0" aria-expanded="false"
+                  data-tags="{{ member.instrument_tag }}">
+                  <div class="flip-card-inner">
+                    <div class="flip-card-front">
+                      {% if member.photo %}
+                        <picture>
+                          {% if member.photo_mobile %}<source media="(max-width:576px)" srcset="{{ member.photo_mobile.url }}">{% endif %}
+                          <img src="{{ member.photo.url }}" alt="{{ member.name }}" loading="lazy" decoding="async"
+                               style="--fy:{{ member.image_focal_y|default:50 }}%;--fy-m:{{ member.image_focal_y_mobile|default:member.image_focal_y|default:50 }}%;--fx-m:{{ member.image_focal_x_mobile|default:50 }}%;" />
+                        </picture>
+                      {% else %}
+                        <img src="{% static 'images/piano.png' %}" alt="{{ member.name }}" loading="lazy" decoding="async" />
+                      {% endif %}
+                      <div class="p-3">
+                        <h5>{{ member.name }}</h5>
+                        <p>{{ member.title }}</p>
+                      </div>
+                    </div>
+                    <div class="flip-card-back">
+                      <h5>{{ member.name }}</h5>
+                      <p>{{ member.bio }}</p>
+                      <a href="mailto:{{ site_settings.email }}?subject=Lesson%20Inquiry" class="btn">Request Lesson</a>
+                    </div>
+                  </div>
+                </div>
+                {% endfor %}
+              </div>
+            </section>
+            {% endfor %}
           </div>
-          {% endfor %}
-        </div>
-      </section>
+
+        {% endif %}
+
       {% empty %}
       <p class="text-stone-500 text-center py-10">No faculty listed yet.</p>
       {% endfor %}
