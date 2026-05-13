@@ -3,7 +3,7 @@
 
   // Rendered pixel dimensions of each image container on the live site.
   var CONFIGS = {
-    heroslide:           { desktop: [1440, 720], mobile: [375, 534] },
+    heroslide:           { desktop: [1440, 860], mobile: [375, 680] },
     galleryphoto:        { desktop: [260,  200], mobile: [375, 200] },
     facultymember:       { desktop: [240,  240], mobile: [375, 276] },
     homesection_about:   { desktop: [596,  288], mobile: [375, 288] },
@@ -12,7 +12,7 @@
   };
 
   var PREVIEW_MAX_W = 460;
-  var PREVIEW_MAX_IMG_H = 380;
+  var PREVIEW_MAX_IMG_H = 440;
 
   function getViewDims(inputName) {
     var isMobile = inputName.indexOf("_mobile") !== -1;

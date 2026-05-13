@@ -123,14 +123,15 @@
       btn.style.cssText = "margin-left:12px;padding:4px 10px;font-size:11px;";
       btn.addEventListener("click", function (e) {
         e.preventDefault();
-        fetch(a.href, { mode: "cors", cache: "no-cache" })
+        var proxyUrl = "/admin-image-proxy/?url=" + encodeURIComponent(a.href);
+        fetch(proxyUrl, { cache: "no-cache" })
           .then(function (res) { return res.blob(); })
           .then(function (blob) {
             var filename = a.textContent.trim() || (Date.now() + ".jpg");
             openModalForImage(input, new File([blob], filename, { type: blob.type || "image/jpeg" }));
           })
           .catch(function () {
-            alert("Could not load this image for cropping.\nIf storage is on S3, ensure CORS allows GET requests from this domain.");
+            alert("Could not load this image for cropping.\nPlease try uploading a new version instead.");
           });
       });
       a.parentNode.insertBefore(btn, a.nextSibling);

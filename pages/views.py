@@ -74,6 +74,40 @@ def program_view(request):
     return render(request, "pages/program.html", {"program": program})
 
 
+def admin_image_proxy(request):
+    """Server-side proxy for admin image cropper — bypasses S3 CORS for existing images."""
+    from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden
+    import urllib.request
+
+    if not request.user.is_staff:
+        return HttpResponseForbidden()
+
+    url = request.GET.get("url", "").strip()
+    if not url:
+        return HttpResponseBadRequest("No URL")
+
+    from django.conf import settings
+    bucket = getattr(settings, "AWS_STORAGE_BUCKET_NAME", "")
+    cf_domain = getattr(settings, "AWS_S3_CUSTOM_DOMAIN", "")
+
+    allowed = (
+        (bucket and (f"{bucket}.s3." in url or f"s3.amazonaws.com/{bucket}" in url))
+        or (cf_domain and cf_domain in url)
+        or url.startswith(request.build_absolute_uri("/media/"))
+        or (url.startswith("/media/") and not url.startswith("//"))
+    )
+    if not allowed:
+        return HttpResponseForbidden("URL not allowed")
+
+    try:
+        req = urllib.request.Request(url, headers={"User-Agent": "Django/admin-proxy"})
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            ct = resp.headers.get("Content-Type", "image/jpeg")
+            return HttpResponse(resp.read(), content_type=ct)
+    except Exception:
+        return HttpResponseBadRequest("Failed to fetch image")
+
+
 def sitemap_xml(request):
     from django.http import HttpResponse
     from django.utils import timezone
