@@ -511,20 +511,18 @@ header { position: relative; display: block; line-height: 0; font-size: 0; }
 }
 .faculty-row-packed:first-child { border-top: none; }
 
-/* Each section inside a packed row */
+/* Each section inside a packed row — no dividing lines, gap handled by padding */
 .faculty-section-packed {
   flex: 1;
   min-width: 0;
   border-top: none !important;
-  padding: 2rem 1.5rem;
-  border-right: 1px solid #e7e5e4;
+  padding: 2rem 2rem;
 }
-.faculty-section-packed:last-child { border-right: none; }
 
 /* Stack packed sections on mobile */
 @media (max-width: 640px) {
   .faculty-row-packed { flex-direction: column; }
-  .faculty-section-packed { border-right: none; padding: 2rem 0; }
+  .faculty-section-packed { padding: 2rem 0; }
 }
 
 .faculty-section-heading {
