@@ -9,11 +9,13 @@
 
     .spms-dash { background: #1c1917; min-height: 60vh; }
 
+    .spms-dash-inner { max-width: 1100px; margin: 0 auto; }
+
     .spms-tab-bar {
         display: flex;
         background: #110f0e;
         border-bottom: 1px solid #44403c;
-        padding: 0 40px;
+        padding: 0;
         gap: 0;
         overflow-x: auto;
         scrollbar-width: none;
@@ -49,13 +51,16 @@
     }
 
     .spms-links {
-        list-style: none;
+        list-style: none !important;
         margin: 0;
         padding: 0;
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
         gap: 10px;
     }
+
+    .spms-links li { list-style: none !important; }
+    .spms-links li::marker { content: '' !important; display: none !important; }
 
     .spms-links li a {
         display: flex;
@@ -97,6 +102,7 @@
 </style>
 
 <div class="spms-dash">
+<div class="spms-dash-inner">
 
     <!-- Tab bar -->
     <div class="spms-tab-bar">
@@ -215,7 +221,8 @@
         </ul>
     </div>
 
-</div>
+</div><!-- /.spms-dash-inner -->
+</div><!-- /.spms-dash (extra close) -->
 
 <script>
 (function() {
