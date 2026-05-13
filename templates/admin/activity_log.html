@@ -1,0 +1,166 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block title %}Activity Log | Southern Park Music School Admin{% endblock %}
+
+{% block content %}
+<style>
+    #content-main { padding: 0 !important; }
+
+    .spms-log { background: #1c1917; min-height: 60vh; padding: 36px 40px; max-width: 1100px; margin: 0 auto; }
+
+    .spms-log-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .spms-log-title {
+        font-family: 'Playfair Display', Georgia, serif;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #fff;
+        margin: 0;
+    }
+
+    .spms-log-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: #a8a29e;
+        text-decoration: none;
+        font-size: 0.8rem;
+        font-family: 'Poppins', sans-serif;
+        font-weight: 500;
+        transition: color 0.15s;
+    }
+    .spms-log-back:hover { color: #fff; }
+
+    .spms-log-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-family: 'Poppins', sans-serif;
+        font-size: 0.82rem;
+    }
+
+    .spms-log-table th {
+        background: #110f0e;
+        color: #a8a29e;
+        font-weight: 600;
+        font-size: 0.72rem;
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
+        padding: 10px 14px;
+        text-align: left;
+        border-bottom: 1px solid #44403c;
+        white-space: nowrap;
+    }
+
+    .spms-log-table td {
+        padding: 11px 14px;
+        border-bottom: 1px solid #292524;
+        color: #e7e5e4;
+        vertical-align: middle;
+    }
+
+    .spms-log-table tr:last-child td { border-bottom: none; }
+    .spms-log-table tr:hover td { background: #231f1c; }
+
+    .spms-log-time {
+        color: #78716c;
+        font-size: 0.78rem;
+        white-space: nowrap;
+    }
+
+    .spms-log-user {
+        color: #fb923c;
+        font-weight: 500;
+        white-space: nowrap;
+    }
+
+    .spms-badge {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        white-space: nowrap;
+    }
+    .spms-badge-add    { background: #14532d; color: #86efac; }
+    .spms-badge-change { background: #431407; color: #fdba74; }
+    .spms-badge-delete { background: #450a0a; color: #fca5a5; }
+
+    .spms-log-model {
+        color: #a8a29e;
+        font-size: 0.78rem;
+    }
+
+    .spms-log-object {
+        color: #e7e5e4;
+        max-width: 320px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .spms-log-empty {
+        text-align: center;
+        padding: 48px 20px;
+        color: #57534e;
+        font-size: 0.9rem;
+    }
+</style>
+
+<div class="spms-log">
+    <div class="spms-log-header">
+        <p class="spms-log-title">Activity Log</p>
+        <a class="spms-log-back" href="{% url 'admin:index' %}">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+            Back to Dashboard
+        </a>
+    </div>
+
+    {% if entries %}
+    <table class="spms-log-table">
+        <thead>
+            <tr>
+                <th>Date &amp; Time</th>
+                <th>User</th>
+                <th>Action</th>
+                <th>Section</th>
+                <th>Item</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for entry in entries %}
+            <tr>
+                <td class="spms-log-time">
+                    {{ entry.action_time|date:"M j, Y" }}<br>
+                    <span style="font-size:0.72rem">{{ entry.action_time|time:"g:i A" }}</span>
+                </td>
+                <td class="spms-log-user">{{ entry.user.get_full_name|default:entry.user.username }}</td>
+                <td>
+                    {% if entry.is_addition %}
+                        <span class="spms-badge spms-badge-add">Added</span>
+                    {% elif entry.is_change %}
+                        <span class="spms-badge spms-badge-change">Changed</span>
+                    {% elif entry.is_deletion %}
+                        <span class="spms-badge spms-badge-delete">Deleted</span>
+                    {% endif %}
+                </td>
+                <td class="spms-log-model">{{ entry.content_type.name|capfirst }}</td>
+                <td class="spms-log-object" title="{{ entry.object_repr }}">{{ entry.object_repr }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="spms-log-empty">No activity recorded yet.</div>
+    {% endif %}
+</div>
+{% endblock %}
