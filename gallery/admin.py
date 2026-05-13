@@ -3,6 +3,28 @@ from django.utils.html import format_html
 from .models import GalleryPhoto, GalleryVideo
 
 
+def _backup():
+    try:
+        from sitecontent.s3_backup import backup_db
+        backup_db()
+    except Exception:
+        pass
+
+
+class AutoBackupMixin:
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+        _backup()
+
+    def delete_model(self, request, obj):
+        super().delete_model(request, obj)
+        _backup()
+
+    def delete_queryset(self, request, queryset):
+        super().delete_queryset(request, queryset)
+        _backup()
+
+
 class ImageToolsAdminMixin:
     class Media:
         css = {"all": [
@@ -17,7 +39,7 @@ class ImageToolsAdminMixin:
 
 
 @admin.register(GalleryPhoto)
-class GalleryPhotoAdmin(ImageToolsAdminMixin, admin.ModelAdmin):
+class GalleryPhotoAdmin(AutoBackupMixin, ImageToolsAdminMixin, admin.ModelAdmin):
     list_display = ["thumbnail_preview", "display_name", "sort_order", "is_active"]
     list_editable = ["sort_order", "is_active"]
     list_display_links = ["thumbnail_preview", "display_name"]
@@ -58,6 +80,6 @@ class GalleryPhotoAdmin(ImageToolsAdminMixin, admin.ModelAdmin):
 
 
 @admin.register(GalleryVideo)
-class GalleryVideoAdmin(admin.ModelAdmin):
+class GalleryVideoAdmin(AutoBackupMixin, admin.ModelAdmin):
     list_display = ["title", "youtube_url", "sort_order", "is_active"]
     list_editable = ["sort_order", "is_active"]

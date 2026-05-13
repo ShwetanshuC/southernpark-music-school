@@ -2,6 +2,28 @@ from django.contrib import admin
 from .models import Instrument, FacultyMember
 
 
+def _backup():
+    try:
+        from sitecontent.s3_backup import backup_db
+        backup_db()
+    except Exception:
+        pass
+
+
+class AutoBackupMixin:
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+        _backup()
+
+    def delete_model(self, request, obj):
+        super().delete_model(request, obj)
+        _backup()
+
+    def delete_queryset(self, request, queryset):
+        super().delete_queryset(request, queryset)
+        _backup()
+
+
 class ImageToolsAdminMixin:
     class Media:
         css = {"all": [
@@ -16,13 +38,13 @@ class ImageToolsAdminMixin:
 
 
 @admin.register(Instrument)
-class InstrumentAdmin(admin.ModelAdmin):
+class InstrumentAdmin(AutoBackupMixin, admin.ModelAdmin):
     list_display = ["name", "slug", "sort_order"]
     list_editable = ["sort_order"]
 
 
 @admin.register(FacultyMember)
-class FacultyMemberAdmin(ImageToolsAdminMixin, admin.ModelAdmin):
+class FacultyMemberAdmin(AutoBackupMixin, ImageToolsAdminMixin, admin.ModelAdmin):
     list_display = ["name", "title", "instrument", "sort_order", "is_active"]
     list_editable = ["sort_order", "is_active"]
     list_filter = ["instrument", "is_active"]

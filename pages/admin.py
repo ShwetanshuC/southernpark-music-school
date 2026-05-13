@@ -2,8 +2,27 @@ from django.contrib import admin
 from .models import RecitalProgram
 
 
+def _backup():
+    try:
+        from sitecontent.s3_backup import backup_db
+        backup_db()
+    except Exception:
+        pass
+
+
 @admin.register(RecitalProgram)
 class RecitalProgramAdmin(admin.ModelAdmin):
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+        _backup()
+
+    def delete_model(self, request, obj):
+        super().delete_model(request, obj)
+        _backup()
+
+    def delete_queryset(self, request, queryset):
+        super().delete_queryset(request, queryset)
+        _backup()
     fields = ("title", "pdf", "uploaded_at")
     readonly_fields = ("uploaded_at",)
 

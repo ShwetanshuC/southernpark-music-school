@@ -8,6 +8,28 @@ from django.urls import reverse, path
 from .models import SiteSettings, HeroSlide, HomeSection, HomeStat, HomeFeature, HomeHistoryItem
 
 
+def _backup():
+    try:
+        from sitecontent.s3_backup import backup_db
+        backup_db()
+    except Exception:
+        pass
+
+
+class AutoBackupMixin:
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+        _backup()
+
+    def delete_model(self, request, obj):
+        super().delete_model(request, obj)
+        _backup()
+
+    def delete_queryset(self, request, queryset):
+        super().delete_queryset(request, queryset)
+        _backup()
+
+
 class ImageToolsAdminMixin:
     class Media:
         css = {"all": [
@@ -50,7 +72,7 @@ _ALERT_COLOR_HELP = (
 
 
 @admin.register(SiteSettings)
-class SiteSettingsAdmin(admin.ModelAdmin):
+class SiteSettingsAdmin(AutoBackupMixin, admin.ModelAdmin):
     fieldsets = (
         ("Alert Banner", {
             "fields": ("alert_enabled", "alert_message", "alert_color"),
@@ -98,7 +120,7 @@ class SiteSettingsAdmin(admin.ModelAdmin):
         return super().change_view(request, object_id, form_url, extra_context)
 
 @admin.register(HeroSlide)
-class HeroSlideAdmin(ImageToolsAdminMixin, admin.ModelAdmin):
+class HeroSlideAdmin(AutoBackupMixin, ImageToolsAdminMixin, admin.ModelAdmin):
     list_display = ["__str__", "sort_order", "is_active"]
     list_editable = ["sort_order", "is_active"]
 
@@ -120,7 +142,7 @@ class HeroSlideAdmin(ImageToolsAdminMixin, admin.ModelAdmin):
     )
 
 @admin.register(HomeSection)
-class HomeSectionAdmin(ImageToolsAdminMixin, admin.ModelAdmin):
+class HomeSectionAdmin(AutoBackupMixin, ImageToolsAdminMixin, admin.ModelAdmin):
     list_display = ["get_section_type_display", "title"]
     readonly_fields = ["section_type"]
 
@@ -142,7 +164,7 @@ class HomeSectionAdmin(ImageToolsAdminMixin, admin.ModelAdmin):
     )
 
 @admin.register(HomeStat)
-class HomeStatAdmin(admin.ModelAdmin):
+class HomeStatAdmin(AutoBackupMixin, admin.ModelAdmin):
     list_display = ["number", "label", "link_url_display", "sort_order"]
     list_editable = ["sort_order"]
     fieldsets = (
@@ -161,12 +183,12 @@ class HomeStatAdmin(admin.ModelAdmin):
         return "— no link —"
 
 @admin.register(HomeFeature)
-class HomeFeatureAdmin(admin.ModelAdmin):
+class HomeFeatureAdmin(AutoBackupMixin, admin.ModelAdmin):
     list_display = ["title", "sort_order"]
     list_editable = ["sort_order"]
 
 @admin.register(HomeHistoryItem)
-class HomeHistoryItemAdmin(admin.ModelAdmin):
+class HomeHistoryItemAdmin(AutoBackupMixin, admin.ModelAdmin):
     list_display = ["year", "sort_order"]
     list_editable = ["sort_order"]
 
