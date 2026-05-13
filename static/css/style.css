@@ -10,6 +10,8 @@
   --shadow-lg: 0 6px 24px rgba(0,0,0,0.11);
 }
 
+html { scroll-behavior: smooth; }
+
 *, *::before, *::after { box-sizing: border-box; }
 
 body {
