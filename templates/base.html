@@ -86,11 +86,16 @@
           <li><a href="{% url 'gallery' %}"
               class="{% if request.resolver_match.url_name == 'gallery' %}active-link text-white{% else %}text-stone-300 hover:text-white{% endif %} nav-link-ul font-medium transition-colors"
               style="text-decoration:none;font-size:0.875rem;padding:0.45rem 0.85rem">Gallery</a></li>
+          <li style="margin-left:0.75rem">
+            <a href="mailto:{{ site_settings.email }}?subject=Book%20a%20Trial%20Lesson"
+              class="btn-trial inline-flex items-center justify-center bg-orange-600 hover:bg-orange-500 text-white font-semibold rounded-full transition-all hover:shadow-lg hover:shadow-orange-600/30 hover:-translate-y-px whitespace-nowrap"
+              style="text-decoration:none;font-size:0.8rem;padding:0.55rem 1.2rem">Book a Trial Lesson</a>
+          </li>
           <!-- Contact icon → scrolls to footer -->
           <li>
             <a href="#site-footer"
               class="text-stone-400 hover:text-orange-400 transition-colors flex items-center"
-              style="text-decoration:none;padding:0.45rem 0.6rem"
+              style="text-decoration:none;padding:0.45rem 0.5rem"
               title="Contact us">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -100,11 +105,6 @@
                   12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/>
               </svg>
             </a>
-          </li>
-          <li style="margin-left:0.75rem">
-            <a href="mailto:{{ site_settings.email }}?subject=Book%20a%20Trial%20Lesson"
-              class="btn-trial inline-flex items-center justify-center bg-orange-600 hover:bg-orange-500 text-white font-semibold rounded-full transition-all hover:shadow-lg hover:shadow-orange-600/30 hover:-translate-y-px whitespace-nowrap"
-              style="text-decoration:none;font-size:0.8rem;padding:0.55rem 1.2rem">Book a Trial Lesson</a>
           </li>
         </ul>
       </div>
