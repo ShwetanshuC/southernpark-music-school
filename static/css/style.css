@@ -556,22 +556,27 @@ header { position: relative; display: block; line-height: 0; font-size: 0; }
 }
 
 /* ===== Navbar shadow on scroll ===== */
-nav.scrolled { box-shadow: 0 4px 16px rgba(0,0,0,0.25); }
+.spms-navbar.scrolled { box-shadow: 0 4px 20px rgba(0,0,0,0.35); }
 
-/* ===== Nav link active dot (left side) ===== */
+/* ===== Nav link active underline ===== */
 .nav-link-ul {
   position: relative;
 }
-.nav-link-ul.active-link::before {
+.nav-link-ul::after {
   content: '';
   position: absolute;
-  left: 2px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 2px;
   background: #f97316;
+  border-radius: 1px;
+  transition: width 0.2s ease;
+}
+.nav-link-ul:hover::after,
+.nav-link-ul.active-link::after {
+  width: calc(100% - 2rem);
 }
 
 /* ===== Stacked section cards ===== */

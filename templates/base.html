@@ -52,50 +52,62 @@
   {% endif %}
 
   <!-- Navbar -->
-  <nav class="sticky top-0 z-50 bg-stone-800 border-b border-stone-700" style="position:sticky">
-    <div class="max-w-7xl mx-auto px-6 flex items-center justify-between py-3">
-      <div class="flex flex-col">
-        <div class="flex items-center gap-2.5">
-          <img src="{% static 'images/SPMS_542_icon.gif' %}" alt="SPMS logo" class="h-8 w-auto flex-shrink-0" />
-          <a href="{% url 'home' %}" class="font-bold text-lg text-white tracking-tight leading-none"
-            style="font-family:'Playfair Display',Georgia,serif;text-decoration:none">Southern Park Music School</a>
-        </div>
-        <div class="hidden md:flex items-center gap-2 text-xs text-stone-400 mt-1 pl-10">
-          <a href="tel:{{ site_settings.phone_tel }}" class="hover:text-white transition-colors"
-            style="text-decoration:none">{{ site_settings.phone_display }}</a>
-          <span class="text-stone-600">•</span>
-          <a href="mailto:{{ site_settings.email }}" class="hover:text-white transition-colors"
-            style="text-decoration:none">{{ site_settings.email }}</a>
-        </div>
-      </div>
-      <button class="navbar-toggler lg:hidden" type="button" aria-controls="mainNav" aria-expanded="false"
-        aria-label="Toggle navigation">
-        <span class="hamburger" aria-hidden="true"><span></span><span></span><span></span></span>
-        <span class="visually-hidden">Menu</span>
-      </button>
-      <div class="navbar-collapse hidden lg:flex items-center gap-0.5" id="mainNav">
-        <ul class="flex items-center gap-0.5 list-none m-0 p-0">
-          <li><a href="{% url 'faculty' %}"
-              class="{% if request.resolver_match.url_name == 'faculty' %}active-link text-white font-semibold{% else %}text-stone-300 hover:text-white font-medium{% endif %} text-sm nav-link-ul px-3 py-2 rounded-md hover:bg-white/8 transition-colors"
-              style="text-decoration:none">Faculty</a></li>
-          <li><a href="{% url 'calendar' %}"
-              class="{% if request.resolver_match.url_name == 'calendar' %}active-link text-white font-semibold{% else %}text-stone-300 hover:text-white font-medium{% endif %} text-sm nav-link-ul px-3 py-2 rounded-md hover:bg-white/8 transition-colors"
-              style="text-decoration:none">Calendar</a></li>
-          <li><a href="{% url 'policies' %}"
-              class="{% if request.resolver_match.url_name == 'policies' %}active-link text-white font-semibold{% else %}text-stone-300 hover:text-white font-medium{% endif %} text-sm nav-link-ul px-3 py-2 rounded-md hover:bg-white/8 transition-colors"
-              style="text-decoration:none">Policies</a></li>
-          <li><a href="{% url 'gallery' %}"
-              class="{% if request.resolver_match.url_name == 'gallery' %}active-link text-white font-semibold{% else %}text-stone-300 hover:text-white font-medium{% endif %} text-sm nav-link-ul px-3 py-2 rounded-md hover:bg-white/8 transition-colors"
-              style="text-decoration:none">Gallery</a></li>
-          <li class="ml-3">
-            <a href="mailto:{{ site_settings.email }}?subject=Book%20a%20Trial%20Lesson"
-              class="btn-trial inline-flex items-center justify-center bg-orange-600 hover:bg-orange-500 text-white text-sm font-semibold rounded-full transition-all hover:shadow-lg hover:shadow-orange-600/30 hover:-translate-y-px whitespace-nowrap"
-              style="text-decoration:none;padding:0.6rem 1.25rem;line-height:1">Book a Trial Lesson</a>
-          </li>
-        </ul>
+  <div class="sticky top-0 z-50" style="position:sticky">
+    <!-- Top contact bar -->
+    <div class="bg-stone-900 border-b border-stone-800 hidden md:block">
+      <div class="max-w-7xl mx-auto px-6 flex items-center justify-end gap-5 py-1.5">
+        <a href="tel:{{ site_settings.phone_tel }}"
+          class="text-stone-400 hover:text-orange-400 transition-colors text-xs flex items-center gap-1.5"
+          style="text-decoration:none">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.67A2 2 0 012 1h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"></path></svg>
+          {{ site_settings.phone_display }}
+        </a>
+        <span class="text-stone-700 text-xs">|</span>
+        <a href="mailto:{{ site_settings.email }}"
+          class="text-stone-400 hover:text-orange-400 transition-colors text-xs flex items-center gap-1.5"
+          style="text-decoration:none">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+          {{ site_settings.email }}
+        </a>
       </div>
     </div>
-  </nav>
+    <!-- Main nav -->
+    <nav class="bg-stone-800 border-b border-stone-700/60">
+      <div class="max-w-7xl mx-auto px-6 flex items-center justify-between py-3">
+        <a href="{% url 'home' %}" class="flex items-center gap-3 group" style="text-decoration:none">
+          <img src="{% static 'images/SPMS_542_icon.gif' %}" alt="SPMS logo" class="h-9 w-auto flex-shrink-0" />
+          <span class="font-bold text-white text-lg leading-tight tracking-tight"
+            style="font-family:'Playfair Display',Georgia,serif">Southern Park<br><span class="text-orange-400">Music School</span></span>
+        </a>
+        <button class="navbar-toggler lg:hidden" type="button" aria-controls="mainNav" aria-expanded="false"
+          aria-label="Toggle navigation">
+          <span class="hamburger" aria-hidden="true"><span></span><span></span><span></span></span>
+          <span class="visually-hidden">Menu</span>
+        </button>
+        <div class="navbar-collapse hidden lg:flex items-center gap-1" id="mainNav">
+          <ul class="flex items-center gap-1 list-none m-0 p-0">
+            <li><a href="{% url 'faculty' %}"
+                class="{% if request.resolver_match.url_name == 'faculty' %}active-link text-white{% else %}text-stone-300 hover:text-white{% endif %} text-sm font-medium nav-link-ul px-4 py-2 transition-colors"
+                style="text-decoration:none">Faculty</a></li>
+            <li><a href="{% url 'calendar' %}"
+                class="{% if request.resolver_match.url_name == 'calendar' %}active-link text-white{% else %}text-stone-300 hover:text-white{% endif %} text-sm font-medium nav-link-ul px-4 py-2 transition-colors"
+                style="text-decoration:none">Calendar</a></li>
+            <li><a href="{% url 'policies' %}"
+                class="{% if request.resolver_match.url_name == 'policies' %}active-link text-white{% else %}text-stone-300 hover:text-white{% endif %} text-sm font-medium nav-link-ul px-4 py-2 transition-colors"
+                style="text-decoration:none">Policies</a></li>
+            <li><a href="{% url 'gallery' %}"
+                class="{% if request.resolver_match.url_name == 'gallery' %}active-link text-white{% else %}text-stone-300 hover:text-white{% endif %} text-sm font-medium nav-link-ul px-4 py-2 transition-colors"
+                style="text-decoration:none">Gallery</a></li>
+            <li class="ml-4">
+              <a href="mailto:{{ site_settings.email }}?subject=Book%20a%20Trial%20Lesson"
+                class="btn-trial inline-flex items-center justify-center bg-orange-600 hover:bg-orange-500 text-white text-sm font-semibold rounded-full transition-all hover:shadow-lg hover:shadow-orange-600/30 hover:-translate-y-px whitespace-nowrap"
+                style="text-decoration:none;padding:0.55rem 1.3rem;line-height:1">Book a Trial Lesson</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </div>
 
   {% block content %}{% endblock %}
 

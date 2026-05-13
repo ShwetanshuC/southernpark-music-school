@@ -227,11 +227,12 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   // ===== Navbar shadow on scroll + hero parallax =====
-  var mainNav = document.querySelector('nav');
+  var mainNav = document.querySelector('.sticky.top-0');
   var heroImgs = document.querySelectorAll('#heroCarousel .carousel-item img');
   var heroEl = document.getElementById('heroCarousel');
   window.addEventListener('scroll', function () {
     var sy = window.scrollY;
+    if (mainNav) mainNav.classList.toggle('spms-navbar', sy > 10);
     if (mainNav) mainNav.classList.toggle('scrolled', sy > 10);
     if (heroImgs.length && heroEl && sy < heroEl.offsetHeight * 1.2) {
       var offset = sy * 0.18;
