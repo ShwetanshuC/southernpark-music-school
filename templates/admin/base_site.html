@@ -8,45 +8,43 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
-<link rel="stylesheet" href="{% static 'css/ckeditor-dark-theme.css' %}">
 <style>
     /* ============================================================
-       SOUTHERN PARK ADMIN – PREMIUM DARK THEME
+       SOUTHERN PARK ADMIN – WARM LIGHT THEME
        ============================================================ */
     :root {
         --primary: #c2410c;
         --secondary: #9a3412;
         --accent: #ea580c;
         --primary-fg: #fff;
-        --body-bg: #1c1917;
-        --body-fg: #e7e5e4;
-        --body-quiet-color: #a8a29e;
-        --body-loud-color: #fff;
-        --header-bg: #110f0e;
+        --body-bg: #faf7f2;
+        --body-fg: #1c1917;
+        --body-quiet-color: #78716c;
+        --body-loud-color: #1c1917;
+        --header-bg: #3d2b1f;
         --header-color: #fff;
         --header-branding-color: #c2410c;
-        --header-link-color: #d6d3d1;
-        --breadcrumbs-bg: #292524;
-        --breadcrumbs-fg: #d6d3d1;
-        --breadcrumbs-link-fg: #fff;
-        --link-fg: #f97316;
-        --link-hover-color: #fb923c;
-        --link-selected-fg: #fff;
-        --hairline-color: #44403c;
-        --border-color: #57534e;
-        --error-fg: #ef4444;
+        --header-link-color: #e7e5e4;
+        --breadcrumbs-bg: #f0ebe3;
+        --breadcrumbs-fg: #57534e;
+        --breadcrumbs-link-fg: #3d2b1f;
+        --link-fg: #C2410C;
+        --link-hover-color: #9a3412;
+        --link-selected-fg: #1c1917;
+        --hairline-color: #e7e5e4;
+        --border-color: #d6d3d1;
+        --error-fg: #b91c1c;
         --message-success-bg: #15803d;
         --message-warning-bg: #ca8a04;
         --message-error-bg: #b91c1c;
-        --darkened-bg: #292524;
-        --selected-bg: #292524;
-        --selected-row: #44403c;
+        --darkened-bg: #f0ebe3;
+        --selected-bg: #fef9f0;
+        --selected-row: #fef9f0;
         --button-fg: #fff;
-        --button-bg: #c2410c;
+        --button-bg: #C2410C;
         --button-hover-bg: #9a3412;
-        --default-button-bg: #44403c;
-        --default-button-hover-bg: #57534e;
+        --default-button-bg: #d6d3d1;
+        --default-button-hover-bg: #a8a29e;
         font-family: 'Poppins', sans-serif !important;
     }
 
@@ -85,7 +83,7 @@
 
     /* ── Module titles ── */
     .module h2, .module caption, .inline-group h2 {
-        background: #292524 !important;
+        background: #3d2b1f !important;
         color: #fff !important;
         border-bottom: 2px solid var(--primary);
         font-family: 'Playfair Display', Georgia, serif;
@@ -94,6 +92,16 @@
         letter-spacing: 0.02em;
         padding: 12px 15px;
     }
+
+    /* ── Module body ── */
+    .module {
+        background: #fff;
+        border: 1px solid var(--hairline-color);
+        border-radius: 12px;
+        overflow: hidden;
+        margin-bottom: 30px;
+    }
+    fieldset.module { padding: 0; }
 
     /* ── Breadcrumbs ── */
     div.breadcrumbs {
@@ -110,7 +118,7 @@
     /* ── Page h1 ── */
     #content h1 {
         font-family: 'Playfair Display', Georgia, serif;
-        color: #fff;
+        color: #3d2b1f;
         font-weight: 700;
         margin-bottom: 24px;
         font-size: 2rem;
@@ -123,25 +131,17 @@
         border-bottom: 1px solid var(--hairline-color);
     }
     table thead th {
-        background: #292524 !important;
-        color: #fff;
+        background: #f0ebe3 !important;
+        color: #1c1917;
         font-weight: 600;
         text-transform: uppercase;
         font-size: 0.75rem;
         letter-spacing: 0.05em;
     }
-    tr.row1, tr.row2 { background: #1c1917 !important; }
-    tr:hover td, tr:hover th { background: #44403c !important; }
+    tr.row1, tr.row2 { background: #fff !important; }
+    tr:hover td, tr:hover th { background: #fef9f0 !important; }
 
     /* ── Forms ── */
-    .module {
-        background: #292524;
-        border: 1px solid var(--hairline-color);
-        border-radius: 12px;
-        overflow: hidden;
-        margin-bottom: 30px;
-    }
-    fieldset.module { padding: 0; }
     .form-row {
         padding: 15px 20px;
         border-bottom: 1px solid var(--hairline-color);
@@ -152,29 +152,29 @@
     input[type=url],
     input[type=number],
     textarea {
-        background-color: #110f0e !important;
-        color: #fff !important;
-        -webkit-text-fill-color: #fff !important;
+        background-color: #fff !important;
+        color: #1c1917 !important;
+        -webkit-text-fill-color: #1c1917 !important;
         border: 1px solid var(--border-color) !important;
         padding: 10px 14px !important;
         border-radius: 8px !important;
         font-size: 1rem !important;
     }
 
-    /* ── Select dropdowns: force readable text on Safari/macOS dark mode ── */
+    /* ── Select dropdowns ── */
     select:not(.admin-autocomplete):not([multiple]):not([size]) {
         appearance: none !important;
         -webkit-appearance: none !important;
         -moz-appearance: none !important;
         forced-color-adjust: none !important;
-        color-scheme: dark !important;
-        background-color: #1e1a17 !important;
+        color-scheme: light !important;
+        background-color: #fff !important;
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23c2410c' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
         background-repeat: no-repeat !important;
         background-position: right 12px center !important;
         background-size: 14px !important;
-        color: #f6efe8 !important;
-        -webkit-text-fill-color: #f6efe8 !important;
+        color: #1c1917 !important;
+        -webkit-text-fill-color: #1c1917 !important;
         border: 1px solid var(--border-color) !important;
         padding: 10px 36px 10px 14px !important;
         border-radius: 8px !important;
@@ -184,8 +184,8 @@
 
     select option,
     select optgroup {
-        color: #f6efe8;
-        background: #1e1a17;
+        color: #1c1917;
+        background: #fff;
     }
 
     input[type=text]:focus, select:focus, textarea:focus {
@@ -221,7 +221,7 @@
         letter-spacing: 0.05em;
     }
     .submit-row {
-        background: #110f0e;
+        background: #f0ebe3;
         border: none;
         border-radius: 0 0 12px 12px;
         padding: 20px;
@@ -259,7 +259,7 @@
     /* ── Content padding ── */
     #content-main { padding: 40px; }
 
-    /* ── Recent actions: move to top via JS, style it nicely ── */
+    /* ── Recent actions ── */
     #recent-actions-module {
         margin-bottom: 30px;
     }
@@ -275,14 +275,14 @@
         width: 28px;
         height: 28px;
         border-radius: 50%;
-        border: 2px solid rgba(255,255,255,0.15);
+        border: 2px solid rgba(0,0,0,0.12);
         cursor: pointer;
         transition: transform 0.15s, border-color 0.15s;
         flex-shrink: 0;
     }
     .spms-swatch:hover {
         transform: scale(1.2);
-        border-color: rgba(255,255,255,0.6);
+        border-color: rgba(0,0,0,0.4);
     }
     .spms-swatch-label {
         font-size: 0.7rem;
@@ -301,7 +301,7 @@
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
-        background: #110f0e !important;
+        background: #faf7f2 !important;
         margin: 0 !important;
         padding: 16px !important;
     }
@@ -309,15 +309,15 @@
         position: relative !important;
         width: 100% !important;
         max-width: 400px !important;
-        background: #1c1917 !important;
-        border: 1px solid #44403c !important;
+        background: #fff !important;
+        border: 1px solid #e7e5e4 !important;
         border-radius: 16px !important;
         overflow: hidden !important;
-        box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.9) !important;
+        box-shadow: 0 20px 60px rgba(61,43,31,0.15) !important;
         margin: 0 !important;
     }
     .login #header {
-        background: transparent !important;
+        background: #3d2b1f !important;
         border: none !important;
         border-bottom: 1px solid var(--primary) !important;
         text-align: center !important;
@@ -381,8 +381,8 @@
        ==================================================== */
     .spms-crop-wrapper {
         margin-top: 16px;
-        background: #110f0e;
-        border: 1px solid #44403c;
+        background: #f5f0e8;
+        border: 1px solid #e7e5e4;
         border-radius: 12px;
         overflow: hidden;
         max-width: 680px;
@@ -392,8 +392,8 @@
         align-items: center;
         justify-content: space-between;
         padding: 12px 16px;
-        background: #292524;
-        border-bottom: 1px solid #44403c;
+        background: #f0ebe3;
+        border-bottom: 1px solid #e7e5e4;
     }
     .spms-crop-title {
         font-size: 0.78rem;
@@ -404,9 +404,9 @@
     }
     .spms-crop-badge {
         font-size: 0.72rem;
-        color: #a8a29e;
-        background: #1c1917;
-        border: 1px solid #44403c;
+        color: #78716c;
+        background: #fff;
+        border: 1px solid #d6d3d1;
         border-radius: 9999px;
         padding: 2px 10px;
     }
@@ -416,6 +416,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        background: #f5f0e8;
     }
     .spms-crop-canvas img {
         max-width: 100%;
@@ -427,8 +428,8 @@
         align-items: center;
         gap: 10px;
         padding: 12px 16px;
-        background: #292524;
-        border-top: 1px solid #44403c;
+        background: #f0ebe3;
+        border-top: 1px solid #e7e5e4;
     }
     .spms-crop-btn {
         border-radius: 9999px;
@@ -448,10 +449,10 @@
     .spms-crop-btn-primary:hover { background: #9a3412; }
     .spms-crop-btn-secondary {
         background: transparent;
-        color: #a8a29e;
-        border: 1px solid #57534e;
+        color: #78716c;
+        border: 1px solid #d6d3d1;
     }
-    .spms-crop-btn-secondary:hover { color: #fff; border-color: #a8a29e; }
+    .spms-crop-btn-secondary:hover { color: #1c1917; border-color: #a8a29e; }
     .spms-crop-hint {
         font-size: 0.72rem;
         color: #78716c;
@@ -465,7 +466,7 @@
 document.addEventListener("DOMContentLoaded", function() {
     if (document.body.classList.contains('login')) {
         var b = document.body;
-        b.style.cssText += 'display:flex!important;align-items:center!important;justify-content:center!important;min-height:100dvh!important;margin:0!important;padding:16px!important;background:#110f0e!important;';
+        b.style.cssText += 'display:flex!important;align-items:center!important;justify-content:center!important;min-height:100dvh!important;margin:0!important;padding:16px!important;background:#faf7f2!important;';
         var c = document.getElementById('container');
         if (c) c.style.margin = '0';
     }
@@ -476,10 +477,10 @@ document.addEventListener("DOMContentLoaded", function() {
 <style>
 .spms-sel-shell {
     position: relative; display: inline-block; vertical-align: middle;
-    background-color: #1e1a17; border: 1px solid #3b342f; border-radius: 4px;
+    background-color: #fff; border: 1px solid #d6d3d1; border-radius: 4px;
     cursor: pointer; box-sizing: border-box;
 }
-.spms-sel-shell:hover { border-color: #5a4a43; }
+.spms-sel-shell:hover { border-color: #a8a29e; }
 .spms-sel-shell:focus-within { border-color: #C2410C; box-shadow: 0 0 0 3px rgba(194,65,12,0.2); }
 .spms-sel-shell::after {
     content: ''; position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
@@ -497,7 +498,7 @@ document.addEventListener("DOMContentLoaded", function() {
 .spms-sel-ov {
     display: flex; align-items: center;
     padding: 8px 36px 8px 14px; min-height: 36px;
-    color: #f6efe8; font-size: 14px; font-family: 'Poppins', sans-serif;
+    color: #1c1917; font-size: 14px; font-family: 'Poppins', sans-serif;
     pointer-events: none; overflow: hidden; white-space: nowrap;
     text-decoration: none !important; line-height: 1;
 }
