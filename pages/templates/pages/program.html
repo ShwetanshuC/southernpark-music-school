@@ -13,50 +13,65 @@
         <p class="text-stone-500 text-sm">Last updated: {{ program.uploaded_at|date:"F j, Y" }}</p>
       </div>
 
-      <!-- PDF viewer using PDF.js (one full-width page per canvas, scroll between pages) -->
-      <div id="pdf-container" class="rounded-2xl overflow-hidden shadow-xl border border-stone-200 bg-white flex flex-col items-center gap-1 py-4 px-2">
-        <p id="pdf-loading" class="text-stone-400 text-sm py-8">Loading program…</p>
+      <!-- Program viewer: image or PDF depending on file type -->
+      <div class="rounded-2xl overflow-hidden shadow-xl border border-stone-200 bg-white">
+
+        {% with name=program.pdf.name|lower %}
+        {% if ".jpg" in name or ".jpeg" in name or ".png" in name or ".gif" in name or ".webp" in name %}
+
+          <img
+            src="{{ program.pdf.url }}"
+            alt="{{ program.title }}"
+            class="w-full h-auto block"
+          >
+
+        {% else %}
+
+          <div id="pdf-container" class="flex flex-col items-center gap-1 py-4 px-2">
+            <p id="pdf-loading" class="text-stone-400 text-sm py-8">Loading program…</p>
+          </div>
+
+          <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" crossorigin="anonymous"></script>
+          <script>
+            pdfjsLib.GlobalWorkerOptions.workerSrc =
+              'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+            (async () => {
+              const container = document.getElementById('pdf-container');
+              const loading   = document.getElementById('pdf-loading');
+              const url       = '{{ program.pdf.url|escapejs }}';
+
+              try {
+                const pdf = await pdfjsLib.getDocument(url).promise;
+                loading.remove();
+
+                for (let i = 1; i <= pdf.numPages; i++) {
+                  const page     = await pdf.getPage(i);
+                  const viewport = page.getViewport({ scale: 1 });
+                  const scale    = (container.clientWidth - 16) / viewport.width;
+                  const scaled   = page.getViewport({ scale });
+
+                  const canvas   = document.createElement('canvas');
+                  canvas.width   = scaled.width;
+                  canvas.height  = scaled.height;
+                  canvas.style.width   = '100%';
+                  canvas.style.display = 'block';
+                  canvas.className     = 'rounded-lg shadow-sm';
+
+                  container.appendChild(canvas);
+                  await page.render({ canvasContext: canvas.getContext('2d'), viewport: scaled }).promise;
+                }
+              } catch (err) {
+                loading.textContent = 'Could not load program. Please use the download link below.';
+                console.error(err);
+              }
+            })();
+          </script>
+
+        {% endif %}
+        {% endwith %}
+
       </div>
-
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" crossorigin="anonymous"></script>
-      <script>
-        pdfjsLib.GlobalWorkerOptions.workerSrc =
-          'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-
-        (async () => {
-          const container = document.getElementById('pdf-container');
-          const loading  = document.getElementById('pdf-loading');
-          const url      = '{{ program.pdf.url|escapejs }}';
-
-          try {
-            const pdf = await pdfjsLib.getDocument(url).promise;
-            loading.remove();
-
-            for (let i = 1; i <= pdf.numPages; i++) {
-              const page     = await pdf.getPage(i);
-              const viewport = page.getViewport({ scale: 1 });
-
-              // Scale so the page fills the container width
-              const containerWidth = container.clientWidth - 16; // minus padding
-              const scale    = containerWidth / viewport.width;
-              const scaled   = page.getViewport({ scale });
-
-              const canvas   = document.createElement('canvas');
-              canvas.width   = scaled.width;
-              canvas.height  = scaled.height;
-              canvas.style.width  = '100%';
-              canvas.style.display = 'block';
-              canvas.className = 'rounded-lg shadow-sm';
-
-              container.appendChild(canvas);
-              await page.render({ canvasContext: canvas.getContext('2d'), viewport: scaled }).promise;
-            }
-          } catch (err) {
-            loading.textContent = 'Could not load PDF. Please use the download link below.';
-            console.error(err);
-          }
-        })();
-      </script>
 
       <div class="text-center mt-6">
         <a
@@ -67,7 +82,7 @@
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3" />
           </svg>
-          Download PDF
+          Download
         </a>
       </div>
     </div>
