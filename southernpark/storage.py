@@ -16,12 +16,21 @@ from django.core.files.storage import FileSystemStorage
 MAX_PX = 3840
 
 
+_IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".gif", ".webp", ".bmp", ".tiff", ".heic", ".heif"}
+
+
 def _process(content):
     """
     Convert to progressive JPEG at quality 95, fix EXIF rotation, and
     downscale if either dimension exceeds MAX_PX (aspect ratio preserved).
     Returns (new_content, ext) where ext is '.jpg', or (original, None) on failure.
+    Non-image files (PDFs etc.) are returned unchanged without touching PIL.
     """
+    name = getattr(content, "name", "") or ""
+    suffix = ("." + name.rsplit(".", 1)[-1]).lower() if "." in name else ""
+    if suffix not in _IMAGE_EXTENSIONS:
+        return content, None
+
     try:
         from PIL import Image, ImageOps
         content.seek(0)

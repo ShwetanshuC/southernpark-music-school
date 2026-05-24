@@ -14,6 +14,6 @@ class RecitalProgram(models.Model):
         return self.title
 
     def save(self, *args, **kwargs):
-        # Only one program record at a time — replace it
-        self.__class__.objects.exclude(pk=self.pk).delete()
         super().save(*args, **kwargs)
+        # After successful save, drop any other records (singleton pattern)
+        self.__class__.objects.exclude(pk=self.pk).delete()

@@ -74,6 +74,24 @@ def program_view(request):
     return render(request, "pages/program.html", {"program": program})
 
 
+def program_pdf(request):
+    """Proxy the program PDF through Django so PDF.js can fetch it cross-origin-free."""
+    from .models import RecitalProgram
+    from django.http import Http404, StreamingHttpResponse
+
+    program = RecitalProgram.objects.first()
+    if not program:
+        raise Http404("No program available")
+
+    try:
+        pdf_file = program.pdf.open("rb")
+        response = StreamingHttpResponse(pdf_file, content_type="application/pdf")
+        response["Content-Disposition"] = 'inline; filename="program.pdf"'
+        return response
+    except Exception:
+        raise Http404("Program file not found")
+
+
 def admin_image_proxy(request):
     """Server-side proxy for admin image cropper — bypasses S3 CORS for existing images."""
     from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden

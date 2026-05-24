@@ -39,7 +39,7 @@
             (async () => {
               const container = document.getElementById('pdf-container');
               const loading   = document.getElementById('pdf-loading');
-              const url       = '{{ program.pdf.url|escapejs }}';
+              const url       = '{% url "program_pdf" %}';
 
               try {
                 const pdf = await pdfjsLib.getDocument(url).promise;

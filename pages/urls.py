@@ -10,4 +10,5 @@ urlpatterns = [
     path("healthcheck", lambda r: HttpResponse("OK"), name="healthcheck"),
     path("admin-image-proxy/", views.admin_image_proxy, name="admin_image_proxy"),
     path("program/", views.program_view, name="program"),
+    path("program/pdf/", views.program_pdf, name="program_pdf"),
 ]
