@@ -40,23 +40,26 @@
               const container = document.getElementById('pdf-container');
               const loading   = document.getElementById('pdf-loading');
               const url       = '{% url "program_pdf" %}';
+              const dpr       = window.devicePixelRatio || 1;
 
               try {
                 const pdf = await pdfjsLib.getDocument(url).promise;
                 loading.remove();
 
                 for (let i = 1; i <= pdf.numPages; i++) {
-                  const page     = await pdf.getPage(i);
-                  const viewport = page.getViewport({ scale: 1 });
-                  const scale    = (container.clientWidth - 16) / viewport.width;
-                  const scaled   = page.getViewport({ scale });
+                  const page        = await pdf.getPage(i);
+                  const baseVp      = page.getViewport({ scale: 1 });
+                  const cssWidth    = container.clientWidth - 16;
+                  const scale       = cssWidth / baseVp.width;
+                  const scaled      = page.getViewport({ scale: scale * dpr });
 
-                  const canvas   = document.createElement('canvas');
-                  canvas.width   = scaled.width;
-                  canvas.height  = scaled.height;
-                  canvas.style.width   = '100%';
+                  const canvas      = document.createElement('canvas');
+                  canvas.width      = scaled.width;
+                  canvas.height     = scaled.height;
+                  canvas.style.width  = cssWidth + 'px';
+                  canvas.style.height = (scaled.height / dpr) + 'px';
                   canvas.style.display = 'block';
-                  canvas.className     = 'rounded-lg shadow-sm';
+                  canvas.className  = 'rounded-lg shadow-sm';
 
                   container.appendChild(canvas);
                   await page.render({ canvasContext: canvas.getContext('2d'), viewport: scaled }).promise;
