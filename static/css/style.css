@@ -543,6 +543,14 @@ header { position: relative; display: block; line-height: 0; font-size: 0; }
 }
 @media (max-width: 360px) { .faculty-grid { grid-template-columns: 1fr; } }
 
+/* Prevent cards in packed rows from stretching wider when the row has fewer than 4 sections */
+.faculty-section-packed .faculty-grid {
+  justify-items: center;
+}
+.faculty-section-packed .flip-card {
+  max-width: 260px;
+}
+
 .search-box input[type="search"] {
   border: 1px solid #d6d3d1;
   border-radius: 999px;
