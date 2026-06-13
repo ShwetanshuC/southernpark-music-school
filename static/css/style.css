@@ -236,8 +236,8 @@ header { position: relative; display: block; line-height: 0; font-size: 0; }
     border-radius: 4px;
   }
   .navbar-collapse ul li a:hover { color: #fff; background: rgba(255,255,255,0.06); }
-  .navbar-collapse ul .cta-item a,
-  .navbar-collapse ul li:last-child a {
+  /* CTA button — target by class so the phone icon li is unaffected */
+  .navbar-collapse ul li a.btn-trial {
     display: block !important;
     text-align: center !important;
     margin: 0.5rem 0 0 !important;
@@ -249,9 +249,9 @@ header { position: relative; display: block; line-height: 0; font-size: 0; }
     width: 100% !important;
     box-sizing: border-box !important;
   }
-  .navbar-collapse ul li:last-child { margin-left: 0 !important; }
-  .navbar-collapse ul .cta-item a:hover,
-  .navbar-collapse ul li:last-child a:hover { background: #c2410c !important; }
+  .navbar-collapse ul li a.btn-trial:hover { background: #c2410c !important; }
+  /* Hide phone icon in mobile menu — contact info is in the footer */
+  .navbar-collapse ul li:last-child { display: none !important; }
 }
 
 /* ===== Visually hidden ===== */
@@ -592,7 +592,7 @@ header { position: relative; display: block; line-height: 0; font-size: 0; }
 /* ===== Navbar shadow on scroll ===== */
 .spms-navbar.scrolled { box-shadow: 0 4px 20px rgba(0,0,0,0.35); }
 
-/* ===== Nav link active underline ===== */
+/* ===== Nav link active underline (desktop only) ===== */
 .nav-link-ul {
   position: relative;
 }
@@ -611,6 +611,14 @@ header { position: relative; display: block; line-height: 0; font-size: 0; }
 .nav-link-ul:hover::after,
 .nav-link-ul.active-link::after {
   width: calc(100% - 2rem);
+}
+/* Suppress the orange underline bar in mobile dropdown */
+@media (max-width: 1023px) {
+  .nav-link-ul::after { display: none; }
+  .navbar-collapse ul li a.active-link {
+    color: #fff;
+    background: rgba(255,255,255,0.08);
+  }
 }
 
 /* ===== Stacked section cards ===== */
