@@ -1,0 +1,469 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block title %}Faculty Layout | SPMS Admin{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">Home</a>
+    &rsaquo; <a href="{% url 'admin:faculty_facultymember_changelist' %}">Faculty Members</a>
+    &rsaquo; Arrange Faculty
+</div>
+{% endblock %}
+
+{% block content %}
+<meta name="csrf-token" content="{{ csrf_token }}">
+
+<div class="ro-page">
+
+    <!-- Header -->
+    <div class="ro-header">
+        <div>
+            <h1 style="font-family:'Playfair Display',Georgia,serif;color:#fff;font-size:1.8rem;margin:0 0 6px;">Faculty Layout</h1>
+            <p class="ro-hint">Drag <strong>sections</strong> up or down to reorder instrument groups.&nbsp; Drag <strong>teacher cards</strong> to reorder or move them between sections.</p>
+        </div>
+        <div class="ro-header-actions">
+            <a href="{% url 'admin:faculty_facultymember_changelist' %}" class="ro-back-btn">&#8592; Back</a>
+            <button id="save-btn" class="ro-save-btn">Save Order</button>
+        </div>
+    </div>
+
+    <!-- Instrument sections -->
+    <div id="sections-container">
+        {% for group in groups %}
+        <div class="ro-section" data-instrument-id="{{ group.instrument.pk }}">
+            <div class="ro-section-header">
+                <span class="ro-grip" title="Drag to reorder section">&#8759;</span>
+                <span class="ro-section-name">{{ group.instrument.name }}</span>
+                <span class="ro-count" data-count="{{ group.members|length }}">
+                    {{ group.members|length }} teacher{{ group.members|length|pluralize }}
+                </span>
+            </div>
+            <div class="ro-cards" data-instrument-id="{{ group.instrument.pk }}">
+                {% for member in group.members %}
+                <div class="ro-card{% if not member.is_active %} ro-card-inactive{% endif %}"
+                     data-faculty-id="{{ member.pk }}"
+                     title="{{ member.name }}{% if not member.is_active %} (inactive){% endif %}">
+                    {% if member.photo %}
+                        <img src="{{ member.photo.url }}" alt="{{ member.name }}">
+                    {% else %}
+                        <div class="ro-card-initial">{{ member.name|first }}</div>
+                    {% endif %}
+                    <p class="ro-card-name">{{ member.name }}</p>
+                    {% if not member.is_active %}
+                    <span class="ro-card-inactive-badge">Inactive</span>
+                    {% endif %}
+                </div>
+                {% endfor %}
+                {% if not group.members %}
+                <p class="ro-empty">No teachers yet</p>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+
+        {% if leftover %}
+        <div class="ro-section" data-instrument-id="">
+            <div class="ro-section-header">
+                <span class="ro-grip">&#8759;</span>
+                <span class="ro-section-name" style="color:#a8a29e;">Unassigned</span>
+                <span class="ro-count">{{ leftover|length }} teacher{{ leftover|length|pluralize }}</span>
+            </div>
+            <div class="ro-cards" data-instrument-id="">
+                {% for member in leftover %}
+                <div class="ro-card" data-faculty-id="{{ member.pk }}" title="{{ member.name }}">
+                    {% if member.photo %}
+                        <img src="{{ member.photo.url }}" alt="{{ member.name }}">
+                    {% else %}
+                        <div class="ro-card-initial">{{ member.name|first }}</div>
+                    {% endif %}
+                    <p class="ro-card-name">{{ member.name }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Sticky save bar -->
+    <div class="ro-save-bar">
+        <span class="ro-save-bar-hint">Changes are not saved automatically.</span>
+        <button id="save-btn-bottom" class="ro-save-btn">Save Order</button>
+    </div>
+
+</div>
+
+<!-- Toast -->
+<div id="toast" class="ro-toast ro-toast-hidden"></div>
+
+<style>
+/* ── Page layout ── */
+.ro-page { padding: 0; }
+
+.ro-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+}
+.ro-hint {
+    color: #a8a29e;
+    font-size: 0.875rem;
+    margin: 0;
+    max-width: 520px;
+    line-height: 1.5;
+}
+.ro-hint strong { color: #e7e5e4; }
+
+.ro-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.ro-back-btn {
+    color: #a8a29e;
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    padding: 10px 18px;
+    border-radius: 9999px;
+    border: 1px solid #44403c;
+    transition: color 0.2s, border-color 0.2s;
+}
+.ro-back-btn:hover { color: #e7e5e4; border-color: #78716c; }
+
+/* ── Save button ── */
+.ro-save-btn {
+    background: #c2410c;
+    color: #fff;
+    border: none;
+    border-radius: 9999px;
+    padding: 11px 32px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    letter-spacing: 0.03em;
+    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    box-shadow: 0 2px 8px rgba(194,65,12,0.3);
+}
+.ro-save-btn:hover {
+    background: #9a3412;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(194,65,12,0.4);
+}
+.ro-save-btn.saving { background: #44403c; cursor: wait; transform: none; box-shadow: none; }
+.ro-save-btn.saved  { background: #15803d; box-shadow: 0 2px 8px rgba(21,128,61,0.4); }
+
+/* ── Section blocks ── */
+.ro-section {
+    background: #292524;
+    border: 1px solid #44403c;
+    border-radius: 14px;
+    margin-bottom: 14px;
+    overflow: hidden;
+    transition: box-shadow 0.25s, transform 0.2s;
+}
+.ro-section:hover {
+    box-shadow: 0 6px 24px rgba(0,0,0,0.4);
+}
+.ro-section.sortable-ghost { opacity: 0.35; border: 2px dashed #c2410c; }
+.ro-section.sortable-chosen { box-shadow: 0 16px 48px rgba(0,0,0,0.7); }
+
+.ro-section-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 20px;
+    cursor: grab;
+    background: #1c1917;
+    border-bottom: 2px solid #44403c;
+    user-select: none;
+    transition: background 0.2s;
+}
+.ro-section-header:hover { background: #221e1b; }
+.ro-section-header:active { cursor: grabbing; }
+
+.ro-grip {
+    font-size: 1.4rem;
+    color: #57534e;
+    line-height: 1;
+    transition: color 0.2s;
+    flex-shrink: 0;
+}
+.ro-section-header:hover .ro-grip { color: #c2410c; }
+
+.ro-section-name {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #fff;
+    flex: 1;
+}
+.ro-count {
+    color: #78716c;
+    font-size: 0.8rem;
+    font-weight: 400;
+    white-space: nowrap;
+}
+
+/* ── Card grid ── */
+.ro-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    padding: 18px 20px;
+    min-height: 64px;
+}
+
+/* ── Individual card ── */
+.ro-card {
+    background: #1c1917;
+    border: 1.5px solid #44403c;
+    border-radius: 10px;
+    width: 106px;
+    overflow: hidden;
+    cursor: grab;
+    user-select: none;
+    position: relative;
+    transition: transform 0.22s cubic-bezier(0.34,1.56,0.64,1),
+                box-shadow 0.22s ease,
+                border-color 0.2s;
+}
+.ro-card:hover {
+    transform: translateY(-6px) scale(1.03);
+    box-shadow: 0 12px 28px rgba(0,0,0,0.55);
+    border-color: #c2410c;
+}
+.ro-card:active { cursor: grabbing; transform: translateY(-3px) scale(1.01); }
+.ro-card.sortable-ghost { opacity: 0.25; border: 2px dashed #c2410c; }
+.ro-card.sortable-chosen {
+    box-shadow: 0 16px 40px rgba(0,0,0,0.7);
+    border-color: #ea580c;
+    transform: rotate(1.5deg) scale(1.05);
+}
+
+.ro-card img {
+    width: 100%;
+    height: 96px;
+    object-fit: cover;
+    display: block;
+    pointer-events: none;
+}
+.ro-card-initial {
+    width: 100%;
+    height: 96px;
+    background: #44403c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #78716c;
+    font-family: 'Playfair Display', Georgia, serif;
+}
+.ro-card-name {
+    padding: 7px 6px 8px;
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: #e7e5e4;
+    line-height: 1.35;
+    text-align: center;
+    margin: 0;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+/* Inactive state */
+.ro-card-inactive { opacity: 0.5; }
+.ro-card-inactive-badge {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background: #292524;
+    color: #78716c;
+    font-size: 0.6rem;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 9999px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.ro-empty {
+    color: #57534e;
+    font-size: 0.8rem;
+    font-style: italic;
+    padding: 4px 0;
+    margin: 0;
+}
+
+/* ── Sticky save bar ── */
+.ro-save-bar {
+    position: sticky;
+    bottom: 0;
+    background: #110f0e;
+    border-top: 1px solid #44403c;
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin: 28px -40px -32px;
+    z-index: 100;
+}
+.ro-save-bar-hint {
+    color: #57534e;
+    font-size: 0.8rem;
+}
+
+/* ── Toast ── */
+.ro-toast {
+    position: fixed;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #15803d;
+    color: #fff;
+    padding: 12px 30px;
+    border-radius: 9999px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    z-index: 9999;
+    transition: opacity 0.35s;
+    pointer-events: none;
+    white-space: nowrap;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+}
+.ro-toast.ro-toast-error { background: #b91c1c; }
+.ro-toast.ro-toast-hidden { opacity: 0; }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.6/Sortable.min.js"></script>
+<script>
+(function () {
+    const SAVE_URL = "{% url 'admin:faculty_reorder_save' %}";
+    const CSRF    = document.querySelector('meta[name="csrf-token"]').content;
+
+    // --- Sortable: instrument sections ---
+    Sortable.create(document.getElementById('sections-container'), {
+        animation: 200,
+        handle: '.ro-section-header',
+        ghostClass: 'sortable-ghost',
+        chosenClass: 'sortable-chosen',
+        easing: 'cubic-bezier(0.25, 1, 0.5, 1)',
+    });
+
+    // --- Sortable: faculty cards (cross-section allowed) ---
+    document.querySelectorAll('.ro-cards').forEach(function (container) {
+        Sortable.create(container, {
+            group: 'faculty',
+            animation: 200,
+            ghostClass: 'sortable-ghost',
+            chosenClass: 'sortable-chosen',
+            easing: 'cubic-bezier(0.25, 1, 0.5, 1)',
+            onEnd: updateCounts,
+        });
+    });
+
+    function updateCounts() {
+        document.querySelectorAll('.ro-section').forEach(function (section) {
+            var count = section.querySelectorAll('.ro-card').length;
+            var el = section.querySelector('.ro-count');
+            if (el) el.textContent = count + ' teacher' + (count !== 1 ? 's' : '');
+        });
+    }
+
+    function collectPayload() {
+        var instruments = [];
+        var faculty = [];
+        var order = 0;
+        document.querySelectorAll('.ro-section').forEach(function (section) {
+            var instrId = section.dataset.instrumentId;
+            var instrIdNum = instrId ? parseInt(instrId) : null;
+            if (instrIdNum) instruments.push(instrIdNum);
+            section.querySelectorAll('.ro-card').forEach(function (card) {
+                faculty.push({
+                    id: parseInt(card.dataset.facultyId),
+                    instrument_id: instrIdNum,
+                    order: order++,
+                });
+            });
+        });
+        return { instruments: instruments, faculty: faculty };
+    }
+
+    function doSave(btn) {
+        btn.textContent = 'Saving…';
+        btn.classList.add('saving');
+        btn.disabled = true;
+
+        fetch(SAVE_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': CSRF,
+            },
+            body: JSON.stringify(collectPayload()),
+        })
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+            btn.disabled = false;
+            if (data.status === 'ok') {
+                btn.textContent = '✓ Saved!';
+                btn.classList.remove('saving');
+                btn.classList.add('saved');
+                showToast('Order saved successfully!', false);
+                setTimeout(function () {
+                    btn.textContent = 'Save Order';
+                    btn.classList.remove('saved');
+                }, 2800);
+                // sync the other button
+                syncButtons(btn);
+            } else {
+                throw new Error(data.error || 'Unknown error');
+            }
+        })
+        .catch(function () {
+            btn.disabled = false;
+            btn.textContent = 'Save Order';
+            btn.classList.remove('saving');
+            showToast('Error saving — please try again.', true);
+        });
+    }
+
+    function syncButtons(active) {
+        // Mirror state across both save buttons
+        [document.getElementById('save-btn'), document.getElementById('save-btn-bottom')].forEach(function (b) {
+            if (b && b !== active) {
+                b.textContent = active.textContent;
+                b.className   = active.className;
+                setTimeout(function () {
+                    b.textContent = 'Save Order';
+                    b.className   = 'ro-save-btn';
+                }, 2800);
+            }
+        });
+    }
+
+    document.getElementById('save-btn').addEventListener('click', function () { doSave(this); });
+    document.getElementById('save-btn-bottom').addEventListener('click', function () { doSave(this); });
+
+    function showToast(msg, isError) {
+        var toast = document.getElementById('toast');
+        toast.textContent = msg;
+        toast.className = 'ro-toast' + (isError ? ' ro-toast-error' : '');
+        clearTimeout(toast._timer);
+        toast._timer = setTimeout(function () {
+            toast.classList.add('ro-toast-hidden');
+        }, 2800);
+    }
+})();
+</script>
+{% endblock %}
